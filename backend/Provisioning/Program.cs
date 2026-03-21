@@ -2,25 +2,26 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
+using Azure.Storage.Blobs;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("settings.json", optional: false, reloadOnChange: false)
     .Build();
 
-var provisioning = configuration.GetSection("Provisioning").Get<Options>()
+var cosmosDbOptions = configuration.GetSection("CosmosDb").Get<CosmosDbProvisionOptions>()
     ?? throw new InvalidOperationException("Provisioning cannot be null");
 
-var connectionString = configuration.GetConnectionString("CosmosDb");
-var cosmosClient = new CosmosClient(connectionString, new CosmosClientOptions
+var cosmosConnectionString = configuration.GetConnectionString("CosmosDb");
+var cosmosClient = new CosmosClient(cosmosConnectionString, new CosmosClientOptions
 {
     ConnectionMode = ConnectionMode.Gateway,
     LimitToEndpoint = true
 });
 
-var database = await cosmosClient.CreateDatabaseIfNotExistsAsync(provisioning.DatabaseName);
+var database = await cosmosClient.CreateDatabaseIfNotExistsAsync(cosmosDbOptions.DatabaseName);
 
-foreach (var container in provisioning.Containers)
+foreach (var container in cosmosDbOptions.Containers)
 {
     await database.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
     {
@@ -28,3 +29,22 @@ foreach (var container in provisioning.Containers)
         PartitionKeyPath = "/partitionKey",
     });
 }
+
+var blobStorageOptions = configuration.GetSection("BlobStorage").Get<BlobStorageProvisionOptions>()
+    ?? throw new InvalidOperationException("Provisioning cannot be null");
+
+var blobStorageConnectionString = configuration.GetConnectionString("BlobStorage");
+var blobClient = new BlobServiceClient(blobStorageConnectionString);
+
+foreach (var container in blobStorageOptions.Containers)
+{
+    try
+    {
+        await blobClient.CreateBlobContainerAsync(container);
+    }
+    catch (AggregateException ex)
+    {
+        Console.Error.WriteLine("The container already exist.");
+    }
+}
+

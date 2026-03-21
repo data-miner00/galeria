@@ -1,6 +1,6 @@
 ﻿namespace Provisioning;
 
-internal class Options
+internal class CosmosDbProvisionOptions
 {
     public string DatabaseName { get; set; }
 
