@@ -1,0 +1,19 @@
+services:
+  cosmos-emulator:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+    container_name: cosmos-emulator
+    hostname: cosmos-emulator
+    restart: "unless-stopped"
+    ports:
+      - 8081:8081
+      - 1235:1234
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite-emulator
+    hostname: azurite-emulator
+    restart: "unless-stopped"
+    ports:
+      - 10003:10000
+      - 10001:10001
+      - 10002:10002
