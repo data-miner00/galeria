@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
+using WebApi.Repositories;
 
 namespace WebApi.Controllers.V1
 {
@@ -7,17 +8,21 @@ namespace WebApi.Controllers.V1
     [Route("api/v1/[controller]")]
     public class ImageController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<Image> Get()
+        private readonly ImageRepository repository;
+
+        public ImageController(ImageRepository repository)
         {
-            return Enumerable.Range(1, 5).Select(index => new Image
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserId = Guid.NewGuid().ToString(),
-                Path = "/path",
-                CreatedAt = DateTimeOffset.UtcNow,
-            })
-            .ToArray();
+            this.repository = repository;
+        }
+
+        private CancellationToken CancellationToken => this.HttpContext.RequestAborted;
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Image image)
+        {
+            await this.repository.UpsertAsync(image, this.CancellationToken);
+
+            return this.Created();
         }
     }
 }

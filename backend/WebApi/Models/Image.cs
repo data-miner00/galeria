@@ -1,13 +1,11 @@
 ﻿namespace WebApi.Models
 {
-    public class Image
+    public class Image : Entity
     {
-        public string Id { get; set; }
-
-        public string UserId { get; set; }
-
         public string Path { get; set; }
 
-        public DateTimeOffset CreatedAt { get; set; }
+        public string? Description { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }
