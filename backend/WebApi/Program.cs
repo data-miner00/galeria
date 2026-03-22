@@ -9,6 +9,8 @@ namespace WebApi
 {
     public static class Program
     {
+        private static readonly string CorsPolicyName = "GaleriaPolicy";
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,7 @@ namespace WebApi
             builder.ConfigureRepositories();
             builder.ConfigureClients();
             builder.Services.AddSingleton<ImageService>();
+            builder.ConfigureCors();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -35,6 +38,8 @@ namespace WebApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(CorsPolicyName);
 
             app.UseAuthorization();
 
@@ -75,6 +80,26 @@ namespace WebApi
             var facadeClient = new BlobStorageImageClient(container);
 
             builder.Services.AddSingleton<IImageClient>(facadeClient);
+
+            return builder;
+        }
+
+        private static WebApplicationBuilder ConfigureCors(this WebApplicationBuilder builder)
+        {
+            var corsOptions = builder.Configuration.GetSection("Cors").Get<CorsOptions>()
+                ?? throw new InvalidOperationException("Cors option not found.");
+
+            builder.Services.AddCors((opt) =>
+            {
+                opt.AddPolicy(
+                    name: CorsPolicyName,
+                    (policy) =>
+                    {
+                        policy.WithOrigins(corsOptions.AllowedOrigins)
+                              .WithHeaders(corsOptions.AllowedHeaders)
+                              .WithMethods(corsOptions.AllowedMethods);
+                    });
+            });
 
             return builder;
         }
