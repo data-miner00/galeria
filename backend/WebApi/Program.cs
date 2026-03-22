@@ -1,6 +1,9 @@
 
+using Azure.Storage.Blobs;
 using Microsoft.Azure.Cosmos;
+using WebApi.Options;
 using WebApi.Repositories;
+using WebApi.Services;
 
 namespace WebApi
 {
@@ -12,6 +15,8 @@ namespace WebApi
 
             // Add services to the container.
             builder.ConfigureRepositories();
+            builder.ConfigureClients();
+            builder.Services.AddSingleton<ImageService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -25,7 +30,7 @@ namespace WebApi
                 app.MapOpenApi();
                 app.UseSwaggerUI(opt =>
                 {
-                    opt.SwaggerEndpoint("/openapi/v1.json", "Queue Listener API V1"); // /swagger/index
+                    opt.SwaggerEndpoint("/openapi/v1.json", "Galeria API V1"); // /swagger/index
                 });
             }
 
@@ -54,6 +59,22 @@ namespace WebApi
             var repositoryFactory = new RepositoryFactory(cosmosClient);
 
             builder.Services.AddSingleton(repositoryFactory.CreateImageRepository());
+
+            return builder;
+        }
+
+        private static WebApplicationBuilder ConfigureClients(this WebApplicationBuilder builder)
+        {
+            var storageAccountConnectionString = builder.Configuration.GetConnectionString("StorageAccount")
+                ?? throw new InvalidOperationException("Cannot find blob storage connection string");
+
+            var options = builder.Configuration.GetSection("BlobStorage").Get<BlobStorageOptions>();
+
+            var blobClient = new BlobServiceClient(storageAccountConnectionString);
+            var container = blobClient.GetBlobContainerClient(options.ContainerName);
+            var facadeClient = new BlobStorageImageClient(container);
+
+            builder.Services.AddSingleton<IImageClient>(facadeClient);
 
             return builder;
         }

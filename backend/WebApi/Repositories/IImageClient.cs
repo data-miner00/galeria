@@ -1,6 +1,14 @@
-﻿namespace WebApi.Repositories
+﻿namespace WebApi.Repositories;
+
+public interface IImageClient
 {
-    public interface IImageClient
-    {
-    }
+    Task DeleteAsync(string blobName, CancellationToken ct = default);
+
+    Task<Stream> DownloadAsync(string blobName, CancellationToken ct = default);
+
+    Task<bool> ExistsAsync(string blobName, CancellationToken ct = default);
+
+    Uri GetPublicUri(string blobName);
+
+    Task<string> UploadAsync(Stream imageStream, string fileName, string contentType, CancellationToken ct = default);
 }

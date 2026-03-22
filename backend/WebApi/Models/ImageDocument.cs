@@ -6,7 +6,13 @@
 
         public string Path { get; set; }
 
+        public string OriginalFileName { get; set; }
+
+        public string ContentType { get; set; }
+
         public string? Description { get; set; }
+
+        public UploadStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
@@ -19,6 +25,9 @@
                 Description = Description,
                 CreatedAt = CreatedAt,
                 ETag = ETag,
+                OriginalFileName = OriginalFileName,
+                ContentType = ContentType,
+                Status = Status,
             };
         }
 
@@ -32,6 +41,9 @@
                 ETag = entity.ETag,
                 Path = entity.Path,
                 PartitionKey = PartitionKeyValue,
+                OriginalFileName = entity.OriginalFileName,
+                ContentType = entity.ContentType,
+                Status = entity.Status,
             };
         }
     }
