@@ -30,11 +30,7 @@ public sealed class BlobStorageImageClient : IImageClient
         ArgumentNullException.ThrowIfNull(imageStream);
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
 
-        // Generate a unique blob name to avoid collisions
-        var extension = Path.GetExtension(fileName);
-        var blobName = $"{Guid.NewGuid()}{extension}";
-
-        var blobClient = this.container.GetBlobClient(blobName);
+        var blobClient = this.container.GetBlobClient(fileName);
 
         var uploadOptions = new BlobUploadOptions
         {
@@ -46,7 +42,7 @@ public sealed class BlobStorageImageClient : IImageClient
 
         await blobClient.UploadAsync(imageStream, uploadOptions, ct);
 
-        return blobName;
+        return fileName;
     }
 
     /// <summary>
