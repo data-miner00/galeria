@@ -4,6 +4,19 @@ using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using Azure.Storage.Blobs;
 
+#if DEBUG
+    Console.WriteLine("Provisioning in debug mode.");
+#else
+    Console.WriteLine("Provisioning in production mode.");
+#endif
+
+#if NET8_0 || NET10_0
+    Console.WriteLine("Provisioning in .NET.");
+#else
+#error No TFM is Implemented!
+    throw new PlatformNotSupportedException();
+#endif
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("settings.json", optional: false, reloadOnChange: false)
