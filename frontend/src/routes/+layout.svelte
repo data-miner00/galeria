@@ -3,13 +3,16 @@
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { ArrowLeft, SearchIcon } from '@lucide/svelte';
+	import { ArrowLeft, PlusIcon, SearchIcon } from '@lucide/svelte';
 
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { Button } from '$lib/components/ui/button';
+	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
 
 	let { children } = $props();
+
+	let isDialogOpen = $state(false);
 </script>
 
 <svelte:head>
@@ -18,14 +21,14 @@
 </svelte:head>
 
 <Sidebar.Provider>
-	<AppSidebar />
+	<AppSidebar onCreateClick={() => (isDialogOpen = !isDialogOpen)} />
 	<Sidebar.Inset class="relative overflow-clip">
 		<header class="sticky top-0 right-0 left-0 flex h-16 shrink-0 items-center gap-2 bg-white">
 			<div class="flex w-full items-center justify-between px-4">
 				<div class="flex items-center gap-2">
 					<Sidebar.Trigger class="-ms-1" />
 					<Separator orientation="vertical" class="data-[orientation=vertical]:h-4" />
-					<Button variant="ghost" size="icon">
+					<Button variant="ghost" size="icon" onclick={() => history.back()}>
 						<ArrowLeft />
 					</Button>
 					<Separator orientation="vertical" class="me-2 data-[orientation=vertical]:h-4" />
@@ -41,9 +44,13 @@
 						</Breadcrumb.List>
 					</Breadcrumb.Root>
 				</div>
-				<div>
+				<div class="flex items-center gap-2">
 					<Button variant="ghost" size="icon">
 						<SearchIcon />
+					</Button>
+
+					<Button onclick={() => (isDialogOpen = !isDialogOpen)}>
+						<PlusIcon /> Create
 					</Button>
 				</div>
 			</div>
@@ -53,3 +60,5 @@
 		</div>
 	</Sidebar.Inset>
 </Sidebar.Provider>
+
+<UploadImageDialog bind:isDialogOpen />

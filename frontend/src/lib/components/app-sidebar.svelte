@@ -142,8 +142,11 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import CommandIcon from '@lucide/svelte/icons/command';
 	import type { ComponentProps } from 'svelte';
+	import Button from './ui/button/button.svelte';
+	import { PlusIcon } from '@lucide/svelte';
+	type Props = ComponentProps<typeof Sidebar.Root> & { onCreateClick: () => void };
 
-	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+	let { ref = $bindable(null), onCreateClick, ...restProps }: Props = $props();
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
@@ -171,6 +174,9 @@
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
 		<NavProjects projects={data.projects} />
+		<Button onclick={onCreateClick}>
+			<PlusIcon /> Create New Image
+		</Button>
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
