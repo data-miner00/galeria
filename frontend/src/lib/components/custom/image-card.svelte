@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Ellipsis from '@lucide/svelte/icons/ellipsis';
-	import Button from '../ui/button/button.svelte';
+	import CardActionsButton from './card-actions-button.svelte';
 
 	type Props = {
 		id: string;
@@ -19,8 +18,6 @@
 		<div>
 			<p class="max-w-40 text-sm text-ellipsis">{description}</p>
 		</div>
-		<Button variant="ghost" size="icon">
-			<Ellipsis />
-		</Button>
+		<CardActionsButton {id} />
 	</div>
 </div>
