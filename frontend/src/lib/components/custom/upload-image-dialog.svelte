@@ -3,6 +3,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { X } from '@lucide/svelte';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -83,8 +84,16 @@
 					<Label for="image">Image</Label>
 					<Input bind:files onchange={onImageChange} id="image" name="image" type="file" />
 				</div>
-				<!-- svelte-ignore a11y_missing_attribute -->
-				<img bind:this={image} />
+
+				{#if files}
+					<div class="relative">
+						<Button class="absolute top-0 right-0" variant="ghost" onclick={clearInput} size="icon">
+							<X />
+						</Button>
+						<!-- svelte-ignore a11y_missing_attribute -->
+						<img bind:this={image} />
+					</div>
+				{/if}
 			</div>
 			<Dialog.Footer>
 				<Dialog.Close
