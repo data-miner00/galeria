@@ -9,6 +9,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { Button } from '$lib/components/ui/button';
 	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { children } = $props();
 
@@ -19,6 +20,8 @@
 	<link rel="icon" href={favicon} />
 	<title>Galeria</title>
 </svelte:head>
+
+<Toaster position="bottom-right" duration={5000} />
 
 <Sidebar.Provider>
 	<AppSidebar onCreateClick={() => (isDialogOpen = !isDialogOpen)} />
