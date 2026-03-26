@@ -40,5 +40,13 @@ namespace WebApi.Controllers.V1
 
             return this.Created();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var isDeleted = await this.service.DeleteAsync(id, this.CancellationToken);
+
+            return isDeleted ? this.NoContent() : this.NotFound();
+        }
     }
 }

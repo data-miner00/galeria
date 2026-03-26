@@ -103,4 +103,30 @@ public sealed class ImageService
             return false;
         }
     }
+
+    /// <summary>
+    /// Deletes the image associated with the specified identifier asynchronously.
+    /// </summary>
+    /// <remarks>If the image record is found, this method deletes both the record from the repository and the
+    /// associated blob from storage. If the record does not exist, no deletions are performed and the method returns
+    /// <see langword="false"/>.</remarks>
+    /// <param name="imageId">The unique identifier of the image to delete. Cannot be null or empty.</param>
+    /// <param name="ct">A cancellation token that can be used to cancel the operation. The default value is <see
+    /// cref="CancellationToken.None"/>.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the image was
+    /// successfully deleted; otherwise, <see langword="false"/> if no image was found with the specified identifier.</returns>
+    public async Task<bool> DeleteAsync(string imageId, CancellationToken ct = default)
+    {
+        var record = await this.repository.GetByIdAsync(imageId, ImageDocument.PartitionKeyValue, ct);
+
+        if (record is null)
+        {
+            return false;
+        }
+
+        await this.repository.DeleteAsync(imageId, ImageDocument.PartitionKeyValue, ct);
+        await this.blobClient.DeleteAsync(record.Path, ct);
+
+        return true;
+    }
 }
