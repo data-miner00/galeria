@@ -11,13 +11,13 @@
 	let { isDialogOpen = $bindable(false) }: Props = $props();
 
 	let description = $state('');
-	let files: FileList;
+	let files: FileList | undefined = $state();
 	let image: HTMLImageElement;
 	let showImage = $state(false);
 
 	function onImageChange() {
-		const file = files[0];
-		if (file) {
+		if (files?.[0]) {
+			const file = files[0];
 			showImage = true;
 
 			const reader = new FileReader();
@@ -32,8 +32,8 @@
 	}
 
 	async function uploadImage() {
+		if (!files?.[0]) return;
 		const file = files[0];
-		if (!file) return;
 
 		const formData = new FormData();
 		formData.append('File', file);
@@ -55,6 +55,10 @@
 		} catch (error) {
 			console.error('Upload error:', error);
 		}
+	}
+
+	function clearInput() {
+		files = undefined;
 	}
 </script>
 
@@ -83,7 +87,11 @@
 				<img bind:this={image} />
 			</div>
 			<Dialog.Footer>
-				<Dialog.Close type="button" class={buttonVariants({ variant: 'outline' })}>
+				<Dialog.Close
+					type="button"
+					class={buttonVariants({ variant: 'outline' })}
+					onclick={clearInput}
+				>
 					Cancel
 				</Dialog.Close>
 				<Button type="submit" onclick={uploadImage}>Save changes</Button>
