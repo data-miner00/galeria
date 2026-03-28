@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ImageCard from '$lib/components/custom/image-card.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
 
 	type ImageRecord = {
@@ -18,32 +19,69 @@
 		const res = await fetch('https://localhost:7146/api/v1/image');
 		records = await res.json();
 	});
+
+	function onDelete(deletedId: string) {
+		records = records.filter((record) => record.id != deletedId);
+	}
 </script>
+
+<div class="flex gap-2">
+	<Button size="sm">All</Button>
+	<Button size="sm" variant="ghost">Photography</Button>
+	<Button size="sm" variant="ghost">Gadgets</Button>
+	<Button size="sm" variant="ghost">Books</Button>
+	<Button size="sm" variant="ghost">Cars</Button>
+</div>
 
 <div class="grid h-full grid-cols-5 gap-4">
 	<div class="flex w-70 flex-col gap-4">
 		{#each records as record}
-			<ImageCard id={record.id} path={record.path} description={record.description} />
+			<ImageCard
+				id={record.id}
+				path={record.path}
+				description={record.description}
+				onDelete={() => onDelete(record.id)}
+			/>
 		{/each}
 	</div>
 	<div class="flex w-70 flex-col gap-4">
 		{#each records as record}
-			<ImageCard id={record.id} path={record.path} description={record.description} />
+			<ImageCard
+				id={record.id}
+				path={record.path}
+				description={record.description}
+				onDelete={() => onDelete(record.id)}
+			/>
 		{/each}
 	</div>
 	<div class="flex w-70 flex-col gap-4">
 		{#each records as record}
-			<ImageCard id={record.id} path={record.path} description={record.description} />
+			<ImageCard
+				id={record.id}
+				path={record.path}
+				description={record.description}
+				onDelete={() => onDelete(record.id)}
+			/>
 		{/each}
 	</div>
 	<div class="flex w-70 flex-col gap-4">
 		{#each records as record}
-			<ImageCard id={record.id} path={record.path} description={record.description} />
+			<ImageCard
+				id={record.id}
+				path={record.path}
+				description={record.description}
+				onDelete={() => onDelete(record.id)}
+			/>
 		{/each}
 	</div>
 	<div class="flex w-70 flex-col gap-4">
 		{#each records as record}
-			<ImageCard id={record.id} path={record.path} description={record.description} />
+			<ImageCard
+				id={record.id}
+				path={record.path}
+				description={record.description}
+				onDelete={() => onDelete(record.id)}
+			/>
 		{/each}
 	</div>
 </div>

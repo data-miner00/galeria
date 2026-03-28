@@ -5,9 +5,10 @@
 		id: string;
 		path: string;
 		description?: string;
+		onDelete: () => void;
 	};
 
-	const { id, path, description }: Props = $props();
+	const { id, path, description, onDelete }: Props = $props();
 </script>
 
 <div>
@@ -18,6 +19,6 @@
 		<div>
 			<p class="max-w-40 text-sm text-ellipsis">{description}</p>
 		</div>
-		<CardActionsButton {id} />
+		<CardActionsButton {id} {onDelete} />
 	</div>
 </div>
