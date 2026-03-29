@@ -4,6 +4,7 @@
 	import { Download, Ellipsis, Info, Plus, Star, Trash2 } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import AddToBoardDialog from './add-to-board-dialog.svelte';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -13,6 +14,8 @@
 	};
 
 	const { id, onDelete }: Props = $props();
+
+	let isAddToBoardDialogOpen = $state(false);
 
 	async function removeImage() {
 		try {
@@ -34,6 +37,8 @@
 	}
 </script>
 
+<AddToBoardDialog imageId={id} bind:isDialogOpen={isAddToBoardDialogOpen} />
+
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
@@ -45,7 +50,9 @@
 	<DropdownMenu.Content class="w-56" align="start">
 		<DropdownMenu.Item><Info /> View</DropdownMenu.Item>
 		<DropdownMenu.Item><Star /> Add to Favorite</DropdownMenu.Item>
-		<DropdownMenu.Item><Plus /> Create Board</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={() => (isAddToBoardDialogOpen = !isAddToBoardDialogOpen)}>
+			<Plus /> Add to Board
+		</DropdownMenu.Item>
 		<DropdownMenu.Item><Download /> Download</DropdownMenu.Item>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item

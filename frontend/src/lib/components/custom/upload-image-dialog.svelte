@@ -4,6 +4,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { X } from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -13,7 +14,7 @@
 
 	let description = $state('');
 	let files: FileList | undefined = $state();
-	let image: HTMLImageElement;
+	let image: HTMLImageElement | undefined = $state();
 	let showImage = $state(false);
 
 	function onImageChange() {
@@ -25,7 +26,7 @@
 
 			reader.addEventListener('load', function () {
 				if (reader.result) {
-					image.setAttribute('src', reader.result.toString());
+					image?.setAttribute('src', reader.result.toString());
 				}
 			});
 			reader.readAsDataURL(file);
@@ -50,11 +51,11 @@
 				throw new Error(`Upload failed: ${response.statusText}`);
 			}
 
-			console.log('Upload successful');
+			toast.success('Image uploaded successfully.');
 
 			isDialogOpen = false;
 		} catch (error) {
-			console.error('Upload error:', error);
+			toast.error('Image upload failed. Please try again.');
 		}
 	}
 
@@ -65,7 +66,7 @@
 
 <Dialog.Root bind:open={isDialogOpen}>
 	<form>
-		<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Content class="sm:max-w-106.25">
 			<Dialog.Header>
 				<Dialog.Title>Upload Image</Dialog.Title>
 				<Dialog.Description>Upload and create a new entry in the gallery.</Dialog.Description>

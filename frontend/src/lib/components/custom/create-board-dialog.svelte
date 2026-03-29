@@ -45,7 +45,7 @@
 
 <Dialog.Root bind:open={isDialogOpen}>
 	<form>
-		<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Content class="sm:max-w-106.25">
 			<Dialog.Header>
 				<Dialog.Title>Create Board</Dialog.Title>
 				<Dialog.Description
