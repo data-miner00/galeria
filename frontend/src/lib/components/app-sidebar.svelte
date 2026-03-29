@@ -125,9 +125,12 @@
 	import Button from './ui/button/button.svelte';
 	import { PlusIcon } from '@lucide/svelte';
 	import { type Board } from '$lib/types';
-	type Props = ComponentProps<typeof Sidebar.Root> & { onCreateClick: () => void };
+	type Props = ComponentProps<typeof Sidebar.Root> & {
+		onCreateClick: () => void;
+		onCreateBoardClick: () => void;
+	};
 
-	let { ref = $bindable(null), onCreateClick, ...restProps }: Props = $props();
+	let { ref = $bindable(null), onCreateClick, onCreateBoardClick, ...restProps }: Props = $props();
 
 	let boards = $state<Board[]>([]);
 
@@ -163,6 +166,9 @@
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
 		<NavProjects {boards} />
+		<Button variant="outline" onclick={onCreateBoardClick}>
+			<PlusIcon /> Create Board
+		</Button>
 		<Button onclick={onCreateClick}>
 			<PlusIcon /> Create New Image
 		</Button>

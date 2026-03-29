@@ -10,10 +10,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import CreateBoardDialog from '$lib/components/custom/create-board-dialog.svelte';
 
 	let { children } = $props();
 
-	let isDialogOpen = $state(false);
+	let isUploadImageDialogOpen = $state(false);
+	let isCreateBoardDialogOpen = $state(false);
 </script>
 
 <svelte:head>
@@ -24,7 +26,10 @@
 <Toaster position="bottom-right" duration={5000} />
 
 <Sidebar.Provider>
-	<AppSidebar onCreateClick={() => (isDialogOpen = !isDialogOpen)} />
+	<AppSidebar
+		onCreateClick={() => (isUploadImageDialogOpen = !isUploadImageDialogOpen)}
+		onCreateBoardClick={() => (isCreateBoardDialogOpen = !isCreateBoardDialogOpen)}
+	/>
 	<Sidebar.Inset class="relative overflow-clip">
 		<header class="sticky top-0 right-0 left-0 flex h-16 shrink-0 items-center gap-2 bg-white">
 			<div class="flex w-full items-center justify-between px-4">
@@ -52,7 +57,7 @@
 						<SearchIcon />
 					</Button>
 
-					<Button onclick={() => (isDialogOpen = !isDialogOpen)}>
+					<Button onclick={() => (isUploadImageDialogOpen = !isUploadImageDialogOpen)}>
 						<PlusIcon /> Create
 					</Button>
 				</div>
@@ -64,4 +69,5 @@
 	</Sidebar.Inset>
 </Sidebar.Provider>
 
-<UploadImageDialog bind:isDialogOpen />
+<UploadImageDialog bind:isDialogOpen={isUploadImageDialogOpen} />
+<CreateBoardDialog bind:isDialogOpen={isCreateBoardDialogOpen} />
