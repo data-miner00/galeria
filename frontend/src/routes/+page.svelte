@@ -1,17 +1,8 @@
 <script lang="ts">
 	import ImageCard from '$lib/components/custom/image-card.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import type { ImageRecord } from '$lib/types';
 	import { onMount } from 'svelte';
-
-	type ImageRecord = {
-		id: string;
-		path: string;
-		originalFileName: string;
-		contentType: string;
-		description?: string;
-		status: number;
-		createdAt: string;
-	};
 
 	let records = $state<ImageRecord[]>([]);
 

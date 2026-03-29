@@ -31,6 +31,19 @@ namespace WebApi.Controllers.V1
             return this.Ok(images);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Image>> GetById(string id)
+        {
+            var image = await this.repository.GetByIdAsync(id, ImageDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (image is null)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(image);
+        }
+
         [HttpPost]
         [RequestSizeLimit(TwentyMegabytes)]
         [Consumes("multipart/form-data")]

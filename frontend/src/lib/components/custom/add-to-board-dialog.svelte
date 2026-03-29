@@ -67,7 +67,7 @@
 				<div class="grid gap-3">
 					<Label for="board">Board</Label>
 					<Select.Root type="single" bind:value={boardId}>
-						<Select.Trigger>
+						<Select.Trigger class="w-full">
 							{triggerContent}
 						</Select.Trigger>
 						<Select.Content>
