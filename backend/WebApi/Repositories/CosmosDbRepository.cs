@@ -11,7 +11,7 @@ namespace WebApi.Repositories
         where TEntity: Entity
         where TDocument : Document
     {
-        private readonly Container container;
+        protected readonly Container container;
 
         protected CosmosDbRepository(Container container)
         {
@@ -19,7 +19,7 @@ namespace WebApi.Repositories
             this.container = container;
         }
 
-        public async Task<TEntity?> GetByIdAsync(string id, string partitionKey, CancellationToken cancellationToken)
+        public virtual async Task<TEntity?> GetByIdAsync(string id, string partitionKey, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ArgumentException.ThrowIfNullOrWhiteSpace(id);
@@ -36,7 +36,7 @@ namespace WebApi.Repositories
             }
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -56,7 +56,7 @@ namespace WebApi.Repositories
             return results.Select(this.ToEntity);
         }
 
-        public async Task<DatabaseOperationStatus> UpsertAsync(TEntity entity, CancellationToken cancellationToken)
+        public virtual async Task<DatabaseOperationStatus> UpsertAsync(TEntity entity, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(entity);
             cancellationToken.ThrowIfCancellationRequested();
@@ -67,7 +67,7 @@ namespace WebApi.Repositories
             return DatabaseOperationStatus.Success;
         }
 
-        public async Task<DatabaseOperationStatus> DeleteAsync(string id, string partitionKey, CancellationToken cancellationToken)
+        public virtual async Task<DatabaseOperationStatus> DeleteAsync(string id, string partitionKey, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ArgumentException.ThrowIfNullOrWhiteSpace(id);

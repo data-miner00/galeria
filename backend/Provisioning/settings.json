@@ -6,7 +6,8 @@
   "CosmosDb": {
     "DatabaseName": "Galeria",
     "Containers": [
-      "Image"
+      "Image",
+      "Board"
     ]
   },
   "BlobStorage": {

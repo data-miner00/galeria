@@ -64,6 +64,7 @@ namespace WebApi
             var repositoryFactory = new RepositoryFactory(cosmosClient);
 
             builder.Services.AddSingleton(repositoryFactory.CreateImageRepository());
+            builder.Services.AddSingleton(repositoryFactory.CreateBoardRepository());
 
             return builder;
         }

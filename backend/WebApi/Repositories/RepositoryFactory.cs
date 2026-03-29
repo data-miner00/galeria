@@ -21,5 +21,12 @@ namespace WebApi.Repositories
             var container = this.cosmosClient.GetContainer(DatabaseName, ContainerName);
             return new ImageRepository(container);
         }
+
+        public BoardRepository CreateBoardRepository()
+        {
+            const string ContainerName = "Board";
+            var container = this.cosmosClient.GetContainer(DatabaseName, ContainerName);
+            return new BoardRepository(container);
+        }
     }
 }

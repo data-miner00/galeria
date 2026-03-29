@@ -14,6 +14,7 @@ A self-hosted authenticationless image board used for
 10. Enable categorization / tagging
 11. Filter
 12. Support GIF?
+13. Lightbox
 
 Should be simple and quick. Aim to get MVP by 22 March 2026.
 
@@ -29,3 +30,9 @@ Should be simple and quick. Aim to get MVP by 22 March 2026.
 
 - [Pinterest](https://www.pinterest.com/)
 - [Midjourney](https://www.midjourney.com/explore?tab=video_top)
+- [Mobbin Gallery](https://mobbin.com/glossary/gallery)
+- [Masonry Layout](https://piccalil.li/blog/a-simple-masonry-like-composable-layout/)
+- [Behance](https://www.behance.net/#)
+- [Tailwind Aspect Ratio](https://tailwindcss.com/docs/aspect-ratio)
+- [Shadcn/Svelte](https://shadcn-svelte.com/)
+- [Svelte](https://svelte.dev/)
