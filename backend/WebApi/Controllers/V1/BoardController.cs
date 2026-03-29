@@ -77,5 +77,18 @@ namespace WebApi.Controllers.V1
 
             return this.Ok();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var status = await this.repository.DeleteAsync(id, BoardDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (status != Models.DatabaseOperationStatus.Success)
+            {
+                return this.NotFound();
+            }
+
+            return this.NoContent();
+        }
     }
 }
