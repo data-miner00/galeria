@@ -3,6 +3,8 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { ImageRecord } from '$lib/types';
 	import { onMount } from 'svelte';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import { LayoutDashboardIcon, LayoutGridIcon } from '@lucide/svelte';
 
 	let records = $state<ImageRecord[]>([]);
 
@@ -11,68 +13,56 @@
 		records = await res.json();
 	});
 
+	let chunkedRecords = $derived(
+		(() => {
+			const images: ImageRecord[][] = [];
+			let i = 0;
+			for (; i < 5; i++) {
+				images.push([]);
+			}
+			i = 0;
+
+			let j = 0;
+			while (i < records.length) {
+				images[i++ % 5].push(records[j++]);
+			}
+
+			return images;
+		})()
+	);
+
 	function onDelete(deletedId: string) {
 		records = records.filter((record) => record.id != deletedId);
 	}
 </script>
 
-<div class="flex gap-2">
-	<Button size="sm">All</Button>
-	<Button size="sm" variant="ghost">Photography</Button>
-	<Button size="sm" variant="ghost">Gadgets</Button>
-	<Button size="sm" variant="ghost">Books</Button>
-	<Button size="sm" variant="ghost">Cars</Button>
+<div class="flex justify-between">
+	<div class="flex gap-2">
+		<Button size="sm">All</Button>
+		<Button size="sm" variant="ghost">Photography</Button>
+		<Button size="sm" variant="ghost">Gadgets</Button>
+		<Button size="sm" variant="ghost">Books</Button>
+		<Button size="sm" variant="ghost">Cars</Button>
+	</div>
+	<div>
+		<ButtonGroup.Root>
+			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
+			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
+		</ButtonGroup.Root>
+	</div>
 </div>
 
 <div class="grid h-full grid-cols-5 gap-4">
-	<div class="flex w-70 flex-col gap-4">
-		{#each records as record}
-			<ImageCard
-				id={record.id}
-				path={record.path}
-				description={record.description}
-				onDelete={() => onDelete(record.id)}
-			/>
-		{/each}
-	</div>
-	<div class="flex w-70 flex-col gap-4">
-		{#each records as record}
-			<ImageCard
-				id={record.id}
-				path={record.path}
-				description={record.description}
-				onDelete={() => onDelete(record.id)}
-			/>
-		{/each}
-	</div>
-	<div class="flex w-70 flex-col gap-4">
-		{#each records as record}
-			<ImageCard
-				id={record.id}
-				path={record.path}
-				description={record.description}
-				onDelete={() => onDelete(record.id)}
-			/>
-		{/each}
-	</div>
-	<div class="flex w-70 flex-col gap-4">
-		{#each records as record}
-			<ImageCard
-				id={record.id}
-				path={record.path}
-				description={record.description}
-				onDelete={() => onDelete(record.id)}
-			/>
-		{/each}
-	</div>
-	<div class="flex w-70 flex-col gap-4">
-		{#each records as record}
-			<ImageCard
-				id={record.id}
-				path={record.path}
-				description={record.description}
-				onDelete={() => onDelete(record.id)}
-			/>
-		{/each}
-	</div>
+	{#each chunkedRecords as chunk}
+		<div class="flex flex-col gap-4">
+			{#each chunk as record}
+				<ImageCard
+					id={record.id}
+					path={record.path}
+					description={record.description}
+					onDelete={() => onDelete(record.id)}
+				/>
+			{/each}
+		</div>
+	{/each}
 </div>
