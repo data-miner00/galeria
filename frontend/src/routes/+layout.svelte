@@ -11,11 +11,21 @@
 	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import CreateBoardDialog from '$lib/components/custom/create-board-dialog.svelte';
+	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+	import { appState } from '$lib/states.svelte';
 
 	let { children } = $props();
 
 	let isUploadImageDialogOpen = $state(false);
 	let isCreateBoardDialogOpen = $state(false);
+
+	onMount(async () => {
+		const res = await fetch('https://localhost:7146/api/v1/board');
+		if (res.ok) {
+			appState.boards = await res.json();
+		}
+	});
 </script>
 
 <svelte:head>
@@ -47,7 +57,11 @@
 							</Breadcrumb.Item>
 							<Breadcrumb.Separator class="hidden md:block" /> -->
 							<Breadcrumb.Item>
-								<Breadcrumb.Page>Home</Breadcrumb.Page>
+								<Breadcrumb.Page
+									>{page.params.id
+										? appState.boards.find((b) => b.id === page.params.id)?.title
+										: 'Home'}</Breadcrumb.Page
+								>
 							</Breadcrumb.Item>
 						</Breadcrumb.List>
 					</Breadcrumb.Root>

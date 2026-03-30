@@ -121,10 +121,11 @@
 	import NavUser from './nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import CommandIcon from '@lucide/svelte/icons/command';
-	import { onMount, type ComponentProps } from 'svelte';
+	import { type ComponentProps } from 'svelte';
 	import Button from './ui/button/button.svelte';
 	import { PlusIcon } from '@lucide/svelte';
 	import { type Board } from '$lib/types';
+	import { appState } from '$lib/states.svelte';
 	type Props = ComponentProps<typeof Sidebar.Root> & {
 		onCreateClick: () => void;
 		onCreateBoardClick: () => void;
@@ -132,13 +133,7 @@
 
 	let { ref = $bindable(null), onCreateClick, onCreateBoardClick, ...restProps }: Props = $props();
 
-	let boards = $state<Board[]>([]);
-
-	onMount(async () => {
-		const res = await fetch('https://localhost:7146/api/v1/Board', {});
-
-		boards = (await res.json()) as Board[];
-	});
+	let boards = $derived<Board[]>(appState.boards);
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
