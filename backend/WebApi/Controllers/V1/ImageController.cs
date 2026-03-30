@@ -61,5 +61,18 @@ namespace WebApi.Controllers.V1
 
             return isDeleted ? this.NoContent() : this.NotFound();
         }
+
+        [HttpPost("getbyids")]
+        public async Task<ActionResult<IEnumerable<Image>>> GetByIds([FromBody] GetImagesByIdsRequest request)
+        {
+            if (request is null || request.ImageIds.Count == 0)
+            {
+                return this.BadRequest();
+            }
+
+            var images = await this.repository.GetByIdsAsync(request.ImageIds, this.CancellationToken);
+
+            return this.Ok(images);
+        }
     }
 }
