@@ -14,8 +14,6 @@
 
         public UploadStatus Status { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-
         public Image ToEntity()
         {
             return new Image
@@ -44,6 +42,7 @@
                 OriginalFileName = entity.OriginalFileName,
                 ContentType = entity.ContentType,
                 Status = entity.Status,
+                DocumentType = DocumentType.ImageRecord,
             };
         }
     }

@@ -9,5 +9,9 @@ namespace WebApi.Models
         public string? ETag { get; set; }
 
         public string Id { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        //public DateTime UpdatedAt { get; set; }
     }
 }

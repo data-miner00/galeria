@@ -9,7 +9,5 @@
         public List<string> ImageIds { get; set; } = [];
 
         public bool IsDeletable { get; set; }
-
-        public DateTime CreatedAt { get; set; }
     }
 }

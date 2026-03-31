@@ -12,8 +12,6 @@
 
         public bool IsDeletable { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-
         public Board ToEntity()
         {
             return new Board
@@ -38,6 +36,7 @@
                 ImageIds = entity.ImageIds,
                 IsDeletable = entity.IsDeletable,
                 CreatedAt = entity.CreatedAt,
+                DocumentType = DocumentType.Board,
             };
         }
     }

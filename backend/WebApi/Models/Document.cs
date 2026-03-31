@@ -17,5 +17,9 @@ namespace WebApi.Models
 
         [JsonProperty("partitionKey")]
         public string PartitionKey { get; set; }
+
+        public DocumentType DocumentType { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }
