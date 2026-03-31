@@ -14,6 +14,8 @@ namespace WebApi.Dtos
 
         public DateTime CreatedAt { get; set; }
 
+        public DateTime UpdatedAt { get; set; }
+
         public static Board FromInternal(InternalBoard board)
         {
             return new Board
@@ -23,6 +25,7 @@ namespace WebApi.Dtos
                 Description = board.Description,
                 ImageIds = board.ImageIds,
                 CreatedAt = board.CreatedAt,
+                UpdatedAt = board.UpdatedAt,
             };
         }
     }

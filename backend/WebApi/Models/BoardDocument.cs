@@ -14,6 +14,9 @@
 
         public Board ToEntity()
         {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
+            DateTime updatedAt = dateTimeOffset.UtcDateTime;
+
             return new Board
             {
                 Id = Id,
@@ -22,6 +25,7 @@
                 ImageIds = ImageIds,
                 IsDeletable = IsDeletable,
                 CreatedAt = CreatedAt,
+                UpdatedAt = updatedAt,
             };
         }
 

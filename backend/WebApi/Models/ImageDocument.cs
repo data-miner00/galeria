@@ -16,6 +16,9 @@
 
         public Image ToEntity()
         {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
+            DateTime updatedAt = dateTimeOffset.UtcDateTime;
+
             return new Image
             {
                 Path = Path,
@@ -26,6 +29,7 @@
                 OriginalFileName = OriginalFileName,
                 ContentType = ContentType,
                 Status = Status,
+                UpdatedAt = updatedAt,
             };
         }
 
