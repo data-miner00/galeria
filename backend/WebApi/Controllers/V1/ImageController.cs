@@ -49,9 +49,9 @@ namespace WebApi.Controllers.V1
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Create([FromForm] UploadImageRequest request)
         {
-            await this.service.UploadImageAsync(request, this.CancellationToken);
+            var image = await this.service.UploadImageAsync(request, this.CancellationToken);
 
-            return this.Created();
+            return this.Created(image.Path, image);
         }
 
         [HttpDelete("{id}")]

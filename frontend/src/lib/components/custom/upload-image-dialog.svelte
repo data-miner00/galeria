@@ -3,6 +3,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { appState } from '$lib/states.svelte';
 	import { X } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -50,6 +51,8 @@
 			if (!response.ok) {
 				throw new Error(`Upload failed: ${response.statusText}`);
 			}
+
+			appState.images.push(await response.json());
 
 			toast.success('Image uploaded successfully.');
 
