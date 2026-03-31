@@ -48,17 +48,18 @@
 				body: formData
 			});
 
+			const result = await response.json();
+
 			if (!response.ok) {
-				throw new Error(`Upload failed: ${response.statusText}`);
+				throw new Error(result.errorMessage || 'Something went wrong.');
 			}
 
-			appState.images.push(await response.json());
-
+			appState.images.push(result);
 			toast.success('Image uploaded successfully.');
 
 			isDialogOpen = false;
 		} catch (error) {
-			toast.error('Image upload failed. Please try again.');
+			toast.error('Image upload failed. ' + (error as Error).message);
 		}
 	}
 

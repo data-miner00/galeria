@@ -59,7 +59,11 @@ namespace WebApi.Controllers.V1
 
             if (result != Models.DatabaseOperationStatus.Success)
             {
-                return this.Conflict();
+                return this.StatusCode(500, new ErrorResponse
+                {
+                    ErrorMessage = "The database did not indicate success.",
+                    ReferenceId = Guid.NewGuid().ToString(),
+                });
             }
 
             return this.Created();

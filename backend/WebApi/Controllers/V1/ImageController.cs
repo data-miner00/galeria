@@ -52,7 +52,11 @@ namespace WebApi.Controllers.V1
         {
             if (!request.File.IsValidImageFile()) // TODO: Make this into an injectable service
             {
-                return this.BadRequest("File with unsupported format provided.");
+                return this.BadRequest(new ErrorResponse
+                {
+                    ErrorMessage = "File with unsupported format provided.",
+                    ReferenceId = Guid.NewGuid().ToString(),
+                });
             }
 
             var image = await this.service.UploadImageAsync(request, this.CancellationToken);
@@ -73,7 +77,11 @@ namespace WebApi.Controllers.V1
         {
             if (request is null || request.ImageIds.Count == 0)
             {
-                return this.BadRequest();
+                return this.BadRequest(new ErrorResponse
+                {
+                    ErrorMessage = "The imageIds field must not be empty.",
+                    ReferenceId = Guid.NewGuid().ToString(),
+                });
             }
 
             var images = await this.repository.GetByIdsAsync(request.ImageIds, this.CancellationToken);
