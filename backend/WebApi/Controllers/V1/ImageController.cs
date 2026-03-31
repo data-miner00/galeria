@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApi.Dtos;
+using WebApi.Extensions;
 using WebApi.Models;
 using WebApi.Repositories;
 using WebApi.Services;
@@ -49,6 +50,11 @@ namespace WebApi.Controllers.V1
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Create([FromForm] UploadImageRequest request)
         {
+            if (!request.File.IsValidImageFile()) // TODO: Make this into an injectable service
+            {
+                return this.BadRequest("File with unsupported format provided.");
+            }
+
             var image = await this.service.UploadImageAsync(request, this.CancellationToken);
 
             return this.Created(image.Path, image);
