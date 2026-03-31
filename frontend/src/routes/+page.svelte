@@ -5,12 +5,14 @@
 	import { onMount } from 'svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import { LayoutDashboardIcon, LayoutGridIcon } from '@lucide/svelte';
-
-	let records = $state<ImageRecord[]>([]);
+	import { appState } from '$lib/states.svelte';
 
 	onMount(async () => {
+		if (appState.images.length > 0) {
+			return;
+		}
 		const res = await fetch('https://localhost:7146/api/v1/image');
-		records = await res.json();
+		appState.images = await res.json();
 	});
 
 	let chunkedRecords = $derived(
@@ -23,8 +25,8 @@
 			i = 0;
 
 			let j = 0;
-			while (i < records.length) {
-				images[i++ % 5].push(records[j++]);
+			while (i < appState.images.length) {
+				images[i++ % 5].push(appState.images[j++]);
 			}
 
 			return images;
@@ -32,7 +34,7 @@
 	);
 
 	function onDelete(deletedId: string) {
-		records = records.filter((record) => record.id != deletedId);
+		appState.images = appState.images.filter((record) => record.id != deletedId);
 	}
 </script>
 
