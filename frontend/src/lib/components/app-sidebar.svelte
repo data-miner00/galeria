@@ -1,4 +1,16 @@
-<script lang="ts" module>
+<script lang="ts">
+	import NavMain from './nav-main.svelte';
+	import NavProjects from './nav-projects.svelte';
+	import NavSecondary from './nav-secondary.svelte';
+	import NavUser from './nav-user.svelte';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import CommandIcon from '@lucide/svelte/icons/command';
+	import { onMount, type ComponentProps } from 'svelte';
+	import Button from './ui/button/button.svelte';
+	import { PlusIcon } from '@lucide/svelte';
+	import type { UserProfile, Board } from '$lib/types';
+	import { appState } from '$lib/states.svelte';
+
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import BotIcon from '@lucide/svelte/icons/bot';
 	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
@@ -6,12 +18,13 @@
 	import Settings2Icon from '@lucide/svelte/icons/settings-2';
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
 
+	let user = $state({
+		name: 'user',
+		email: 'user@example.com',
+		avatar: '/avatars/shadcn.jpg'
+	});
+
 	const data = {
-		user: {
-			name: 'shadcn',
-			email: 'm@example.com',
-			avatar: '/avatars/shadcn.jpg'
-		},
 		navMain: [
 			{
 				title: 'Playground',
@@ -112,20 +125,7 @@
 			}
 		]
 	};
-</script>
 
-<script lang="ts">
-	import NavMain from './nav-main.svelte';
-	import NavProjects from './nav-projects.svelte';
-	import NavSecondary from './nav-secondary.svelte';
-	import NavUser from './nav-user.svelte';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import CommandIcon from '@lucide/svelte/icons/command';
-	import { type ComponentProps } from 'svelte';
-	import Button from './ui/button/button.svelte';
-	import { PlusIcon } from '@lucide/svelte';
-	import { type Board } from '$lib/types';
-	import { appState } from '$lib/states.svelte';
 	type Props = ComponentProps<typeof Sidebar.Root> & {
 		onCreateClick: () => void;
 		onCreateBoardClick: () => void;
@@ -134,6 +134,17 @@
 	let { ref = $bindable(null), onCreateClick, onCreateBoardClick, ...restProps }: Props = $props();
 
 	let boards = $derived<Board[]>(appState.boards);
+
+	let profile = $state<UserProfile>({});
+
+	onMount(async () => {
+		const res = await fetch('https://localhost:7146/api/v1/UserProfile');
+		profile = await res.json();
+
+		if (profile.username) user.name = profile.username;
+		if (profile.email) user.email = profile.email;
+		if (profile.avatarImage) user.avatar = profile.avatarImage;
+	});
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
@@ -170,6 +181,6 @@
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<NavUser user={data.user} />
+		<NavUser {user} />
 	</Sidebar.Footer>
 </Sidebar.Root>
