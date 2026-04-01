@@ -15,3 +15,13 @@ export type ImageRecord = {
 	status: number;
 	createdAt: string;
 };
+
+export type UserProfile = {
+	username?: string;
+	avatarImage?: string;
+	firstName?: string;
+	lastName?: string;
+	websiteUrl?: string;
+	bio?: string;
+	email?: string;
+};

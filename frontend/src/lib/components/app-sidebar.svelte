@@ -20,7 +20,7 @@
 				isActive: true,
 				items: [
 					{
-						title: 'History',
+						title: 'Recycle Bin',
 						url: '#'
 					},
 					{
@@ -81,8 +81,8 @@
 				icon: Settings2Icon,
 				items: [
 					{
-						title: 'General',
-						url: '#'
+						title: 'Profile',
+						url: '/settings/profile'
 					},
 					{
 						title: 'Team',
