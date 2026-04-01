@@ -66,7 +66,7 @@
 		<div>
 			<p class="max-w-40 truncate text-sm">{description}</p>
 		</div>
-		<CardActionsButton {id} {onDelete} />
+		<CardActionsButton {id} {path} {onDelete} />
 	</div>
 </div>
 
