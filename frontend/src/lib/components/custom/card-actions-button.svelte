@@ -63,6 +63,25 @@
 			console.error('Error downloading image: ', error);
 		}
 	}
+
+	async function setAsProfilePicture(imageSrc: string) {
+		try {
+			const response = await fetch('https://localhost:7146/api/v1/UserProfile', {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ avatarImage: imageSrc })
+			});
+
+			if (!response.ok) {
+				throw new Error('Something wrong');
+			}
+			toast.success('Successfully set profile picture.');
+		} catch {
+			toast.error('An error has occurred.');
+		}
+	}
 </script>
 
 <AddToBoardDialog imageId={id} bind:isDialogOpen={isAddToBoardDialogOpen} />
@@ -91,6 +110,11 @@
 			onclick={() => downloadImage(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`, path)}
 		>
 			<Download /> Download
+		</DropdownMenu.Item>
+		<DropdownMenu.Item
+			onclick={() => setAsProfilePicture(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`)}
+		>
+			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item
