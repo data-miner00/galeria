@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import type { Board, ImageRecord } from '$lib/types';
+	import type { ImageRecord } from '$lib/types';
 
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -9,14 +9,35 @@
 	import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
 	import { ImageIcon } from '@lucide/svelte';
 
-	import type { PageProps } from './$types';
 	import { appState } from '$lib/states.svelte';
 
-	let { data }: PageProps = $props();
-	// svelte-ignore state_referenced_locally
-	let board: Board = $state(data.board);
-	// svelte-ignore state_referenced_locally
-	let records: ImageRecord[] = $state(data.images);
+	async function loadBoard(boardId: string) {
+		const res = await fetch(`https://localhost:7146/api/v1/board/${boardId}`);
+		const board = await res.json();
+
+		// Question: Should fetch by passing params or post body
+		if (board.imageIds.length > 0) {
+			const response = await fetch(`https://localhost:7146/api/v1/image/getbyids`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ imageIds: board.imageIds })
+			});
+			records = await response.json();
+		} else {
+			records = [];
+		}
+	}
+
+	// Workaround for onMount not working when navigating from one board to another. This is because Svelte cache the array for some reason.
+	$effect(() => {
+		if (page.params.id) {
+			loadBoard(page.params.id);
+		}
+	});
+
+	let records: ImageRecord[] = $state([]);
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 
@@ -42,47 +63,45 @@
 	}
 </script>
 
-{#key page.params.id}
-	{#if records.length > 0}
-		<div
-			class="grid h-full gap-4"
-			class:grid-cols-5={columns === 5}
-			class:grid-cols-4={columns === 4}
-			class:grid-cols-6={columns === 6}
-		>
-			{#each chunkedRecords as chunk}
-				<div class="flex flex-col gap-4">
-					{#each chunk as record}
-						<ImageCard
-							id={record.id}
-							path={record.path}
-							description={record.description}
-							onDelete={() => onDelete(record.id)}
-						/>
-					{/each}
-				</div>
-			{/each}
-		</div>
-	{:else}
-		<Empty.Root>
-			<Empty.Header>
-				<Empty.Media variant="icon">
-					<ImageIcon />
-				</Empty.Media>
-				<Empty.Title>No Images Yet</Empty.Title>
-				<Empty.Description>Get started by adding your first image to this board.</Empty.Description>
-			</Empty.Header>
-			<Empty.Content>
-				<div class="flex gap-2">
-					<Button>Add Image</Button>
-					<Button variant="outline">Import Images</Button>
-				</div>
-			</Empty.Content>
-			<Button variant="link" class="text-muted-foreground" size="sm">
-				<a href="#/">
-					Learn More <ArrowUpRightIcon class="inline" />
-				</a>
-			</Button>
-		</Empty.Root>
-	{/if}
-{/key}
+{#if records.length > 0}
+	<div
+		class="grid h-full gap-4"
+		class:grid-cols-5={columns === 5}
+		class:grid-cols-4={columns === 4}
+		class:grid-cols-6={columns === 6}
+	>
+		{#each chunkedRecords as chunk}
+			<div class="flex flex-col gap-4">
+				{#each chunk as record}
+					<ImageCard
+						id={record.id}
+						path={record.path}
+						description={record.description}
+						onDelete={() => onDelete(record.id)}
+					/>
+				{/each}
+			</div>
+		{/each}
+	</div>
+{:else}
+	<Empty.Root>
+		<Empty.Header>
+			<Empty.Media variant="icon">
+				<ImageIcon />
+			</Empty.Media>
+			<Empty.Title>No Images Yet</Empty.Title>
+			<Empty.Description>Get started by adding your first image to this board.</Empty.Description>
+		</Empty.Header>
+		<Empty.Content>
+			<div class="flex gap-2">
+				<Button>Add Image</Button>
+				<Button variant="outline">Import Images</Button>
+			</div>
+		</Empty.Content>
+		<Button variant="link" class="text-muted-foreground" size="sm">
+			<a href="#/">
+				Learn More <ArrowUpRightIcon class="inline" />
+			</a>
+		</Button>
+	</Empty.Root>
+{/if}
