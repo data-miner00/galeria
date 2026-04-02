@@ -6,15 +6,31 @@ A self-hosted authenticationless image board used for
 2. Organizing interested internet photos
 3. Create board / list
 4. Add description / notes
-5. Maybe need authentication, for collaborator
-6. Image manipulation capabilities.
-7. Masonry layout
-8. Dark-light mode
-9. Internationalization
-10. Enable categorization / tagging
-11. Filter
-12. Support GIF?
-13. Lightbox
+5. Image manipulation capabilities.
+6. Masonry layout
+7. Dark-light mode
+8. Internationalization (en,ja,ko,es,pt,fr,zh,ms)
+9. Enable categorization / tagging
+10. Filter
+11. Support GIF?
+12. Lightbox
+13. Favorites board
+14. Change layout
+15. Tagging
+16. Import from folder
+17. Export metadata and images to folder
+18. Password-protected board
+19. Identify Duplicate
+20. Identify similar
+21. Usage analytics
+22. Mobile responsive
+23. Add Log aggregator like logseq to monitor API calls
+24. Add Skeleton
+25. Sketch note to Image
+26. Optional Authentication
+27. Optional TOTP MFA
+28. 404 Page
+29. Censor/blur option
 
 Should be simple and quick. Aim to get MVP by 22 March 2026.
 
