@@ -1,7 +1,17 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Download, Ellipsis, ExternalLink, Info, Plus, Star, Trash2 } from '@lucide/svelte';
+	import {
+		Download,
+		Ellipsis,
+		ExternalLink,
+		GitForkIcon,
+		Info,
+		Plus,
+		RecycleIcon,
+		Star,
+		Trash2
+	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import AddToBoardDialog from './add-to-board-dialog.svelte';
@@ -103,6 +113,7 @@
 			<ExternalLink /> Open in new tab
 		</DropdownMenu.Item>
 		<DropdownMenu.Item><Star /> Add to Favorite</DropdownMenu.Item>
+		<DropdownMenu.Item><GitForkIcon /> Fork this image</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={() => (isAddToBoardDialogOpen = !isAddToBoardDialogOpen)}>
 			<Plus /> Add to Board
 		</DropdownMenu.Item>
@@ -117,8 +128,11 @@
 			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator />
+		<DropdownMenu.Item onclick={() => (isDeleteDialogOpen = !isDeleteDialogOpen)}>
+			<RecycleIcon /> Move to Trash
+		</DropdownMenu.Item>
 		<DropdownMenu.Item
-			class="text-red-500"
+			variant="destructive"
 			onclick={() => (isDeleteDialogOpen = !isDeleteDialogOpen)}
 		>
 			<Trash2 /> Delete
