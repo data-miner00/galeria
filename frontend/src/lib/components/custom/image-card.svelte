@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { onDestroy, tick } from 'svelte';
 	import CardActionsButton from './card-actions-button.svelte';
+	import { appState } from '$lib/states.svelte';
+
+	let columns = $derived(appState.settings.noOfColumns || 5);
 
 	type Props = {
 		id: string;
@@ -50,7 +53,10 @@
 
 <div>
 	<button
-		class="w-70 overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+		class="overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+		class:w-70={columns === 5}
+		class:w-80={columns === 4}
+		class:w-60={columns === 6}
 		type="button"
 		onclick={openLightbox}
 		aria-label="Open image preview"
