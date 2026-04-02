@@ -59,15 +59,19 @@
 
 			appState.images.push(result);
 			toast.success('Image uploaded successfully.');
-
 			isDialogOpen = false;
+
+			clearInput();
 		} catch (error) {
 			toast.error('Image upload failed. ' + (error as Error).message);
 		}
 	}
 
 	function clearInput() {
+		description = '';
+		isCensored = false;
 		files = undefined;
+		image = undefined;
 	}
 </script>
 
