@@ -14,6 +14,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { appState } from '$lib/states.svelte';
+	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
 
 	let { children } = $props();
 
@@ -90,3 +91,5 @@
 
 <UploadImageDialog bind:isDialogOpen={isUploadImageDialogOpen} />
 <CreateBoardDialog bind:isDialogOpen={isCreateBoardDialogOpen} />
+
+<ToTopButton />
