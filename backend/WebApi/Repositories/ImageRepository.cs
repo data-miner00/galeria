@@ -27,6 +27,8 @@ namespace WebApi.Repositories
             return images.Select(x => x.ToEntity());
         }
 
+        protected override DocumentType DocumentType => DocumentType.ImageRecord;
+
         protected override ImageDocument ToDocument(Image entity)
         {
             return ImageDocument.FromEntity(entity);

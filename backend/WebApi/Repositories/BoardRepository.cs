@@ -30,6 +30,18 @@ namespace WebApi.Repositories
             return DatabaseOperationStatus.Success;
         }
 
+        public async Task<DatabaseOperationStatus> RemoveImageFromBoardAsync(
+            string id,
+            string partitionKey,
+            string imageId,
+            CancellationToken ct)
+        {
+            // TODO
+            return DatabaseOperationStatus.Success;
+        }
+
+        protected override DocumentType DocumentType => DocumentType.Board;
+
         protected override BoardDocument ToDocument(Board entity)
         {
             return BoardDocument.FromEntity(entity);

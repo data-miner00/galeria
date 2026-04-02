@@ -25,3 +25,7 @@ export type UserProfile = {
 	bio?: string;
 	email?: string;
 };
+
+export type UserSettings = {
+	noOfColumns: number;
+};

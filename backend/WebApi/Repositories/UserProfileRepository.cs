@@ -9,6 +9,8 @@ namespace WebApi.Repositories
         {
         }
 
+        protected override DocumentType DocumentType => DocumentType.UserProfile;
+
         protected override UserProfileDocument ToDocument(UserProfile entity)
         {
             return UserProfileDocument.FromEntity(entity);

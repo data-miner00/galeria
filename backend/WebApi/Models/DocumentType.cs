@@ -5,5 +5,6 @@
         ImageRecord,
         Board,
         UserProfile,
+        UserSettings,
     }
 }

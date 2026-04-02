@@ -19,12 +19,12 @@ namespace WebApi.Repositories
             this.container = container;
         }
 
-        public virtual async Task<Entity?> GetFirstAsync(CancellationToken cancellationToken)
+        public virtual async Task<TEntity?> GetFirstAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = "SELECT * FROM c";
-            var queryDefinition = new QueryDefinition(query);
+            var query = "SELECT * FROM c WHERE c.DocumentType = @DocumentType";
+            var queryDefinition = new QueryDefinition(query).WithParameter("@DocumentType", this.DocumentType);
 
             var requestOptions = new QueryRequestOptions { MaxItemCount = 1 };
 
@@ -64,8 +64,8 @@ namespace WebApi.Repositories
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = "SELECT * FROM c";
-            var queryDefinition = new QueryDefinition(query);
+            var query = "SELECT * FROM c WHERE c.DocumentType = @DocumentType";
+            var queryDefinition = new QueryDefinition(query).WithParameter("@DocumentType", this.DocumentType);
 
             using FeedIterator<TDocument> feedIterator = this.container.GetItemQueryIterator<TDocument>(queryDefinition);
 
@@ -107,6 +107,8 @@ namespace WebApi.Repositories
                 return DatabaseOperationStatus.NotFound;
             }
         }
+
+        protected abstract DocumentType DocumentType { get; }
 
         protected abstract TEntity ToEntity(TDocument document);
 
