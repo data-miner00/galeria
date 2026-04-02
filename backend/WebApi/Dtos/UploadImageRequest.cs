@@ -5,5 +5,7 @@
         public IFormFile File { get; set; }
 
         public string? Description { get; set; }
+
+        public bool IsCensored { get; set; }
     }
 }

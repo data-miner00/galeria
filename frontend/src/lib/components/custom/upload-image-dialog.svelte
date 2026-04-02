@@ -6,6 +6,7 @@
 	import { appState } from '$lib/states.svelte';
 	import { X } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -14,6 +15,7 @@
 	let { isDialogOpen = $bindable(false) }: Props = $props();
 
 	let description = $state('');
+	let isCensored = $state(false);
 	let files: FileList | undefined = $state();
 	let image: HTMLImageElement | undefined = $state();
 	let showImage = $state(false);
@@ -41,6 +43,7 @@
 		const formData = new FormData();
 		formData.append('File', file);
 		formData.append('Description', description);
+		formData.append('IsCensored', isCensored.toString());
 
 		try {
 			const response = await fetch('https://localhost:7146/api/v1/image', {
@@ -70,7 +73,7 @@
 
 <Dialog.Root bind:open={isDialogOpen}>
 	<form>
-		<Dialog.Content class="sm:max-w-106.25">
+		<Dialog.Content class="max-h-[90dvh] overflow-y-auto sm:max-w-106.25">
 			<Dialog.Header>
 				<Dialog.Title>Upload Image</Dialog.Title>
 				<Dialog.Description>Upload and create a new entry in the gallery.</Dialog.Description>
@@ -88,6 +91,11 @@
 				<div class="grid gap-3">
 					<Label for="image">Image</Label>
 					<Input bind:files onchange={onImageChange} id="image" name="image" type="file" />
+				</div>
+
+				<div class="flex items-center gap-3">
+					<Switch id="is-censored" bind:checked={isCensored} />
+					<Label for="is-censored">Censor Image</Label>
 				</div>
 
 				{#if files}

@@ -10,6 +10,8 @@
 
         public string? Description { get; set; }
 
+        public bool IsCensored { get; set; }
+
         public UploadStatus Status { get; set; }
     }
 }

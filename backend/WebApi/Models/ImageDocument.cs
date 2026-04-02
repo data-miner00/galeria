@@ -14,6 +14,8 @@
 
         public UploadStatus Status { get; set; }
 
+        public bool IsCensored { get; set; }
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -30,6 +32,7 @@
                 ContentType = ContentType,
                 Status = Status,
                 UpdatedAt = updatedAt,
+                IsCensored = IsCensored,
             };
         }
 
@@ -47,6 +50,7 @@
                 ContentType = entity.ContentType,
                 Status = entity.Status,
                 DocumentType = DocumentType.ImageRecord,
+                IsCensored = entity.IsCensored,
             };
         }
     }

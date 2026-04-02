@@ -46,6 +46,7 @@ public sealed class ImageService
             Description = request.Description,
             Status = UploadStatus.Pending,
             CreatedAt = DateTime.UtcNow,
+            IsCensored = request.IsCensored,
         };
 
         await this.repository.UpsertAsync(record, ct);
