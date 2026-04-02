@@ -19,6 +19,30 @@ namespace WebApi.Repositories
             this.container = container;
         }
 
+        public virtual async Task<Entity?> GetFirstAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var query = "SELECT * FROM c";
+            var queryDefinition = new QueryDefinition(query);
+
+            var requestOptions = new QueryRequestOptions { MaxItemCount = 1 };
+
+            using FeedIterator<TDocument> feedIterator = this.container.GetItemQueryIterator<TDocument>(queryDefinition, requestOptions: requestOptions);
+
+            while (feedIterator.HasMoreResults)
+            {
+                FeedResponse<TDocument> response = await feedIterator.ReadNextAsync(cancellationToken);
+                var first = response.Resource.FirstOrDefault();
+                if (first != null)
+                {
+                    return this.ToEntity(first);
+                }
+            }
+
+            return null;
+        }
+
         public virtual async Task<TEntity?> GetByIdAsync(string id, string partitionKey, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
