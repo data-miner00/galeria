@@ -3,20 +3,13 @@
 	import * as Label from '$lib/components/ui/label/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import InfoIcon from '@lucide/svelte/icons/info';
-	import type { UserSettings } from '$lib/types';
-	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
-
-	let settings = $state<UserSettings>({ noOfColumns: 5 });
-
-	onMount(async () => {
-		const res = await fetch('https://localhost:7146/api/v1/UserSettings');
-		settings = await res.json();
-	});
+	import { appState } from '$lib/states.svelte';
 
 	let isSaving = $state(false);
+	let noOfColumnsInput = $state(appState.settings.noOfColumns || 5);
 
 	async function saveSettings() {
 		isSaving = true;
@@ -26,10 +19,11 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(settings)
+			body: JSON.stringify(appState.settings)
 		});
 
 		if (request.ok) {
+			appState.settings.noOfColumns = noOfColumnsInput;
 			toast.success('Settings updated successfully!');
 		} else {
 			const error = await request.json();
@@ -53,7 +47,7 @@
 				placeholder="5"
 				max="6"
 				min="4"
-				bind:value={settings.noOfColumns}
+				bind:value={noOfColumnsInput}
 			/>
 			<InputGroup.Addon align="block-start">
 				<Label.Root for="noOfColumns" class="text-foreground">Number of Columns</Label.Root>

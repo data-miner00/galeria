@@ -25,6 +25,11 @@
 		if (res.ok) {
 			appState.boards = await res.json();
 		}
+
+		const resSettings = await fetch('https://localhost:7146/api/v1/UserSettings');
+		if (resSettings.ok) {
+			appState.settings = await resSettings.json();
+		}
 	});
 </script>
 

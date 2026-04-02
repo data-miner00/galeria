@@ -27,5 +27,5 @@ export type UserProfile = {
 };
 
 export type UserSettings = {
-	noOfColumns: number;
+	noOfColumns?: number;
 };
