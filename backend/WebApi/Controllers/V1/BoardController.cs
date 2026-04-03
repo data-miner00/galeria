@@ -66,7 +66,7 @@ namespace WebApi.Controllers.V1
                 });
             }
 
-            return this.Created();
+            return this.Created(id, board);
         }
 
         [HttpPost("{boardId}/{imageId}")]

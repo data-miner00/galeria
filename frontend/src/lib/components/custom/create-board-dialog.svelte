@@ -3,6 +3,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { appState } from '$lib/states.svelte';
 	import { toast } from 'svelte-sonner';
 
 	type Props = {
@@ -39,6 +40,9 @@
 		toast.success('Board created successfully.');
 
 		clearInput();
+
+		appState.boards.push(await res.json());
+
 		isDialogOpen = false;
 	}
 </script>

@@ -10,6 +10,7 @@
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { appState } from '$lib/states.svelte';
 
 	let {
 		boards
@@ -34,6 +35,7 @@
 		}
 
 		toast.success('Board successfully deleted.');
+		appState.boards = appState.boards.filter((board) => board.id !== id);
 		isDeleteDialogOpen = false;
 	}
 
@@ -81,7 +83,7 @@
 							<span>Share Board</span>
 						</DropdownMenu.Item>
 						<DropdownMenu.Separator />
-						<DropdownMenu.Item onclick={() => openDeleteDialog(item.id)}>
+						<DropdownMenu.Item variant="destructive" onclick={() => openDeleteDialog(item.id)}>
 							<Trash2Icon class="text-muted-foreground" />
 							<span>Delete Board</span>
 						</DropdownMenu.Item>
