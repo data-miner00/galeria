@@ -2,6 +2,7 @@
 	import { onDestroy, tick } from 'svelte';
 	import CardActionsButton from './card-actions-button.svelte';
 	import { appState } from '$lib/states.svelte';
+	import { EyeOffIcon } from '@lucide/svelte';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 
@@ -56,11 +57,10 @@
 
 <div>
 	<button
-		class="overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+		class="relative overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 		class:w-70={columns === 5}
 		class:w-80={columns === 4}
 		class:w-60={columns === 6}
-		class:blur-xl={isCensored && !revealCensoredImage}
 		type="button"
 		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}
 		aria-label="Open image preview"
@@ -70,6 +70,14 @@
 			alt={description ?? 'Gallery image'}
 			src={`http://127.0.0.1:10003/devstoreaccount1/images/${path}`}
 		/>
+
+		{#if isCensored && !revealCensoredImage}
+			<div class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xl">
+				<span class="text-sm font-medium text-white">
+					<EyeOffIcon class="me-1 inline-block" />
+				</span>
+			</div>
+		{/if}
 	</button>
 
 	<div class="flex items-center justify-between">
