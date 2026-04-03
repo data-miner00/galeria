@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import type { ImageRecord } from '$lib/types';
+	import type { Board, ImageRecord } from '$lib/types';
 
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -13,7 +13,9 @@
 
 	async function loadBoard(boardId: string) {
 		const res = await fetch(`https://localhost:7146/api/v1/board/${boardId}`);
-		const board = await res.json();
+		const board = (await res.json()) as Board;
+
+		appState.headerTitle = board.title || 'Unnamed Board';
 
 		// Question: Should fetch by passing params or post body
 		if (board.imageIds.length > 0) {

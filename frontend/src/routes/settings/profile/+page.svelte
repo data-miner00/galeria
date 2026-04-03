@@ -9,10 +9,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
+	import { appState } from '$lib/states.svelte';
 
 	let profile = $state<UserProfile>({});
 
 	onMount(async () => {
+		appState.headerTitle = 'Profile Settings';
+
 		const res = await fetch('https://localhost:7146/api/v1/UserProfile');
 		profile = await res.json();
 	});

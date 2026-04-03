@@ -7,9 +7,14 @@
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/states.svelte';
+	import { onMount } from 'svelte';
 
 	let isSaving = $state(false);
 	let noOfColumnsInput = $state(appState.settings.noOfColumns || 5);
+
+	onMount(() => {
+		appState.headerTitle = 'Layout Settings';
+	});
 
 	async function saveSettings() {
 		isSaving = true;

@@ -63,11 +63,7 @@
 							</Breadcrumb.Item>
 							<Breadcrumb.Separator class="hidden md:block" /> -->
 							<Breadcrumb.Item>
-								<Breadcrumb.Page
-									>{page.params.id
-										? appState.boards.find((b) => b.id === page.params.id)?.title
-										: 'Home'}</Breadcrumb.Page
-								>
+								<Breadcrumb.Page>{appState.headerTitle}</Breadcrumb.Page>
 							</Breadcrumb.Item>
 						</Breadcrumb.List>
 					</Breadcrumb.Root>

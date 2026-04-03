@@ -16,6 +16,8 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
 	onMount(async () => {
+		appState.headerTitle = 'Home';
+
 		if (appState.images.length > 0) {
 			return;
 		}
