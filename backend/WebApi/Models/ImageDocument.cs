@@ -16,6 +16,12 @@
 
         public bool IsCensored { get; set; }
 
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public long Size { get; set; }
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -33,6 +39,9 @@
                 Status = Status,
                 UpdatedAt = updatedAt,
                 IsCensored = IsCensored,
+                Width = Width,
+                Height = Height,
+                Size = Size,
             };
         }
 
@@ -51,6 +60,9 @@
                 Status = entity.Status,
                 DocumentType = DocumentType.ImageRecord,
                 IsCensored = entity.IsCensored,
+                Width = entity.Width,
+                Height = entity.Height,
+                Size = entity.Size,
             };
         }
     }

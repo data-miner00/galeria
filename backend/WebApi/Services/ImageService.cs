@@ -2,6 +2,10 @@
 using WebApi.Models;
 using WebApi.Repositories;
 
+using SixLabors.ImageSharp;
+using SixImage = SixLabors.ImageSharp.Image;
+using ImageRecord = WebApi.Models.Image;
+
 namespace WebApi.Services;
 
 public sealed class ImageService
@@ -25,7 +29,7 @@ public sealed class ImageService
     /// If the blob upload fails, the DB record is marked as Failed
     /// so it can be retried or cleaned up — no silent ghost records.
     /// </summary>
-    public async Task<Image> UploadImageAsync(
+    public async Task<ImageRecord> UploadImageAsync(
         UploadImageRequest request,
         CancellationToken ct = default)
     {
@@ -37,7 +41,12 @@ public sealed class ImageService
         var id = Guid.NewGuid().ToString();
         var blobName = $"{id}{extension}";
 
-        var record = new Image
+        await using var stream = file.OpenReadStream();
+
+        var metadata = SixImage.Identify(stream);
+        stream.Position = 0;
+
+        var record = new ImageRecord
         {
             Id = id,
             OriginalFileName = file.FileName,
@@ -47,6 +56,9 @@ public sealed class ImageService
             Status = UploadStatus.Pending,
             CreatedAt = DateTime.UtcNow,
             IsCensored = request.IsCensored,
+            Width = metadata.Width,
+            Height = metadata.Height,
+            Size = file.Length,
         };
 
         await this.repository.UpsertAsync(record, ct);
@@ -55,7 +67,6 @@ public sealed class ImageService
  
         try
         {
-            await using var stream = file.OpenReadStream();
             await blobClient.UploadAsync(stream, blobName, file.ContentType, ct);
  
             record.Status = UploadStatus.Suceeded;
