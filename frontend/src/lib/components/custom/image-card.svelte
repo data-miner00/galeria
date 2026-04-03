@@ -10,9 +10,12 @@
 		path: string;
 		description?: string;
 		onDelete: () => void;
+		isCensored?: boolean;
 	};
 
-	const { id, path, description, onDelete }: Props = $props();
+	let revealCensoredImage = $state(false);
+
+	const { id, path, description, onDelete, isCensored = false }: Props = $props();
 
 	let isLightboxOpen = $state(false);
 	let closeButton: HTMLButtonElement | null = $state(null);
@@ -57,8 +60,9 @@
 		class:w-70={columns === 5}
 		class:w-80={columns === 4}
 		class:w-60={columns === 6}
+		class:blur-xl={isCensored && !revealCensoredImage}
 		type="button"
-		onclick={openLightbox}
+		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}
 		aria-label="Open image preview"
 	>
 		<img

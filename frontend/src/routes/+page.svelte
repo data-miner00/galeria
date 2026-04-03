@@ -4,7 +4,14 @@
 	import type { ImageRecord } from '$lib/types';
 	import { onMount } from 'svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
-	import { ArrowUpRightIcon, ImageIcon, LayoutDashboardIcon, LayoutGridIcon } from '@lucide/svelte';
+	import {
+		ArrowDown01Icon,
+		ArrowUp01Icon,
+		ArrowUpRightIcon,
+		ImageIcon,
+		LayoutDashboardIcon,
+		LayoutGridIcon
+	} from '@lucide/svelte';
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
@@ -53,6 +60,8 @@
 		<ButtonGroup.Root>
 			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
 			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
+			<Button variant="outline" size="icon-sm"><ArrowDown01Icon /></Button>
+			<Button variant="outline" size="icon-sm"><ArrowUp01Icon /></Button>
 		</ButtonGroup.Root>
 	</div>
 </div>
@@ -72,6 +81,7 @@
 						path={record.path}
 						description={record.description}
 						onDelete={() => onDelete(record.id)}
+						isCensored={record.isCensored}
 					/>
 				{/each}
 			</div>

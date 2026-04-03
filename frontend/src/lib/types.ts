@@ -14,6 +14,7 @@ export type ImageRecord = {
 	description?: string;
 	status: number;
 	createdAt: string;
+	isCensored: boolean;
 };
 
 export type UserProfile = {
