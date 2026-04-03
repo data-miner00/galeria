@@ -15,6 +15,8 @@ export type ImageRecord = {
 	status: number;
 	createdAt: string;
 	isCensored: boolean;
+	thumbnailPath: string;
+	mediumPath: string;
 };
 
 export type UserProfile = {

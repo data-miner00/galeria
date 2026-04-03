@@ -9,6 +9,8 @@
 	type Props = {
 		id: string;
 		path: string;
+		thumbnailPath: string;
+		mediumPath: string;
 		description?: string;
 		onDelete: () => void;
 		isCensored?: boolean;
@@ -16,7 +18,15 @@
 
 	let revealCensoredImage = $state(false);
 
-	const { id, path, description, onDelete, isCensored = false }: Props = $props();
+	const {
+		id,
+		path,
+		description,
+		onDelete,
+		thumbnailPath,
+		mediumPath,
+		isCensored = false
+	}: Props = $props();
 
 	let isLightboxOpen = $state(false);
 	let closeButton: HTMLButtonElement | null = $state(null);
@@ -57,7 +67,7 @@
 
 <div>
 	<button
-		class="relative overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+		class="relative cursor-pointer overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 		class:w-70={columns === 5}
 		class:w-80={columns === 4}
 		class:w-60={columns === 6}
@@ -84,7 +94,7 @@
 		<div>
 			<p class="max-w-40 truncate text-sm">{description}</p>
 		</div>
-		<CardActionsButton {id} {path} {onDelete} />
+		<CardActionsButton {id} {path} {thumbnailPath} {mediumPath} {onDelete} />
 	</div>
 </div>
 

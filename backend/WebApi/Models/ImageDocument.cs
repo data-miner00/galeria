@@ -22,6 +22,10 @@
 
         public long Size { get; set; }
 
+        public string ThumbnailPath { get; set; } = string.Empty;
+
+        public string MediumPath { get; set; } = string.Empty;
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -42,6 +46,8 @@
                 Width = Width,
                 Height = Height,
                 Size = Size,
+                ThumbnailPath = ThumbnailPath,
+                MediumPath = MediumPath,
             };
         }
 
@@ -63,6 +69,8 @@
                 Width = entity.Width,
                 Height = entity.Height,
                 Size = entity.Size,
+                ThumbnailPath = entity.ThumbnailPath,
+                MediumPath = entity.MediumPath,
             };
         }
     }

@@ -22,9 +22,11 @@
 		id: string;
 		onDelete: () => void;
 		path: string;
+		thumbnailPath: string;
+		mediumPath: string;
 	};
 
-	const { id, path, onDelete }: Props = $props();
+	const { id, path, thumbnailPath, mediumPath, onDelete }: Props = $props();
 
 	let isAddToBoardDialogOpen = $state(false);
 
@@ -123,7 +125,8 @@
 			<Download /> Download
 		</DropdownMenu.Item>
 		<DropdownMenu.Item
-			onclick={() => setAsProfilePicture(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`)}
+			onclick={() =>
+				setAsProfilePicture(`http://127.0.0.1:10003/devstoreaccount1/images/${thumbnailPath}`)}
 		>
 			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>

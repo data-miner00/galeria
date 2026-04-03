@@ -81,6 +81,8 @@
 						description={record.description}
 						onDelete={() => onDelete(record.id)}
 						isCensored={record.isCensored}
+						thumbnailPath={record.thumbnailPath}
+						mediumPath={record.mediumPath}
 					/>
 				{/each}
 			</div>

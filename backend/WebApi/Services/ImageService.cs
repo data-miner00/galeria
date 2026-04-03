@@ -3,6 +3,10 @@ using WebApi.Models;
 using WebApi.Repositories;
 
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
 using SixImage = SixLabors.ImageSharp.Image;
 using ImageRecord = WebApi.Models.Image;
 
@@ -35,22 +39,30 @@ public sealed class ImageService
     {
         var file = request.File;
  
-        // 1. Pre-compute the blob name here so it's stored in the DB
-        //    before we attempt the upload — this is our reconciliation key.
+        // 1. Pre-compute deterministic blob paths so clients can construct
+        //    variant URLs from the image id without reading the DB.
         var extension = Path.GetExtension(file.FileName);
         var id = Guid.NewGuid().ToString();
-        var blobName = $"{id}{extension}";
+        var basePath = id;
+        var originalPath = $"{basePath}/original{extension}";
+        var thumbPath = $"{basePath}/thumb/150{extension}";
+        var mediumPath = $"{basePath}/medium/w1024{extension}";
 
-        await using var stream = file.OpenReadStream();
+        // Read the incoming file into memory so we can upload multiple variants
+        // and inspect metadata without re-reading the IFormFile stream.
+        await using var uploadedStream = file.OpenReadStream();
+        using var buffered = new MemoryStream();
+        await uploadedStream.CopyToAsync(buffered, ct);
+        buffered.Position = 0;
 
-        var metadata = SixImage.Identify(stream);
-        stream.Position = 0;
+        var metadata = SixImage.Identify(buffered);
+        buffered.Position = 0;
 
         var record = new ImageRecord
         {
             Id = id,
             OriginalFileName = file.FileName,
-            Path = blobName,
+            Path = originalPath,
             ContentType = file.ContentType,
             Description = request.Description,
             Status = UploadStatus.Pending,
@@ -58,32 +70,81 @@ public sealed class ImageService
             IsCensored = request.IsCensored,
             Width = metadata.Width,
             Height = metadata.Height,
-            Size = file.Length,
+            Size = buffered.Length,
+            ThumbnailPath = thumbPath,
+            MediumPath = mediumPath,
         };
 
         await this.repository.UpsertAsync(record, ct);
- 
+
         this.logger.LogInformation("Image record {Id} created with status Pending.", record.Id);
- 
+
         try
         {
-            await blobClient.UploadAsync(stream, blobName, file.ContentType, ct);
- 
+            // Upload original
+            buffered.Position = 0;
+            await this.blobClient.UploadAsync(buffered, originalPath, file.ContentType, ct);
+
+            // Load image for resizing
+            buffered.Position = 0;
+            using var image = SixImage.Load(buffered);
+
+            // Encoder selection based on extension — preserve original format where possible
+            IImageEncoder encoder = extension.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => new JpegEncoder { Quality = 80 },
+                ".png" => new PngEncoder { CompressionLevel = PngCompressionLevel.Level6 },
+                _ => new JpegEncoder { Quality = 80 },
+            };
+
+            // Medium: max width 1024, preserve aspect ratio, never upscale
+            if (image.Width > 1024)
+            {
+                using var medium = image.Clone(ctx => ctx.Resize(new ResizeOptions
+                {
+                    Size = new Size(1024, 0),
+                    Mode = ResizeMode.Max
+                }));
+
+                await using var msMedium = new MemoryStream();
+                await medium.SaveAsync(msMedium, encoder, ct);
+                msMedium.Position = 0;
+                await this.blobClient.UploadAsync(msMedium, mediumPath, file.ContentType, ct);
+            }
+            else
+            {
+                // If original is smaller than medium target, reuse original blob by uploading a copy
+                buffered.Position = 0;
+                await this.blobClient.UploadAsync(buffered, mediumPath, file.ContentType, ct);
+            }
+
+            // Thumbnail: square crop center 150x150
+            using var thumb = image.Clone(ctx => ctx.Resize(new ResizeOptions
+            {
+                Size = new Size(150, 150),
+                Mode = ResizeMode.Crop,
+                Position = AnchorPositionMode.Center
+            }));
+
+            await using var msThumb = new MemoryStream();
+            await thumb.SaveAsync(msThumb, encoder, ct);
+            msThumb.Position = 0;
+            await this.blobClient.UploadAsync(msThumb, thumbPath, file.ContentType, ct);
+
             record.Status = UploadStatus.Suceeded;
             await this.repository.UpsertAsync(record, ct);
- 
-            this.logger.LogInformation("Image record {Id} uploaded successfully.", record.Id);
+
+            this.logger.LogInformation("Image record {Id} uploaded successfully with variants.", record.Id);
         }
         catch (Exception ex)
         {
-            // 5. Mark as failed — do NOT delete the DB record.
-            //    A retry job or admin can pick up Failed records.
+            // Mark as failed — do NOT delete the DB record.
             this.logger.LogError(ex, "Blob upload failed for image record {Id}.", record.Id);
- 
+
             record.Status = UploadStatus.Failed;
             await this.repository.UpsertAsync(record, ct);
         }
- 
+
         return record;
     }
  
@@ -129,6 +190,9 @@ public sealed class ImageService
     /// successfully deleted; otherwise, <see langword="false"/> if no image was found with the specified identifier.</returns>
     public async Task<bool> DeleteAsync(string imageId, CancellationToken ct = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(imageId);
+        ct.ThrowIfCancellationRequested();
+
         var record = await this.repository.GetByIdAsync(imageId, ImageDocument.PartitionKeyValue, ct);
 
         if (record is null)
@@ -137,7 +201,14 @@ public sealed class ImageService
         }
 
         await this.repository.DeleteAsync(imageId, ImageDocument.PartitionKeyValue, ct);
-        await this.blobClient.DeleteAsync(record.Path, ct);
+
+        List<Task> tasks = [
+            this.blobClient.DeleteAsync(record.Path, ct),
+            this.blobClient.DeleteAsync(record.ThumbnailPath, ct),
+            this.blobClient.DeleteAsync(record.MediumPath, ct),
+        ];
+
+        await Task.WhenAll(tasks);
 
         return true;
     }

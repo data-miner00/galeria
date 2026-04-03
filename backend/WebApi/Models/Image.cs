@@ -19,5 +19,9 @@
         public int Height { get; set; }
 
         public long Size { get; set; }
+
+        public string ThumbnailPath { get; set; } = string.Empty;
+
+        public string MediumPath { get; set; } = string.Empty;
     }
 }
