@@ -25,20 +25,23 @@
 		appState.images = await res.json();
 	});
 
+	let orders = $state<'newest' | 'oldest'>('newest');
+
 	let columns = $derived(appState.settings.noOfColumns || 5);
 
 	let chunkedRecords = $derived(
 		(() => {
-			const images: ImageRecord[][] = [];
+			let images: ImageRecord[][] = [];
 			let i = 0;
 			for (; i < columns; i++) {
 				images.push([]);
 			}
 			i = 0;
 
-			let j = 0;
+			let j = 0,
+				k = appState.images.length - 1;
 			while (i < appState.images.length) {
-				images[i++ % columns].push(appState.images[j++]);
+				images[i++ % columns].push(appState.images[orders === 'newest' ? k-- : j++]);
 			}
 
 			return images;
@@ -47,6 +50,10 @@
 
 	function onDelete(deletedId: string) {
 		appState.images = appState.images.filter((record) => record.id != deletedId);
+	}
+
+	function toggleOrder() {
+		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
 </script>
 
@@ -62,8 +69,13 @@
 		<ButtonGroup.Root>
 			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
 			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
-			<Button variant="outline" size="icon-sm"><ArrowDown01Icon /></Button>
-			<Button variant="outline" size="icon-sm"><ArrowUp01Icon /></Button>
+			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>
+				{#if orders === 'newest'}
+					<ArrowDown01Icon />
+				{:else}
+					<ArrowUp01Icon />
+				{/if}
+			</Button>
 		</ButtonGroup.Root>
 	</div>
 </div>
