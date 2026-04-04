@@ -97,6 +97,18 @@
 			toast.error('An error has occurred.');
 		}
 	}
+
+	function openOriginal() {
+		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`, '_blank');
+	}
+
+	function openMedium() {
+		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${mediumPath}`, '_blank');
+	}
+
+	function openThumbnail() {
+		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${thumbnailPath}`, '_blank');
+	}
 </script>
 
 <AddToBoardDialog imageId={id} bind:isDialogOpen={isAddToBoardDialogOpen} />
@@ -111,12 +123,16 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="start">
 		<DropdownMenu.Item><Info /> View</DropdownMenu.Item>
-		<DropdownMenu.Item
-			onclick={() =>
-				window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`, '_blank')}
-		>
-			<ExternalLink /> Open in new tab
-		</DropdownMenu.Item>
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>
+				<ExternalLink /> Open in new tab
+			</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<DropdownMenu.Item onclick={openOriginal}>Original</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={openMedium}>Medium</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={openThumbnail}>Thumbnail</DropdownMenu.Item>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
 		<DropdownMenu.Item><Star /> Add to Favorite</DropdownMenu.Item>
 		<DropdownMenu.Item><GitForkIcon /> Fork this image</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={() => (isAddToBoardDialogOpen = !isAddToBoardDialogOpen)}>
