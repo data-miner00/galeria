@@ -13,7 +13,9 @@
 		mediumPath: string;
 		description?: string;
 		onDelete: () => void;
-		isCensored?: boolean;
+		isCensored: boolean;
+		isFavorite: boolean;
+		isSoftDeleted: boolean;
 	};
 
 	let revealCensoredImage = $state(false);
@@ -25,7 +27,9 @@
 		onDelete,
 		thumbnailPath,
 		mediumPath,
-		isCensored = false
+		isCensored = false,
+		isFavorite = false,
+		isSoftDeleted = false
 	}: Props = $props();
 
 	let isLightboxOpen = $state(false);
@@ -94,7 +98,15 @@
 		<div>
 			<p class="max-w-40 truncate text-sm">{description}</p>
 		</div>
-		<CardActionsButton {id} {path} {thumbnailPath} {mediumPath} {onDelete} />
+		<CardActionsButton
+			{id}
+			{path}
+			{thumbnailPath}
+			{mediumPath}
+			{onDelete}
+			{isFavorite}
+			{isSoftDeleted}
+		/>
 	</div>
 </div>
 

@@ -100,6 +100,8 @@
 						isCensored={record.isCensored}
 						thumbnailPath={record.thumbnailPath}
 						mediumPath={record.mediumPath}
+						isFavorite={record.isFavorite}
+						isSoftDeleted={record.isSoftDeleted}
 					/>
 				{/each}
 			</div>

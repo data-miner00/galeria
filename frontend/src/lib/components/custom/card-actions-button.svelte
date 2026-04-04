@@ -25,9 +25,12 @@
 		path: string;
 		thumbnailPath: string;
 		mediumPath: string;
+		isFavorite: boolean;
+		isSoftDeleted: boolean;
 	};
 
-	const { id, path, thumbnailPath, mediumPath, onDelete }: Props = $props();
+	const { id, path, thumbnailPath, mediumPath, onDelete, isFavorite, isSoftDeleted }: Props =
+		$props();
 
 	let isAddToBoardDialogOpen = $state(false);
 
@@ -109,6 +112,53 @@
 	function openThumbnail() {
 		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${thumbnailPath}`, '_blank');
 	}
+
+	async function toggleFavorite() {
+		try {
+			const response = await fetch(`https://localhost:7146/api/v1/image/${id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ isFavorite: !isFavorite })
+			});
+
+			if (!response.ok) {
+				throw new Error('Something wrong');
+			}
+
+			appState.images = appState.images.map((image) =>
+				image.id === id ? { ...image, isFavorite: !isFavorite } : image
+			);
+			toast.success(!isFavorite ? 'Added to favorites.' : 'Removed from favorites.');
+		} catch {
+			toast.error('An error has occurred.');
+		}
+	}
+
+	async function toggleSoftDeleted() {
+		try {
+			const response = await fetch(`https://localhost:7146/api/v1/image/${id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ isSoftDeleted: !isSoftDeleted })
+			});
+
+			if (!response.ok) {
+				throw new Error('Something wrong');
+			}
+
+			appState.images = appState.images.map((image) =>
+				image.id === id ? { ...image, isSoftDeleted: !isSoftDeleted } : image
+			);
+
+			toast.success(!isSoftDeleted ? 'Image moved to trash.' : 'Image restored.');
+		} catch {
+			toast.error('An error has occurred.');
+		}
+	}
 </script>
 
 <AddToBoardDialog imageId={id} bind:isDialogOpen={isAddToBoardDialogOpen} />
@@ -133,7 +183,13 @@
 				<DropdownMenu.Item onclick={openThumbnail}>Thumbnail</DropdownMenu.Item>
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
-		<DropdownMenu.Item><Star /> Add to Favorite</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={toggleFavorite}>
+			{#if !isFavorite}
+				<Star /> Add to Favorite
+			{:else}
+				<Star fill="currentColor" /> Remove from Favorite
+			{/if}
+		</DropdownMenu.Item>
 		<DropdownMenu.Item><GitForkIcon /> Fork this image</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={() => (isAddToBoardDialogOpen = !isAddToBoardDialogOpen)}>
 			<Plus /> Add to Board
@@ -150,7 +206,7 @@
 			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item onclick={() => (isDeleteDialogOpen = !isDeleteDialogOpen)}>
+		<DropdownMenu.Item onclick={toggleSoftDeleted}>
 			<RecycleIcon /> Move to Trash
 		</DropdownMenu.Item>
 		<DropdownMenu.Item
