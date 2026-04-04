@@ -5,24 +5,17 @@
 	import NavUser from './nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import CommandIcon from '@lucide/svelte/icons/command';
-	import { onMount, type ComponentProps } from 'svelte';
+	import { type ComponentProps } from 'svelte';
 	import Button from './ui/button/button.svelte';
 	import { PlusIcon } from '@lucide/svelte';
-	import type { UserProfile, Board } from '$lib/types';
+	import type { Board } from '$lib/types';
 	import { appState } from '$lib/states.svelte';
 
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import BotIcon from '@lucide/svelte/icons/bot';
 	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
 	import SendIcon from '@lucide/svelte/icons/send';
-	import Settings2Icon from '@lucide/svelte/icons/settings-2';
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
-
-	let user = $state({
-		name: 'user',
-		email: 'user@example.com',
-		avatar: ''
-	});
 
 	const data = {
 		navMain: [
@@ -111,17 +104,6 @@
 	let { ref = $bindable(null), onCreateClick, onCreateBoardClick, ...restProps }: Props = $props();
 
 	let boards = $derived<Board[]>(appState.boards);
-
-	let profile = $state<UserProfile>({});
-
-	onMount(async () => {
-		const res = await fetch('https://localhost:7146/api/v1/UserProfile');
-		profile = await res.json();
-
-		if (profile.username) user.name = profile.username;
-		if (profile.email) user.email = profile.email;
-		if (profile.avatarImage) user.avatar = profile.avatarImage;
-	});
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
@@ -158,6 +140,12 @@
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<NavUser {user} />
+		<NavUser
+			user={{
+				name: appState.profile.username || 'User',
+				email: appState.profile.email || 'user@example.com',
+				avatar: appState.profile.avatarImage || ''
+			}}
+		/>
 	</Sidebar.Footer>
 </Sidebar.Root>

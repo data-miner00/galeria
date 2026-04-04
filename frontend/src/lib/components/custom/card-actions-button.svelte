@@ -15,6 +15,7 @@
 	import { toast } from 'svelte-sonner';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import AddToBoardDialog from './add-to-board-dialog.svelte';
+	import { appState } from '$lib/states.svelte';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -85,6 +86,8 @@
 				},
 				body: JSON.stringify({ avatarImage: imageSrc })
 			});
+
+			appState.profile.avatarImage = imageSrc;
 
 			if (!response.ok) {
 				throw new Error('Something wrong');

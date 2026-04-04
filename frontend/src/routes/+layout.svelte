@@ -31,6 +31,11 @@
 		if (resSettings.ok) {
 			appState.settings = await resSettings.json();
 		}
+
+		const resProfile = await fetch('https://localhost:7146/api/v1/UserProfile');
+		if (resProfile.ok) {
+			appState.profile = await resProfile.json();
+		}
 	});
 </script>
 
