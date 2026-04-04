@@ -26,6 +26,10 @@
 
         public string MediumPath { get; set; } = string.Empty;
 
+        public bool IsFavorite { get; set; }
+
+        public bool IsSoftDeleted { get; set; }
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -48,6 +52,8 @@
                 Size = Size,
                 ThumbnailPath = ThumbnailPath,
                 MediumPath = MediumPath,
+                IsFavorite = IsFavorite,
+                IsSoftDeleted = IsSoftDeleted,
             };
         }
 
@@ -71,6 +77,8 @@
                 Size = entity.Size,
                 ThumbnailPath = entity.ThumbnailPath,
                 MediumPath = entity.MediumPath,
+                IsFavorite = entity.IsFavorite,
+                IsSoftDeleted = entity.IsSoftDeleted,
             };
         }
     }

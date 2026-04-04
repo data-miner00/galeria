@@ -52,7 +52,7 @@
 		onCreateBoardClick={() => (isCreateBoardDialogOpen = !isCreateBoardDialogOpen)}
 	/>
 	<Sidebar.Inset class="relative overflow-clip">
-		<header class="sticky top-0 right-0 left-0 flex h-16 shrink-0 items-center gap-2 bg-white">
+		<header class="sticky top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center gap-2 bg-white">
 			<div class="flex w-full items-center justify-between px-4">
 				<div class="flex items-center gap-2">
 					<Sidebar.Trigger class="-ms-1" />

@@ -27,11 +27,11 @@
 				items: [
 					{
 						title: 'Recycle Bin',
-						url: '#'
+						url: '/recycle'
 					},
 					{
 						title: 'Starred',
-						url: '#'
+						url: '/favorites'
 					},
 					{
 						title: 'Experiment',

@@ -20,6 +20,10 @@
 
         public long Size { get; set; }
 
+        public bool IsFavorite { get; set; }
+
+        public bool IsSoftDeleted { get; set; }
+
         public string ThumbnailPath { get; set; } = string.Empty;
 
         public string MediumPath { get; set; } = string.Empty;

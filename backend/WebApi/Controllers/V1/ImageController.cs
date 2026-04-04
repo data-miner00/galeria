@@ -88,5 +88,45 @@ namespace WebApi.Controllers.V1
 
             return this.Ok(images);
         }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Image>> UpdateImage([FromBody] UpdateImageRequest request, string id)
+        {
+            var image = await this.repository.GetByIdAsync(id, ImageDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (image == null)
+            {
+                return this.NotFound();
+            }
+
+            PatchImageFromRequest(image, request);
+
+            await this.repository.UpsertAsync(image, this.CancellationToken);
+
+            return this.Ok(image);
+        }
+
+        private static void PatchImageFromRequest(Image image, UpdateImageRequest request)
+        {
+            if (!string.IsNullOrWhiteSpace(request.Description))
+            {
+                image.Description = request.Description;
+            }
+
+            if (request.IsCensored.HasValue)
+            {
+                image.IsCensored = request.IsCensored.Value;
+            }
+
+            if (request.IsFavorite.HasValue)
+            {
+                image.IsFavorite = request.IsFavorite.Value;
+            }
+
+            if (request.IsSoftDeleted.HasValue)
+            {
+                image.IsSoftDeleted = request.IsSoftDeleted.Value;
+            }
+        }
     }
 }

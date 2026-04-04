@@ -17,6 +17,8 @@ export type ImageRecord = {
 	isCensored: boolean;
 	thumbnailPath: string;
 	mediumPath: string;
+	isFavorite: boolean;
+	isSoftDeleted: boolean;
 };
 
 export type UserProfile = {

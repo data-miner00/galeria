@@ -16,20 +16,13 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
 	onMount(async () => {
-		appState.headerTitle = 'Home';
-
-		if (appState.images.length > 0) {
-			return;
-		}
-		const res = await fetch('https://localhost:7146/api/v1/image');
-		appState.images = await res.json();
+		appState.headerTitle = 'Recycle Bin';
 	});
 
 	let orders = $state<'newest' | 'oldest'>('newest');
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
-
-	let nonSoftDeletedImages = $derived(appState.images.filter((image) => !image.isSoftDeleted));
+	let softDeletedImages = $derived(appState.images.filter((image) => image.isSoftDeleted));
 
 	let chunkedRecords = $derived(
 		(() => {
@@ -41,9 +34,9 @@
 			i = 0;
 
 			let j = 0,
-				k = nonSoftDeletedImages.length - 1;
-			while (i < nonSoftDeletedImages.length) {
-				images[i++ % columns].push(nonSoftDeletedImages[orders === 'newest' ? k-- : j++]);
+				k = softDeletedImages.length - 1;
+			while (i < softDeletedImages.length) {
+				images[i++ % columns].push(softDeletedImages[orders === 'newest' ? k-- : j++]);
 			}
 
 			return images;
@@ -82,7 +75,7 @@
 	</div>
 </div>
 
-{#if nonSoftDeletedImages.length > 0}
+{#if softDeletedImages.length > 0}
 	<div
 		class="grid h-full gap-4"
 		class:grid-cols-5={columns === 5}
@@ -111,13 +104,13 @@
 			<Empty.Media variant="icon">
 				<ImageIcon />
 			</Empty.Media>
-			<Empty.Title>No Images Yet</Empty.Title>
-			<Empty.Description>Get started by adding your first image to show here!</Empty.Description>
+			<Empty.Title>Nothing in the Recycle Bin</Empty.Title>
+			<Empty.Description>Your recycled images will appear here</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
 			<div class="flex gap-2">
-				<Button>Upload Image</Button>
-				<Button variant="outline">Import Images</Button>
+				<Button href="/">Home</Button>
+				<Button variant="outline" href="/settings/general">Settings</Button>
 			</div>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">

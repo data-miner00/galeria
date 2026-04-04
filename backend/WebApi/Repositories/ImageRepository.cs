@@ -9,22 +9,35 @@ namespace WebApi.Repositories
         {
         }
 
-        public async Task<IEnumerable<Image>> GetByIdsAsync(List<string> ids, CancellationToken ct)
+        public Task<IEnumerable<Image>> GetByIdsAsync(List<string> ids, CancellationToken ct)
         {
             var query = new QueryDefinition("SELECT * FROM c WHERE ARRAY_CONTAINS(@imageIds, c.id)")
                 .WithParameter("@imageIds", ids.ToArray());
 
-            List<ImageDocument> images = [];
+            return this.QueryAllAsync(query, ct);
+        }
 
-            var queryIterator = this.container.GetItemQueryIterator<ImageDocument>(query);
+        /// <summary>
+        /// Gets all images that is not soft deleted.
+        /// </summary>
+        /// <param name="ct">Cancellation token.</param>
+        /// <returns>The list of non-soft deleted images.</returns>
+        public Task<IEnumerable<Image>> GetAllWithoutSoftDeletedAsync(CancellationToken ct)
+        {
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.IsSoftDeleted = false OR NOT IS_DEFINED(c.IsSoftDeleted)");
+            return this.QueryAllAsync(query, ct);
+        }
 
-            while (queryIterator.HasMoreResults)
-            {
-                var response = await queryIterator.ReadNextAsync(ct);
-                images.AddRange(response.Resource);
-            }
-
-            return images.Select(x => x.ToEntity());
+        public Task<IEnumerable<Image>> GetAllFavoritesAsync(CancellationToken ct)
+        {
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.IsFavorite = true");
+            return this.QueryAllAsync(query, ct);
+        }
+        
+        public Task<IEnumerable<Image>> GetAllSoftDeletedAsync(CancellationToken ct)
+        {
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.IsSoftDeleted = true");
+            return this.QueryAllAsync(query, ct);
         }
 
         protected override DocumentType DocumentType => DocumentType.ImageRecord;
@@ -37,6 +50,21 @@ namespace WebApi.Repositories
         protected override Image ToEntity(ImageDocument document)
         {
             return document.ToEntity();
+        }
+
+        private async Task<IEnumerable<Image>> QueryAllAsync(QueryDefinition query, CancellationToken ct)
+        {
+            List<ImageDocument> images = [];
+
+            var queryIterator = this.container.GetItemQueryIterator<ImageDocument>(query);
+
+            while (queryIterator.HasMoreResults)
+            {
+                var response = await queryIterator.ReadNextAsync(ct);
+                images.AddRange(response.Resource);
+            }
+
+            return images.Select(x => x.ToEntity());
         }
     }
 }
