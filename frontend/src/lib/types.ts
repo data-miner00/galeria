@@ -19,6 +19,9 @@ export type ImageRecord = {
 	mediumPath: string;
 	isFavorite: boolean;
 	isSoftDeleted: boolean;
+	width: number;
+	height: number;
+	size: number;
 };
 
 export type UserProfile = {
@@ -33,4 +36,20 @@ export type UserProfile = {
 
 export type UserSettings = {
 	noOfColumns?: number;
+};
+
+export type InfoSheetData = {
+	id?: string;
+	isOpen?: boolean;
+};
+
+export type GeneralSettings = {
+	theme?: 'light' | 'dark' | 'system';
+	language?: string;
+};
+
+export type SecuritySettings = {
+	enablePassword?: boolean;
+	enable2FA?: boolean;
+	rememberMeDuration?: number;
 };

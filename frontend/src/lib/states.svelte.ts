@@ -1,4 +1,4 @@
-import type { Board, ImageRecord, UserProfile, UserSettings } from './types';
+import type { Board, ImageRecord, InfoSheetData, UserProfile, UserSettings } from './types';
 
 export type AppState = {
 	headerTitle: string;
@@ -6,6 +6,7 @@ export type AppState = {
 	boards: Board[];
 	settings: UserSettings;
 	profile: UserProfile;
+	infoSheetData: InfoSheetData;
 };
 
 export let appState = $state<AppState>({
@@ -13,5 +14,6 @@ export let appState = $state<AppState>({
 	images: [],
 	boards: [],
 	settings: {},
-	profile: {}
+	profile: {},
+	infoSheetData: {}
 });

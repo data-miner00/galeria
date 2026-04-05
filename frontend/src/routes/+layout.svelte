@@ -15,11 +15,23 @@
 	import { onMount } from 'svelte';
 	import { appState } from '$lib/states.svelte';
 	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
+	import ImageInfoSheet from '$lib/components/custom/image-info-sheet.svelte';
 
 	let { children } = $props();
 
 	let isUploadImageDialogOpen = $state(false);
 	let isCreateBoardDialogOpen = $state(false);
+	let isInfoSheetOpen = $state(false);
+
+	$effect(() => {
+		if (appState.infoSheetData.isOpen) isInfoSheetOpen = true;
+	});
+
+	$effect(() => {
+		if (!isInfoSheetOpen) {
+			appState.infoSheetData.isOpen = false;
+		}
+	});
 
 	onMount(async () => {
 		const res = await fetch('https://localhost:7146/api/v1/board');
@@ -92,5 +104,6 @@
 
 <UploadImageDialog bind:isDialogOpen={isUploadImageDialogOpen} />
 <CreateBoardDialog bind:isDialogOpen={isCreateBoardDialogOpen} />
+<ImageInfoSheet bind:isOpen={isInfoSheetOpen} />
 
 <ToTopButton />

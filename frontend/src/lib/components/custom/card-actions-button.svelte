@@ -185,6 +185,11 @@
 			image.id === id ? { ...image, isCensored: !image.isCensored } : image
 		);
 	}
+
+	function onInfoClick() {
+		appState.infoSheetData.id = id;
+		appState.infoSheetData.isOpen = true;
+	}
 </script>
 
 <AddToBoardDialog imageId={id} bind:isDialogOpen={isAddToBoardDialogOpen} />
@@ -198,7 +203,9 @@
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="start">
-		<DropdownMenu.Item><Info /> View</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={onInfoClick}>
+			<Info /> View
+		</DropdownMenu.Item>
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger>
 				<ExternalLink /> Open in new tab
