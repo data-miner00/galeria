@@ -5,6 +5,8 @@
 		Download,
 		Ellipsis,
 		ExternalLink,
+		Eye,
+		EyeOff,
 		GitForkIcon,
 		Info,
 		Plus,
@@ -27,10 +29,19 @@
 		mediumPath: string;
 		isFavorite: boolean;
 		isSoftDeleted: boolean;
+		isCensored: boolean;
 	};
 
-	const { id, path, thumbnailPath, mediumPath, onDelete, isFavorite, isSoftDeleted }: Props =
-		$props();
+	const {
+		id,
+		path,
+		thumbnailPath,
+		mediumPath,
+		onDelete,
+		isFavorite,
+		isSoftDeleted,
+		isCensored
+	}: Props = $props();
 
 	let isAddToBoardDialogOpen = $state(false);
 
@@ -113,14 +124,46 @@
 		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${thumbnailPath}`, '_blank');
 	}
 
-	async function toggleFavorite() {
+	function toggleFavorite() {
+		return patchImageProperty(
+			'isFavorite',
+			!isFavorite,
+			'Successfully added to favorites.',
+			'Successfully removed from favorites.'
+		);
+	}
+
+	function toggleSoftDeleted() {
+		return patchImageProperty(
+			'isSoftDeleted',
+			!isSoftDeleted,
+			'Successfully moved to trash.',
+			'Successfully restored image.'
+		);
+	}
+
+	function toggleCensored() {
+		return patchImageProperty(
+			'isCensored',
+			!isCensored,
+			'Successfully censored image.',
+			'Successfully uncensored image.'
+		);
+	}
+
+	async function patchImageProperty(
+		property: string,
+		value: any,
+		toastMessage: string = 'Successfully updated image.',
+		toastMessageOpposite: string = 'Successfully updated image.'
+	) {
 		try {
 			const response = await fetch(`https://localhost:7146/api/v1/image/${id}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ isFavorite: !isFavorite })
+				body: JSON.stringify({ [property]: value })
 			});
 
 			if (!response.ok) {
@@ -128,36 +171,19 @@
 			}
 
 			appState.images = appState.images.map((image) =>
-				image.id === id ? { ...image, isFavorite: !isFavorite } : image
+				image.id === id ? { ...image, [property]: value } : image
 			);
-			toast.success(!isFavorite ? 'Added to favorites.' : 'Removed from favorites.');
+
+			toast.success(value ? toastMessage : toastMessageOpposite);
 		} catch {
 			toast.error('An error has occurred.');
 		}
 	}
 
-	async function toggleSoftDeleted() {
-		try {
-			const response = await fetch(`https://localhost:7146/api/v1/image/${id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ isSoftDeleted: !isSoftDeleted })
-			});
-
-			if (!response.ok) {
-				throw new Error('Something wrong');
-			}
-
-			appState.images = appState.images.map((image) =>
-				image.id === id ? { ...image, isSoftDeleted: !isSoftDeleted } : image
-			);
-
-			toast.success(!isSoftDeleted ? 'Image moved to trash.' : 'Image restored.');
-		} catch {
-			toast.error('An error has occurred.');
-		}
+	function toggleCensoredForThisSession() {
+		appState.images = appState.images.map((image) =>
+			image.id === id ? { ...image, isCensored: !image.isCensored } : image
+		);
 	}
 </script>
 
@@ -206,8 +232,24 @@
 			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator />
+		<DropdownMenu.Item onclick={toggleCensoredForThisSession}>
+			{#if isCensored}
+				<Eye /> Reveal Image temporarily
+			{:else}
+				<EyeOff /> Hide Image temporarily
+			{/if}
+		</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={toggleCensored}>
+			{#if isCensored}
+				<Eye /> Reveal Image
+			{:else}
+				<EyeOff /> Hide Image
+			{/if}
+		</DropdownMenu.Item>
+		<DropdownMenu.Separator />
 		<DropdownMenu.Item onclick={toggleSoftDeleted}>
-			<RecycleIcon /> Move to Trash
+			<RecycleIcon />
+			{#if !isSoftDeleted}Move to Trash{:else}Restore from Trash{/if}
 		</DropdownMenu.Item>
 		<DropdownMenu.Item
 			variant="destructive"

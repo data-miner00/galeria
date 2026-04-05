@@ -106,6 +106,7 @@
 			{onDelete}
 			{isFavorite}
 			{isSoftDeleted}
+			{isCensored}
 		/>
 	</div>
 </div>
