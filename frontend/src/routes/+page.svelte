@@ -15,14 +15,17 @@
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
+	let isLoading = $state(true);
 	onMount(async () => {
 		appState.headerTitle = 'Home';
 
 		if (appState.images.length > 0) {
+			isLoading = false;
 			return;
 		}
 		const res = await fetch('https://localhost:7146/api/v1/image');
 		appState.images = await res.json();
+		isLoading = false;
 	});
 
 	let orders = $state<'newest' | 'oldest'>('newest');
@@ -57,6 +60,8 @@
 	function toggleOrder() {
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
+
+	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 </script>
 
 <div class="flex justify-between">
@@ -82,50 +87,54 @@
 	</div>
 </div>
 
-{#if nonSoftDeletedImages.length > 0}
-	<div
-		class="grid h-full gap-4"
-		class:grid-cols-5={columns === 5}
-		class:grid-cols-4={columns === 4}
-		class:grid-cols-6={columns === 6}
-	>
-		{#each chunkedRecords as chunk}
-			<div class="flex flex-col gap-4">
-				{#each chunk as record}
-					<ImageCard
-						id={record.id}
-						path={record.path}
-						description={record.description}
-						onDelete={() => onDelete(record.id)}
-						isCensored={record.isCensored}
-						thumbnailPath={record.thumbnailPath}
-						mediumPath={record.mediumPath}
-						isFavorite={record.isFavorite}
-						isSoftDeleted={record.isSoftDeleted}
-					/>
-				{/each}
-			</div>
-		{/each}
-	</div>
+{#if !isLoading}
+	{#if nonSoftDeletedImages.length > 0}
+		<div
+			class="grid h-full gap-4"
+			class:grid-cols-5={columns === 5}
+			class:grid-cols-4={columns === 4}
+			class:grid-cols-6={columns === 6}
+		>
+			{#each chunkedRecords as chunk}
+				<div class="flex flex-col gap-4">
+					{#each chunk as record}
+						<ImageCard
+							id={record.id}
+							path={record.path}
+							description={record.description}
+							onDelete={() => onDelete(record.id)}
+							isCensored={record.isCensored}
+							thumbnailPath={record.thumbnailPath}
+							mediumPath={record.mediumPath}
+							isFavorite={record.isFavorite}
+							isSoftDeleted={record.isSoftDeleted}
+						/>
+					{/each}
+				</div>
+			{/each}
+		</div>
+	{:else}
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<ImageIcon />
+				</Empty.Media>
+				<Empty.Title>No Images Yet</Empty.Title>
+				<Empty.Description>Get started by adding your first image to show here!</Empty.Description>
+			</Empty.Header>
+			<Empty.Content>
+				<div class="flex gap-2">
+					<Button>Upload Image</Button>
+					<Button variant="outline">Import Images</Button>
+				</div>
+			</Empty.Content>
+			<Button variant="link" class="text-muted-foreground" size="sm">
+				<a href="#/">
+					Learn More <ArrowUpRightIcon class="inline" />
+				</a>
+			</Button>
+		</Empty.Root>
+	{/if}
 {:else}
-	<Empty.Root>
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<ImageIcon />
-			</Empty.Media>
-			<Empty.Title>No Images Yet</Empty.Title>
-			<Empty.Description>Get started by adding your first image to show here!</Empty.Description>
-		</Empty.Header>
-		<Empty.Content>
-			<div class="flex gap-2">
-				<Button>Upload Image</Button>
-				<Button variant="outline">Import Images</Button>
-			</div>
-		</Empty.Content>
-		<Button variant="link" class="text-muted-foreground" size="sm">
-			<a href="#/">
-				Learn More <ArrowUpRightIcon class="inline" />
-			</a>
-		</Button>
-	</Empty.Root>
+	<LoadingImagesSkeleton />
 {/if}

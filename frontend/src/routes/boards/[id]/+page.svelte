@@ -10,6 +10,9 @@
 	import { ImageIcon } from '@lucide/svelte';
 
 	import { appState } from '$lib/states.svelte';
+	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
+
+	let isLoading = $state(true);
 
 	async function loadBoard(boardId: string) {
 		const res = await fetch(`https://localhost:7146/api/v1/board/${boardId}`);
@@ -35,7 +38,7 @@
 	// Workaround for onMount not working when navigating from one board to another. This is because Svelte cache the array for some reason.
 	$effect(() => {
 		if (page.params.id) {
-			loadBoard(page.params.id);
+			loadBoard(page.params.id).finally(() => (isLoading = false));
 		}
 	});
 
@@ -65,50 +68,54 @@
 	}
 </script>
 
-{#if records.length > 0}
-	<div
-		class="grid h-full gap-4"
-		class:grid-cols-5={columns === 5}
-		class:grid-cols-4={columns === 4}
-		class:grid-cols-6={columns === 6}
-	>
-		{#each chunkedRecords as chunk}
-			<div class="flex flex-col gap-4">
-				{#each chunk as record}
-					<ImageCard
-						id={record.id}
-						path={record.path}
-						description={record.description}
-						onDelete={() => onDelete(record.id)}
-						isCensored={record.isCensored}
-						thumbnailPath={record.thumbnailPath}
-						mediumPath={record.mediumPath}
-						isFavorite={record.isFavorite}
-						isSoftDeleted={record.isSoftDeleted}
-					/>
-				{/each}
-			</div>
-		{/each}
-	</div>
+{#if !isLoading}
+	{#if records.length > 0}
+		<div
+			class="grid h-full gap-4"
+			class:grid-cols-5={columns === 5}
+			class:grid-cols-4={columns === 4}
+			class:grid-cols-6={columns === 6}
+		>
+			{#each chunkedRecords as chunk}
+				<div class="flex flex-col gap-4">
+					{#each chunk as record}
+						<ImageCard
+							id={record.id}
+							path={record.path}
+							description={record.description}
+							onDelete={() => onDelete(record.id)}
+							isCensored={record.isCensored}
+							thumbnailPath={record.thumbnailPath}
+							mediumPath={record.mediumPath}
+							isFavorite={record.isFavorite}
+							isSoftDeleted={record.isSoftDeleted}
+						/>
+					{/each}
+				</div>
+			{/each}
+		</div>
+	{:else}
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<ImageIcon />
+				</Empty.Media>
+				<Empty.Title>No Images Yet</Empty.Title>
+				<Empty.Description>Get started by adding your first image to this board.</Empty.Description>
+			</Empty.Header>
+			<Empty.Content>
+				<div class="flex gap-2">
+					<Button>Add Image</Button>
+					<Button variant="outline">Import Images</Button>
+				</div>
+			</Empty.Content>
+			<Button variant="link" class="text-muted-foreground" size="sm">
+				<a href="#/">
+					Learn More <ArrowUpRightIcon class="inline" />
+				</a>
+			</Button>
+		</Empty.Root>
+	{/if}
 {:else}
-	<Empty.Root>
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<ImageIcon />
-			</Empty.Media>
-			<Empty.Title>No Images Yet</Empty.Title>
-			<Empty.Description>Get started by adding your first image to this board.</Empty.Description>
-		</Empty.Header>
-		<Empty.Content>
-			<div class="flex gap-2">
-				<Button>Add Image</Button>
-				<Button variant="outline">Import Images</Button>
-			</div>
-		</Empty.Content>
-		<Button variant="link" class="text-muted-foreground" size="sm">
-			<a href="#/">
-				Learn More <ArrowUpRightIcon class="inline" />
-			</a>
-		</Button>
-	</Empty.Root>
+	<LoadingImagesSkeleton />
 {/if}
