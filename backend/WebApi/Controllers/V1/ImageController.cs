@@ -106,6 +106,18 @@ namespace WebApi.Controllers.V1
             return this.Ok(image);
         }
 
+        [HttpDelete("recyclebin/clear")]
+        public async Task<IActionResult> ClearRecycleBin()
+        {
+            var isSuccess = await this.service.DeleteSoftDeletedImagesAsync(this.CancellationToken);
+
+            return isSuccess ? this.NoContent() : this.StatusCode(500, new ErrorResponse
+            {
+                ReferenceId = Guid.NewGuid().ToString(),
+                ErrorMessage = "Something went wrong during the clearing of the recycle bin.",
+            });
+        }
+
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)
         {
             if (!string.IsNullOrWhiteSpace(request.Description))

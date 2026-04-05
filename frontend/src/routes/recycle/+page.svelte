@@ -5,19 +5,25 @@
 	import { onMount } from 'svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import {
+		ArchiveRestoreIcon,
 		ArrowDown01Icon,
 		ArrowUp01Icon,
 		ArrowUpRightIcon,
 		ImageIcon,
 		LayoutDashboardIcon,
-		LayoutGridIcon
+		LayoutGridIcon,
+		Trash2Icon
 	} from '@lucide/svelte';
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { toast } from 'svelte-sonner';
 
 	onMount(async () => {
 		appState.headerTitle = 'Recycle Bin';
 	});
+
+	let isDeleteDialogOpen = $state(false);
 
 	let orders = $state<'newest' | 'oldest'>('newest');
 
@@ -50,6 +56,22 @@
 	function toggleOrder() {
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
+
+	async function deleteAll() {
+		try {
+			await fetch('https://localhost:7146/api/v1/image/recyclebin/clear', {
+				method: 'DELETE'
+			});
+
+			appState.images = appState.images.filter((record) => !record.isSoftDeleted);
+
+			toast.success('Recycle bin cleared successfully.');
+		} catch {
+			toast.error('An error has occurred while clearing recycle bin.');
+		}
+
+		isDeleteDialogOpen = false;
+	}
 </script>
 
 <div class="flex justify-between">
@@ -60,7 +82,7 @@
 		<Button size="sm" variant="ghost">Books</Button>
 		<Button size="sm" variant="ghost">Cars</Button>
 	</div>
-	<div>
+	<div class="flex gap-2">
 		<ButtonGroup.Root>
 			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
 			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
@@ -72,6 +94,12 @@
 				{/if}
 			</Button>
 		</ButtonGroup.Root>
+
+		<Button variant="outline" size="icon-sm"><ArchiveRestoreIcon /></Button>
+
+		<Button variant="destructive" size="sm" onclick={() => (isDeleteDialogOpen = true)}>
+			<Trash2Icon /> Clear All
+		</Button>
 	</div>
 </div>
 
@@ -122,3 +150,19 @@
 		</Button>
 	</Empty.Root>
 {/if}
+
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently delete your image and the data from the
+				server.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={deleteAll}>Delete</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>

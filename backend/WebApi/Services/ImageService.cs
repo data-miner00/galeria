@@ -212,4 +212,22 @@ public sealed class ImageService
 
         return true;
     }
+
+    /// <summary>
+    /// Permanently deletes all images that have been soft deleted from the repository.
+    /// </summary>
+    /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+    /// <returns>true if all soft deleted images are successfully deleted; otherwise, false.</returns>
+    public async Task<bool> DeleteSoftDeletedImagesAsync(CancellationToken ct = default)
+    {
+        var recycledImages = await this.repository.GetAllSoftDeletedAsync(ct);
+
+        List<Task<DatabaseOperationStatus>> deleteTasks = recycledImages
+            .Select(image => this.repository.DeleteAsync(image.Id, ImageDocument.PartitionKeyValue, ct))
+            .ToList();
+
+        await Task.WhenAll(deleteTasks);
+
+        return true;
+    }
 }
