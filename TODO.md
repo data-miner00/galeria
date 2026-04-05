@@ -13,13 +13,14 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Favorites
 - [x] Recycle Bin
 - [x] Download
+- [ ] Fuzzy search (filename, desc, metadata, tags)
 
 ## Presentation
 
 - [x] Sorting
   - [x] Based on created date time
-- [ ] Skeleton loading
-- [ ] Dark/light mode
+- [x] Skeleton loading
+- [x] Dark/light mode
 - [ ] Internationalization (en,ja,ko,es,pt,fr,zh,ms)
 - [x] Censor/blur option
 - [ ] Filter base on tags / category
@@ -49,6 +50,9 @@ A self-hosted authenticationless image board used for managing personal images.
 - [ ] Optional TOTP MFA
 - [ ] Craft image from text and emoji icons and backgrounds
 - [ ] PWA
+- [ ] Optional watermarks for downloaded image
+- [ ] Add image from URL
+- [ ] Bulk select for actions
 
 ## Performance
 
@@ -57,6 +61,7 @@ A self-hosted authenticationless image board used for managing personal images.
 - [ ] Refactorings (TBD)
 - [ ] Benchmark memory usage
 - [ ] Fix issues based on benchmark
+- [ ] Client-side caching for frequent images
 
 ## Enhancement
 

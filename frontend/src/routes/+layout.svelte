@@ -16,6 +16,8 @@
 	import { appState } from '$lib/states.svelte';
 	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
 	import ImageInfoSheet from '$lib/components/custom/image-info-sheet.svelte';
+	import { ModeWatcher } from 'mode-watcher';
+	import ThemeButton from '$lib/components/custom/theme-button.svelte';
 
 	let { children } = $props();
 
@@ -58,13 +60,17 @@
 
 <Toaster position="bottom-right" duration={5000} />
 
+<ModeWatcher />
+
 <Sidebar.Provider>
 	<AppSidebar
 		onCreateClick={() => (isUploadImageDialogOpen = !isUploadImageDialogOpen)}
 		onCreateBoardClick={() => (isCreateBoardDialogOpen = !isCreateBoardDialogOpen)}
 	/>
 	<Sidebar.Inset class="relative overflow-clip">
-		<header class="sticky top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center gap-2 bg-white">
+		<header
+			class="sticky top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center gap-2 bg-background"
+		>
 			<div class="flex w-full items-center justify-between px-4">
 				<div class="flex items-center gap-2">
 					<Sidebar.Trigger class="-ms-1" />
@@ -89,6 +95,8 @@
 					<Button variant="ghost" size="icon">
 						<SearchIcon />
 					</Button>
+
+					<ThemeButton />
 
 					<Button onclick={() => (isUploadImageDialogOpen = !isUploadImageDialogOpen)}>
 						<PlusIcon /> Create
