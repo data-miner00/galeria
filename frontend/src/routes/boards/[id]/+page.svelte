@@ -7,10 +7,17 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
-	import { ImageIcon } from '@lucide/svelte';
+	import {
+		ArrowDown01Icon,
+		ArrowUp01Icon,
+		ImageIcon,
+		LayoutDashboardIcon,
+		LayoutGridIcon
+	} from '@lucide/svelte';
 
 	import { appState } from '$lib/states.svelte';
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 
 	let isLoading = $state(true);
 
@@ -44,7 +51,21 @@
 
 	let records: ImageRecord[] = $state([]);
 
+	let categories = $derived(
+		records
+			.map((image) => image.category)
+			.filter((value, index, self) => self.indexOf(value) === index)
+			.filter((category) => !!category)
+	);
+
+	let activeCategory = $state<string>('All');
+	let filteredImages = $derived(
+		activeCategory === 'All'
+			? records.filter((image) => !image.isSoftDeleted)
+			: records.filter((image) => !image.isSoftDeleted && image.category === activeCategory)
+	);
 	let columns = $derived(appState.settings.noOfColumns || 5);
+	let orders = $state<'newest' | 'oldest'>('newest');
 
 	let chunkedRecords = $derived(
 		(() => {
@@ -55,9 +76,10 @@
 			}
 			i = 0;
 
-			let j = 0;
-			while (i < records.length) {
-				images[i++ % columns].push(records[j++]);
+			let j = 0,
+				k = filteredImages.length - 1;
+			while (i < filteredImages.length) {
+				images[i++ % columns].push(filteredImages[orders === 'newest' ? k-- : j++]);
 			}
 
 			return images;
@@ -66,10 +88,51 @@
 	function onDelete(deletedId: string) {
 		records = records.filter((record) => record.id != deletedId);
 	}
+
+	function toggleOrder() {
+		orders = orders === 'newest' ? 'oldest' : 'newest';
+	}
 </script>
 
+<div class="flex justify-between">
+	<div class="flex gap-2">
+		<Button
+			size="sm"
+			variant={activeCategory === 'All' ? 'default' : 'outline'}
+			onclick={() => (activeCategory = 'All')}
+			class="cursor-pointer"
+		>
+			All
+		</Button>
+
+		{#each categories as category}
+			<Button
+				size="sm"
+				variant={activeCategory === category ? 'default' : 'outline'}
+				onclick={() => (activeCategory = category!)}
+				class="cursor-pointer"
+			>
+				{category}
+			</Button>
+		{/each}
+	</div>
+	<div>
+		<ButtonGroup.Root>
+			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
+			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
+			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>
+				{#if orders === 'newest'}
+					<ArrowDown01Icon />
+				{:else}
+					<ArrowUp01Icon />
+				{/if}
+			</Button>
+		</ButtonGroup.Root>
+	</div>
+</div>
+
 {#if !isLoading}
-	{#if records.length > 0}
+	{#if filteredImages.length > 0}
 		<div
 			class="grid h-full gap-4"
 			class:grid-cols-5={columns === 5}

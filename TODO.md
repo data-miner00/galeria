@@ -9,7 +9,7 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Add/Remove image from boards
 - [x] Display in Masonry layout
 - [x] Lightbox
-- [ ] Tags/Category
+- [x] Tags/Category
 - [x] Favorites
 - [x] Recycle Bin
 - [x] Download

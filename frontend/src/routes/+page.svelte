@@ -32,7 +32,20 @@
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 
-	let nonSoftDeletedImages = $derived(appState.images.filter((image) => !image.isSoftDeleted));
+	let categories = $derived(
+		appState.images
+			.map((image) => image.category)
+			.filter((value, index, self) => self.indexOf(value) === index)
+			.filter((category) => !!category)
+	);
+
+	let activeCategory = $state<string>('All');
+
+	let filteredImages = $derived(
+		activeCategory === 'All'
+			? appState.images.filter((image) => !image.isSoftDeleted)
+			: appState.images.filter((image) => !image.isSoftDeleted && image.category === activeCategory)
+	);
 
 	let chunkedRecords = $derived(
 		(() => {
@@ -44,9 +57,9 @@
 			i = 0;
 
 			let j = 0,
-				k = nonSoftDeletedImages.length - 1;
-			while (i < nonSoftDeletedImages.length) {
-				images[i++ % columns].push(nonSoftDeletedImages[orders === 'newest' ? k-- : j++]);
+				k = filteredImages.length - 1;
+			while (i < filteredImages.length) {
+				images[i++ % columns].push(filteredImages[orders === 'newest' ? k-- : j++]);
 			}
 
 			return images;
@@ -66,11 +79,25 @@
 
 <div class="flex justify-between">
 	<div class="flex gap-2">
-		<Button size="sm">All</Button>
-		<Button size="sm" variant="ghost">Photography</Button>
-		<Button size="sm" variant="ghost">Gadgets</Button>
-		<Button size="sm" variant="ghost">Books</Button>
-		<Button size="sm" variant="ghost">Cars</Button>
+		<Button
+			size="sm"
+			variant={activeCategory === 'All' ? 'default' : 'outline'}
+			onclick={() => (activeCategory = 'All')}
+			class="cursor-pointer"
+		>
+			All
+		</Button>
+
+		{#each categories as category}
+			<Button
+				size="sm"
+				variant={activeCategory === category ? 'default' : 'outline'}
+				onclick={() => (activeCategory = category!)}
+				class="cursor-pointer"
+			>
+				{category}
+			</Button>
+		{/each}
 	</div>
 	<div>
 		<ButtonGroup.Root>
@@ -88,7 +115,7 @@
 </div>
 
 {#if !isLoading}
-	{#if nonSoftDeletedImages.length > 0}
+	{#if filteredImages.length > 0}
 		<div
 			class="grid h-full gap-4"
 			class:grid-cols-5={columns === 5}
