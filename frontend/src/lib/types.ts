@@ -22,6 +22,8 @@ export type ImageRecord = {
 	width: number;
 	height: number;
 	size: number;
+	category?: string;
+	tags: string[];
 };
 
 export type UserProfile = {

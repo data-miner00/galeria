@@ -27,5 +27,9 @@
         public string ThumbnailPath { get; set; } = string.Empty;
 
         public string MediumPath { get; set; } = string.Empty;
+
+        public string? Category { get; set; }
+
+        public List<string> Tags { get; set; } = [];
     }
 }

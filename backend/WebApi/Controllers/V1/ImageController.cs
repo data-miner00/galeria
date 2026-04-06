@@ -139,6 +139,16 @@ namespace WebApi.Controllers.V1
             {
                 image.IsSoftDeleted = request.IsSoftDeleted.Value;
             }
+
+            if (!string.IsNullOrWhiteSpace(request.Category))
+            {
+                image.Category = request.Category;
+            }
+
+            if (request.Tags is not null)
+            {
+                image.Tags = request.Tags;
+            }
         }
     }
 }

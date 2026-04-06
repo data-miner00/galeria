@@ -9,5 +9,9 @@
         public bool? IsFavorite { get; set; }
 
         public bool? IsSoftDeleted { get; set; }
+
+        public string? Category { get; set; }
+
+        public List<string>? Tags { get; set; }
     }
 }

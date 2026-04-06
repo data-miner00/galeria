@@ -30,6 +30,10 @@
 
         public bool IsSoftDeleted { get; set; }
 
+        public string? Category { get; set; }
+
+        public List<string> Tags { get; set; } = [];
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -54,6 +58,8 @@
                 MediumPath = MediumPath,
                 IsFavorite = IsFavorite,
                 IsSoftDeleted = IsSoftDeleted,
+                Category = Category,
+                Tags = Tags,
             };
         }
 
@@ -79,6 +85,8 @@
                 MediumPath = entity.MediumPath,
                 IsFavorite = entity.IsFavorite,
                 IsSoftDeleted = entity.IsSoftDeleted,
+                Category = entity.Category,
+                Tags = entity.Tags,
             };
         }
     }

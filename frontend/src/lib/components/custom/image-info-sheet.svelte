@@ -5,6 +5,8 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { appState } from '$lib/states.svelte';
+	import { toast } from 'svelte-sonner';
+	import { onMount } from 'svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -18,6 +20,66 @@
 			return appState.images.find((img) => img.id === appState.infoSheetData.id);
 		})()
 	);
+
+	$effect(() => {
+		if (!isOpen) {
+			resetForm();
+		}
+	});
+
+	function resetForm() {
+		if (!currentImageRecord) return;
+		description = currentImageRecord.description || '';
+		category = currentImageRecord.category || '';
+		tags = currentImageRecord.tags.join(', ');
+	}
+
+	let description = $state('');
+	let category = $state('');
+	let tags = $state('');
+
+	onMount(() => {
+		console.log('Current Image Record:', currentImageRecord);
+		if (currentImageRecord) {
+			description = currentImageRecord.description || '';
+			category = currentImageRecord.category || '';
+			tags = currentImageRecord.tags.join(', ');
+		}
+	});
+
+	async function saveChanges() {
+		if (!currentImageRecord) return;
+
+		const body = {
+			description,
+			category,
+			tags: tags.split(',').map((tag) => tag.trim())
+		};
+
+		try {
+			const response = await fetch(`https://localhost:7146/api/v1/image/${currentImageRecord.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(body)
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to update image details');
+			}
+
+			appState.images = appState.images.map((img) =>
+				img.id === currentImageRecord.id ? { ...img, ...body } : img
+			);
+
+			toast.success('Image details updated successfully!');
+		} catch (error) {
+			toast.error('An error occurred while updating image details.');
+		}
+
+		isOpen = false;
+	}
 </script>
 
 <Sheet.Root bind:open={isOpen}>
@@ -37,11 +99,15 @@
 				</div>
 				<div class="grid gap-3">
 					<Label for="description" class="text-end">Description</Label>
-					<Input
-						id="description"
-						placeholder="Enter image description"
-						value={currentImageRecord.description}
-					/>
+					<Input id="description" placeholder="Enter image description" bind:value={description} />
+				</div>
+				<div class="grid gap-3">
+					<Label for="category" class="text-end">Category</Label>
+					<Input id="category" placeholder="Enter image category" bind:value={category} />
+				</div>
+				<div class="grid gap-3">
+					<Label for="tags" class="text-end">Tags</Label>
+					<Input id="tags" placeholder="Enter image tags (comma-separated)" bind:value={tags} />
 				</div>
 				<div class="grid gap-3">
 					<Label for="width" class="text-end">Width</Label>
@@ -64,7 +130,7 @@
 			<p>Image not found.</p>
 		{/if}
 		<Sheet.Footer>
-			<Button type="submit">Save changes</Button>
+			<Button type="submit" onclick={saveChanges}>Save changes</Button>
 			<Sheet.Close class={buttonVariants({ variant: 'outline' })}>Close</Sheet.Close>
 		</Sheet.Footer>
 	</Sheet.Content>
