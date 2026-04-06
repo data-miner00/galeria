@@ -10,6 +10,7 @@
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/states.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { setMode, mode } from 'mode-watcher';
 
 	let settings = $state({});
 
@@ -17,6 +18,7 @@
 
 	onMount(async () => {
 		appState.headerTitle = 'Security Settings';
+		value = mode.current;
 	});
 
 	let isSaving = $state(false);
@@ -42,10 +44,12 @@
 		{ value: 'pt', label: 'Português' }
 	];
 
-	let value = $state('');
+	let value = $state<'light' | 'dark'>();
 	let language = $state('');
 
-	const triggerContent = $derived(themes.find((f) => f.value === value)?.label ?? 'Select theme');
+	const triggerContent = $derived(
+		themes.find((f) => f.value === mode.current)?.label ?? 'Select theme'
+	);
 	const triggerLanguageContent = $derived(
 		languages.find((f) => f.value === language)?.label ?? 'Select language'
 	);
@@ -59,7 +63,12 @@
 	<div class="grid w-full max-w-sm gap-4">
 		<div>
 			<Label.Root for="theme" class="mb-3 text-foreground">Theme</Label.Root>
-			<Select.Root type="single" name="theme" bind:value>
+			<Select.Root
+				type="single"
+				name="theme"
+				bind:value
+				onValueChange={(value) => setMode(value as 'light' | 'dark' | 'system')}
+			>
 				<Select.Trigger class="w-full">
 					{triggerContent}
 				</Select.Trigger>
