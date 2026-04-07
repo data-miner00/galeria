@@ -3,6 +3,7 @@
 	import CardActionsButton from './card-actions-button.svelte';
 	import { appState } from '$lib/states.svelte';
 	import { EyeOffIcon } from '@lucide/svelte';
+	import type { LayoutType } from '$lib/types';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 
@@ -16,6 +17,7 @@
 		isCensored: boolean;
 		isFavorite: boolean;
 		isSoftDeleted: boolean;
+		layoutType?: LayoutType;
 	};
 
 	let revealCensoredImage = $state(false);
@@ -29,7 +31,8 @@
 		mediumPath,
 		isCensored = false,
 		isFavorite = false,
-		isSoftDeleted = false
+		isSoftDeleted = false,
+		layoutType = 'masonry'
 	}: Props = $props();
 
 	let isLightboxOpen = $state(false);
@@ -72,9 +75,11 @@
 <div>
 	<button
 		class="relative cursor-pointer overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-		class:w-70={columns === 5}
-		class:w-80={columns === 4}
-		class:w-60={columns === 6}
+		class:w-70={layoutType === 'masonry' && columns === 5}
+		class:w-80={layoutType === 'masonry' && columns === 4}
+		class:w-60={layoutType === 'masonry' && columns === 6}
+		class:w-full={layoutType === 'grid'}
+		class:aspect-square={layoutType === 'grid'}
 		type="button"
 		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}
 		aria-label="Open image preview"

@@ -23,10 +23,10 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Dark/light mode
 - [ ] Internationalization (en,ja,ko,es,pt,fr,zh,ms)
 - [x] Censor/blur option
-- [ ] Filter base on tags / category
+- [x] Filter base on tags / category
 - [ ] Mobile responsive
 - [ ] 404 page
-- [ ] Swap between masonry to squared layout
+- [x] Swap between masonry to squared layout
 
 ## Extra
 

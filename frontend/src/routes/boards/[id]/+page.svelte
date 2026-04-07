@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import type { Board, ImageRecord } from '$lib/types';
+	import type { Board, ImageRecord, LayoutType } from '$lib/types';
 
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -92,6 +92,8 @@
 	function toggleOrder() {
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
+
+	let layoutType = $state<LayoutType>('masonry');
 </script>
 
 <div class="flex justify-between">
@@ -118,8 +120,12 @@
 	</div>
 	<div>
 		<ButtonGroup.Root>
-			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
-			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
+			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'masonry')}>
+				<LayoutDashboardIcon />
+			</Button>
+			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'grid')}>
+				<LayoutGridIcon />
+			</Button>
 			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>
 				{#if orders === 'newest'}
 					<ArrowDown01Icon />
@@ -152,6 +158,7 @@
 							mediumPath={record.mediumPath}
 							isFavorite={record.isFavorite}
 							isSoftDeleted={record.isSoftDeleted}
+							{layoutType}
 						/>
 					{/each}
 				</div>

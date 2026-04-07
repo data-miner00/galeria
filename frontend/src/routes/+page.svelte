@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ImageCard from '$lib/components/custom/image-card.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import type { ImageRecord } from '$lib/types';
+	import type { ImageRecord, LayoutType } from '$lib/types';
 	import { onMount } from 'svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import {
@@ -75,6 +75,8 @@
 	}
 
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
+
+	let layoutType = $state<LayoutType>('masonry');
 </script>
 
 <div class="flex justify-between">
@@ -101,8 +103,12 @@
 	</div>
 	<div>
 		<ButtonGroup.Root>
-			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
-			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
+			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'masonry')}>
+				<LayoutDashboardIcon />
+			</Button>
+			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'grid')}>
+				<LayoutGridIcon />
+			</Button>
 			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>
 				{#if orders === 'newest'}
 					<ArrowDown01Icon />
@@ -135,6 +141,7 @@
 							mediumPath={record.mediumPath}
 							isFavorite={record.isFavorite}
 							isSoftDeleted={record.isSoftDeleted}
+							{layoutType}
 						/>
 					{/each}
 				</div>

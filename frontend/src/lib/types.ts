@@ -55,3 +55,5 @@ export type SecuritySettings = {
 	enable2FA?: boolean;
 	rememberMeDuration?: number;
 };
+
+export type LayoutType = 'masonry' | 'grid';
