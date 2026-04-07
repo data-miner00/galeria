@@ -18,6 +18,7 @@
 	import ImageInfoSheet from '$lib/components/custom/image-info-sheet.svelte';
 	import { ModeWatcher } from 'mode-watcher';
 	import ThemeButton from '$lib/components/custom/theme-button.svelte';
+	import CommandPalette from '$lib/components/custom/command-palette.svelte';
 
 	let { children } = $props();
 
@@ -51,12 +52,23 @@
 			appState.profile = await resProfile.json();
 		}
 	});
+
+	let isCommandPaletteOpen = $state(false);
+
+	function handleKeydown(e: KeyboardEvent) {
+		if ((e.key === 'j' && (e.metaKey || e.ctrlKey)) || e.key === '/') {
+			e.preventDefault();
+			isCommandPaletteOpen = !isCommandPaletteOpen;
+		}
+	}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>Galeria</title>
 </svelte:head>
+
+<svelte:document onkeydown={handleKeydown} />
 
 <Toaster position="bottom-right" duration={5000} />
 
@@ -115,3 +127,5 @@
 <ImageInfoSheet bind:isOpen={isInfoSheetOpen} />
 
 <ToTopButton />
+
+<CommandPalette bind:isOpen={isCommandPaletteOpen} />
