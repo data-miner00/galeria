@@ -15,6 +15,11 @@
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
+	let columns = $derived(appState.settings.noOfColumns || 5);
+	const cardWidth = 247.5; // Assuming each card has a fixed width of 240px
+	const containerPadding = 16 * 2;
+	let gap = $derived(16 * (columns - 1));
+
 	let isLoading = $state(true);
 	onMount(async () => {
 		appState.headerTitle = 'Home';
@@ -28,9 +33,27 @@
 		isLoading = false;
 	});
 
-	let orders = $state<'newest' | 'oldest'>('newest');
+	onMount(() => {
+		const targetElement = document.querySelector('#layout-container');
 
-	let columns = $derived(appState.settings.noOfColumns || 5);
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (let entry of entries) {
+				const newWidth = entry.contentRect.width;
+				const availableWidth = newWidth - containerPadding - gap;
+				const newColumns = Math.max(1, Math.floor(availableWidth / cardWidth));
+				appState.settings.noOfColumns = newColumns;
+			}
+		});
+
+		// Start observing the element
+		resizeObserver.observe(targetElement!);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	});
+
+	let orders = $state<'newest' | 'oldest'>('newest');
 
 	let categories = $derived(
 		appState.images
@@ -124,6 +147,8 @@
 	{#if filteredImages.length > 0}
 		<div
 			class="grid h-full gap-4"
+			class:grid-cols-2={columns === 2}
+			class:grid-cols-3={columns === 3}
 			class:grid-cols-5={columns === 5}
 			class:grid-cols-4={columns === 4}
 			class:grid-cols-6={columns === 6}
