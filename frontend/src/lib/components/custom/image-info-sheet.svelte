@@ -39,7 +39,6 @@
 	let tags = $state('');
 
 	onMount(() => {
-		console.log('Current Image Record:', currentImageRecord);
 		if (currentImageRecord) {
 			description = currentImageRecord.description || '';
 			category = currentImageRecord.category || '';

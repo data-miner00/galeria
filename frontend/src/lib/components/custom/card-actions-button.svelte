@@ -85,9 +85,9 @@
 
 			// 5. Revoke the temporary URL to free up memory
 			window.URL.revokeObjectURL(href);
-			console.log('The image has been downloaded');
+			toast.success('The image has been downloaded');
 		} catch (error) {
-			console.error('Error downloading image: ', error);
+			toast.error('Error downloading image.');
 		}
 	}
 

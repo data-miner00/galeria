@@ -38,7 +38,6 @@
 	let title = $state('');
 
 	onMount(() => {
-		console.log('Current Board Record:', currentBoardRecord);
 		if (currentBoardRecord) {
 			description = currentBoardRecord.description || '';
 			title = currentBoardRecord.title || '';
