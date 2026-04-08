@@ -74,11 +74,7 @@
 
 <div>
 	<button
-		class="relative cursor-pointer overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-		class:w-70={layoutType === 'masonry' && columns === 5}
-		class:w-80={layoutType === 'masonry' && columns === 4}
-		class:w-60={layoutType === 'masonry' && columns === 6}
-		class:w-full={layoutType === 'grid'}
+		class="relative w-full cursor-pointer overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 		class:aspect-square={layoutType === 'grid'}
 		type="button"
 		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}
