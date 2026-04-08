@@ -7,6 +7,7 @@
 	import { X } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -18,12 +19,14 @@
 	let isCensored = $state(false);
 	let files: FileList | undefined = $state();
 	let image: HTMLImageElement | undefined = $state();
-	let showImage = $state(false);
+	let imageUrl = $state('');
+
+	type UploadMode = 'file' | 'url';
+	let uploadMode = $state<UploadMode>('file');
 
 	function onImageChange() {
 		if (files?.[0]) {
 			const file = files[0];
-			showImage = true;
 
 			const reader = new FileReader();
 
@@ -37,11 +40,22 @@
 	}
 
 	async function uploadImage() {
-		if (!files?.[0]) return;
-		const file = files[0];
-
 		const formData = new FormData();
-		formData.append('File', file);
+
+		if (uploadMode === 'file') {
+			if (!files?.[0]) return;
+			const file = files[0];
+			formData.append('File', file);
+		} else {
+			if (!imageUrl) return;
+			const response = await fetch(imageUrl);
+			const fileName = imageUrl.split('/').pop() || 'image';
+
+			const blob = await response.blob();
+
+			formData.append('File', new File([blob], fileName, { type: blob.type }));
+		}
+
 		formData.append('Description', description);
 		formData.append('IsCensored', isCensored.toString());
 
@@ -69,6 +83,7 @@
 
 	function clearInput() {
 		description = '';
+		imageUrl = '';
 		isCensored = false;
 		files = undefined;
 		image = undefined;
@@ -82,36 +97,82 @@
 				<Dialog.Title>Upload Image</Dialog.Title>
 				<Dialog.Description>Upload and create a new entry in the gallery.</Dialog.Description>
 			</Dialog.Header>
-			<div class="grid gap-4">
-				<div class="grid gap-3">
-					<Label for="description">Description</Label>
-					<Input
-						bind:value={description}
-						id="description"
-						name="description"
-						placeholder="e.g. A very cool photograph of volcano"
-					/>
-				</div>
-				<div class="grid gap-3">
-					<Label for="image">Image</Label>
-					<Input bind:files onchange={onImageChange} id="image" name="image" type="file" />
-				</div>
 
-				<div class="flex items-center gap-3">
-					<Switch id="is-censored" bind:checked={isCensored} />
-					<Label for="is-censored">Censor Image</Label>
-				</div>
+			<Tabs.Root bind:value={uploadMode} class="w-full">
+				<Tabs.List class="mb-4">
+					<Tabs.Trigger value="file">Upload File</Tabs.Trigger>
+					<Tabs.Trigger value="url">URL</Tabs.Trigger>
+				</Tabs.List>
+				<Tabs.Content value="file">
+					<div class="grid gap-4">
+						<div class="grid gap-3">
+							<Label for="description">Description</Label>
+							<Input
+								bind:value={description}
+								id="description"
+								name="description"
+								placeholder="e.g. A very cool photograph of volcano"
+							/>
+						</div>
+						<div class="grid gap-3">
+							<Label for="image">Image</Label>
+							<Input bind:files onchange={onImageChange} id="image" name="image" type="file" />
+						</div>
 
-				{#if files}
-					<div class="relative">
-						<Button class="absolute top-0 right-0" variant="ghost" onclick={clearInput} size="icon">
-							<X />
-						</Button>
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<img bind:this={image} />
+						<div class="flex items-center gap-3">
+							<Switch id="is-censored" bind:checked={isCensored} />
+							<Label for="is-censored">Censor Image</Label>
+						</div>
+
+						{#if files}
+							<div class="relative">
+								<Button
+									class="absolute top-0 right-0"
+									variant="ghost"
+									onclick={clearInput}
+									size="icon"
+								>
+									<X />
+								</Button>
+								<!-- svelte-ignore a11y_missing_attribute -->
+								<img bind:this={image} />
+							</div>
+						{/if}
 					</div>
-				{/if}
-			</div>
+				</Tabs.Content>
+				<Tabs.Content value="url">
+					<div class="grid gap-4">
+						<div class="grid gap-3">
+							<Label for="description">Description</Label>
+							<Input
+								bind:value={description}
+								id="description"
+								name="description"
+								placeholder="e.g. A very cool photograph of volcano"
+							/>
+						</div>
+						<div class="grid gap-3">
+							<Label for="imageUrl">Image URL</Label>
+							<Input
+								bind:value={imageUrl}
+								id="imageUrl"
+								name="imageUrl"
+								placeholder="e.g. https://github.com/data-miner00.png"
+							/>
+						</div>
+
+						<div>
+							<!-- svelte-ignore a11y_missing_attribute -->
+							<img src={imageUrl} />
+						</div>
+						<div class="flex items-center gap-3">
+							<Switch id="is-censored" bind:checked={isCensored} />
+							<Label for="is-censored">Censor Image</Label>
+						</div>
+					</div>
+				</Tabs.Content>
+			</Tabs.Root>
+
 			<Dialog.Footer>
 				<Dialog.Close
 					type="button"
