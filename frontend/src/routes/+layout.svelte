@@ -19,20 +19,32 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import ThemeButton from '$lib/components/custom/theme-button.svelte';
 	import CommandPalette from '$lib/components/custom/command-palette.svelte';
+	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
 
 	let { children } = $props();
 
 	let isUploadImageDialogOpen = $state(false);
 	let isCreateBoardDialogOpen = $state(false);
-	let isInfoSheetOpen = $state(false);
+	let isImageInfoSheetOpen = $state(false);
+	let isBoardInfoSheetOpen = $state(false);
 
 	$effect(() => {
-		if (appState.infoSheetData.isOpen) isInfoSheetOpen = true;
+		if (appState.infoSheetData.isOpen) isImageInfoSheetOpen = true;
 	});
 
 	$effect(() => {
-		if (!isInfoSheetOpen) {
+		if (!isImageInfoSheetOpen) {
 			appState.infoSheetData.isOpen = false;
+		}
+	});
+
+	$effect(() => {
+		if (appState.boardInfoSheetData.isOpen) isBoardInfoSheetOpen = true;
+	});
+
+	$effect(() => {
+		if (!isBoardInfoSheetOpen) {
+			appState.boardInfoSheetData.isOpen = false;
 		}
 	});
 
@@ -124,7 +136,8 @@
 
 <UploadImageDialog bind:isDialogOpen={isUploadImageDialogOpen} />
 <CreateBoardDialog bind:isDialogOpen={isCreateBoardDialogOpen} />
-<ImageInfoSheet bind:isOpen={isInfoSheetOpen} />
+<ImageInfoSheet bind:isOpen={isImageInfoSheetOpen} />
+<BoardInfoSheet bind:isOpen={isBoardInfoSheetOpen} />
 
 <ToTopButton />
 

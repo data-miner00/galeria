@@ -11,6 +11,7 @@
 		ArrowDown01Icon,
 		ArrowUp01Icon,
 		ImageIcon,
+		InfoIcon,
 		LayoutDashboardIcon,
 		LayoutGridIcon
 	} from '@lucide/svelte';
@@ -94,6 +95,11 @@
 	}
 
 	let layoutType = $state<LayoutType>('masonry');
+
+	function onInfoClick() {
+		appState.boardInfoSheetData.id = page.params.id;
+		appState.boardInfoSheetData.isOpen = true;
+	}
 </script>
 
 <div class="flex justify-between">
@@ -118,7 +124,7 @@
 			</Button>
 		{/each}
 	</div>
-	<div>
+	<div class="flex items-center gap-1">
 		<ButtonGroup.Root>
 			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'masonry')}>
 				<LayoutDashboardIcon />
@@ -134,6 +140,10 @@
 				{/if}
 			</Button>
 		</ButtonGroup.Root>
+
+		<Button variant="outline" size="icon-sm" onclick={onInfoClick} class="ms-2">
+			<InfoIcon />
+		</Button>
 	</div>
 </div>
 

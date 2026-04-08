@@ -94,5 +94,35 @@ namespace WebApi.Controllers.V1
 
             return this.NoContent();
         }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update([FromBody] UpdateBoardRequest request, string id)
+        {
+            var board = await this.repository.GetByIdAsync(id, BoardDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (board is null)
+            {
+                return this.NotFound();
+            }
+
+            PatchBoardFromRequest(request, board);
+
+            await this.repository.UpsertAsync(board, this.CancellationToken);
+
+            return this.Ok(board);
+        }
+
+        private static void PatchBoardFromRequest(UpdateBoardRequest request, InternalBoard board)
+        {
+            if (!string.IsNullOrWhiteSpace(request.Title))
+            {
+                board.Title = request.Title;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Description))
+            {
+                board.Description = request.Description;
+            }
+        }
     }
 }

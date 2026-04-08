@@ -7,6 +7,7 @@ export type AppState = {
 	settings: UserSettings;
 	profile: UserProfile;
 	infoSheetData: InfoSheetData;
+	boardInfoSheetData: InfoSheetData;
 };
 
 export let appState = $state<AppState>({
@@ -15,5 +16,6 @@ export let appState = $state<AppState>({
 	boards: [],
 	settings: {},
 	profile: {},
-	infoSheetData: {}
+	infoSheetData: {},
+	boardInfoSheetData: {}
 });
