@@ -16,6 +16,8 @@ namespace WebApi.Dtos
 
         public DateTime UpdatedAt { get; set; }
 
+        public bool IsPinned { get; set; }
+
         public static Board FromInternal(InternalBoard board)
         {
             return new Board
@@ -26,6 +28,7 @@ namespace WebApi.Dtos
                 ImageIds = board.ImageIds,
                 CreatedAt = board.CreatedAt,
                 UpdatedAt = board.UpdatedAt,
+                IsPinned = board.IsPinned,
             };
         }
     }

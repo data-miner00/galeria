@@ -3,7 +3,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import type { Board } from '$lib/types';
-	import { FrameIcon } from '@lucide/svelte';
+	import { FrameIcon, PinIcon } from '@lucide/svelte';
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
 	import FolderIcon from '@lucide/svelte/icons/folder';
 	import ShareIcon from '@lucide/svelte/icons/share';
@@ -53,7 +53,11 @@
 				<Sidebar.MenuButton>
 					{#snippet child({ props })}
 						<a href={`/boards/${item.id}`} {...props}>
-							<FrameIcon />
+							{#if item.isPinned}
+								<PinIcon />
+							{:else}
+								<FrameIcon />
+							{/if}
 							<span>{item.title}</span>
 						</a>
 					{/snippet}

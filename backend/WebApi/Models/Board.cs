@@ -9,5 +9,7 @@
         public List<string> ImageIds { get; set; } = [];
 
         public bool IsDeletable { get; set; }
+
+        public bool IsPinned { get; set; }
     }
 }

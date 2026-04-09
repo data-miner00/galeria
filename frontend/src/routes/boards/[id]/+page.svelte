@@ -13,18 +13,24 @@
 		ImageIcon,
 		InfoIcon,
 		LayoutDashboardIcon,
-		LayoutGridIcon
+		LayoutGridIcon,
+		PinIcon,
+		PinOffIcon
 	} from '@lucide/svelte';
 
 	import { appState } from '$lib/states.svelte';
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import { toast } from 'svelte-sonner';
 
 	let isLoading = $state(true);
+	let isPinned = $state(false);
 
 	async function loadBoard(boardId: string) {
 		const res = await fetch(`https://localhost:7146/api/v1/board/${boardId}`);
 		const board = (await res.json()) as Board;
+
+		isPinned = board.isPinned;
 
 		appState.headerTitle = board.title || 'Unnamed Board';
 
@@ -100,6 +106,27 @@
 		appState.boardInfoSheetData.id = page.params.id;
 		appState.boardInfoSheetData.isOpen = true;
 	}
+
+	async function onPinToggle() {
+		try {
+			const res = await fetch(`https://localhost:7146/api/v1/board/${page.params.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ isPinned: !isPinned })
+			});
+
+			if (!res.ok) {
+				throw new Error('Failed to update pin status');
+			}
+
+			isPinned = !isPinned;
+			toast.success(isPinned ? 'Board pinned successfully!' : 'Board unpinned successfully!');
+		} catch (error) {
+			toast.error('Failed to update pin status');
+		}
+	}
 </script>
 
 <div class="flex justify-between">
@@ -140,6 +167,14 @@
 				{/if}
 			</Button>
 		</ButtonGroup.Root>
+
+		<Button variant="outline" size="icon-sm" onclick={onPinToggle} class="ms-2">
+			{#if isPinned}
+				<PinOffIcon />
+			{:else}
+				<PinIcon />
+			{/if}
+		</Button>
 
 		<Button variant="outline" size="icon-sm" onclick={onInfoClick} class="ms-2">
 			<InfoIcon />

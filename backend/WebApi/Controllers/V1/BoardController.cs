@@ -123,6 +123,11 @@ namespace WebApi.Controllers.V1
             {
                 board.Description = request.Description;
             }
+
+            if (request.IsPinned.HasValue)
+            {
+                board.IsPinned = request.IsPinned.Value;
+            }
         }
     }
 }

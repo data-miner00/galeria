@@ -20,6 +20,7 @@
 	import ThemeButton from '$lib/components/custom/theme-button.svelte';
 	import CommandPalette from '$lib/components/custom/command-palette.svelte';
 	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
+	import type { Board } from '$lib/types';
 
 	let { children } = $props();
 
@@ -51,7 +52,11 @@
 	onMount(async () => {
 		const res = await fetch('https://localhost:7146/api/v1/board');
 		if (res.ok) {
-			appState.boards = await res.json();
+			const boards = (await res.json()) as Board[];
+
+			appState.boards = boards.sort((a, b) =>
+				a.isPinned === b.isPinned ? 0 : a.isPinned ? -1 : 1
+			);
 		}
 
 		const resSettings = await fetch('https://localhost:7146/api/v1/UserSettings');

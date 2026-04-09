@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { onDestroy, tick } from 'svelte';
 	import CardActionsButton from './card-actions-button.svelte';
-	import { appState } from '$lib/states.svelte';
 	import { EyeOffIcon } from '@lucide/svelte';
 	import type { LayoutType } from '$lib/types';
-
-	let columns = $derived(appState.settings.noOfColumns || 5);
 
 	type Props = {
 		id: string;

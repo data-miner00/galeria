@@ -4,6 +4,7 @@ export type Board = {
 	description: string;
 	imageIds: string[];
 	createdAt: string;
+	isPinned: boolean;
 };
 
 export type ImageRecord = {

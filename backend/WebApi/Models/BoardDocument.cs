@@ -12,6 +12,8 @@
 
         public bool IsDeletable { get; set; }
 
+        public bool IsPinned { get; set; }
+
         public Board ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -26,6 +28,7 @@
                 IsDeletable = IsDeletable,
                 CreatedAt = CreatedAt,
                 UpdatedAt = updatedAt,
+                IsPinned = IsPinned,
             };
         }
 
@@ -41,6 +44,7 @@
                 IsDeletable = entity.IsDeletable,
                 CreatedAt = entity.CreatedAt,
                 DocumentType = DocumentType.Board,
+                IsPinned = entity.IsPinned,
             };
         }
     }
