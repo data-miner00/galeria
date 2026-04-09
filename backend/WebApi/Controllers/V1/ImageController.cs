@@ -118,6 +118,14 @@ namespace WebApi.Controllers.V1
             });
         }
 
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<string>>> GetUniqueCategories()
+        {
+            var categories = await this.repository.GetUniqueCategories(this.CancellationToken);
+
+            return this.Ok(categories);
+        }
+
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)
         {
             if (!string.IsNullOrWhiteSpace(request.Description))

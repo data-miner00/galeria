@@ -40,6 +40,24 @@ namespace WebApi.Repositories
             return this.QueryAllAsync(query, ct);
         }
 
+        public async Task<IEnumerable<string>> GetUniqueCategories(CancellationToken ct)
+        {
+            var query = new QueryDefinition("SELECT DISTINCT VALUE c.Category FROM c");
+
+            using FeedIterator<string> feed = container.GetItemQueryIterator<string>(query);
+
+            List<string> result = new List<string>();
+            while (feed.HasMoreResults)
+            {
+                foreach (string name in await feed.ReadNextAsync())
+                {
+                    result.Add(name);
+                }
+            }
+
+            return result;
+        }
+
         protected override DocumentType DocumentType => DocumentType.ImageRecord;
 
         protected override ImageDocument ToDocument(Image entity)
