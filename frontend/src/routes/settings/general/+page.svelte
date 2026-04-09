@@ -25,6 +25,8 @@
 
 	import * as Select from '$lib/components/ui/select/index.js';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { availableLanguages } from '$lib/i18n/languages';
+	import { locale } from '$lib/i18n/translations.svelte';
 
 	const themes = [
 		{ value: 'light', label: 'Light' },
@@ -32,26 +34,13 @@
 		{ value: 'system', label: 'System' }
 	];
 
-	const languages = [
-		{ value: 'en', label: 'English' },
-		{ value: 'es', label: 'Español' },
-		{ value: 'fr', label: 'Français' },
-		{ value: 'de', label: 'Deutsch' },
-		{ value: 'zh', label: '中文' },
-		{ value: 'ja', label: '日本語' },
-		{ value: 'ko', label: '한국어' },
-		{ value: 'ru', label: 'Русский' },
-		{ value: 'pt', label: 'Português' }
-	];
-
 	let value = $state<'light' | 'dark'>();
-	let language = $state('');
 
 	const triggerContent = $derived(
 		themes.find((f) => f.value === mode.current)?.label ?? 'Select theme'
 	);
 	const triggerLanguageContent = $derived(
-		languages.find((f) => f.value === language)?.label ?? 'Select language'
+		availableLanguages.find((f) => f.value === locale.current)?.label ?? 'Select language'
 	);
 </script>
 
@@ -86,13 +75,13 @@
 
 		<div>
 			<Label.Root for="language" class="mb-3 text-foreground">Language</Label.Root>
-			<Select.Root type="single" name="language" bind:value={language}>
+			<Select.Root type="single" name="language" bind:value={locale.current}>
 				<Select.Trigger class="w-full">
 					{triggerLanguageContent}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Group>
-						{#each languages as lang (lang.value)}
+						{#each availableLanguages as lang (lang.value)}
 							<Select.Item value={lang.value} label={lang.label}>
 								{lang.label}
 							</Select.Item>

@@ -16,6 +16,7 @@
 	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
 	import SendIcon from '@lucide/svelte/icons/send';
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
+	import { SIDEBAR, t } from '$lib/i18n/translations.svelte';
 
 	const data = {
 		navMain: [
@@ -131,11 +132,13 @@
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
 		<NavProjects {boards} />
-		<Button variant="outline" onclick={onCreateBoardClick}>
-			<PlusIcon /> Create Board
+		<Button variant="outline" onclick={onCreateBoardClick} class="cursor-pointer">
+			<PlusIcon />
+			{t(SIDEBAR.CREATE_BOARD)}
 		</Button>
-		<Button onclick={onCreateClick}>
-			<PlusIcon /> Create New Image
+		<Button onclick={onCreateClick} class="cursor-pointer">
+			<PlusIcon />
+			{t(SIDEBAR.CREATE_IMAGE)}
 		</Button>
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>

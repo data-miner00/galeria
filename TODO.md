@@ -21,10 +21,10 @@ A self-hosted authenticationless image board used for managing personal images.
   - [x] Based on created date time
 - [x] Skeleton loading
 - [x] Dark/light mode
-- [ ] Internationalization (en,ja,ko,es,pt,fr,zh,ms)
+- [x] Internationalization (en,ja,ko,es,pt,fr,zh,ms)
 - [x] Censor/blur option
 - [x] Filter base on tags / category
-- [ ] Mobile responsive
+- [x] Mobile responsive
 - [ ] 404 page
 - [x] Swap between masonry to squared layout
 
@@ -49,9 +49,8 @@ A self-hosted authenticationless image board used for managing personal images.
 - [ ] Optional Authentication
 - [ ] Optional TOTP MFA
 - [ ] Craft image from text and emoji icons and backgrounds
-- [ ] PWA
 - [ ] Optional watermarks for downloaded image
-- [ ] Add image from URL
+- [x] Add image from URL
 - [ ] Bulk select for actions
 
 ## Performance
