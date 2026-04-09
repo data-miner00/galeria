@@ -2,6 +2,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import {
+		CircleMinus,
 		Download,
 		Ellipsis,
 		ExternalLink,
@@ -18,6 +19,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import AddToBoardDialog from './add-to-board-dialog.svelte';
 	import { appState } from '$lib/states.svelte';
+	import { page } from '$app/state';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -59,6 +61,30 @@
 			isDeleteDialogOpen = false;
 
 			onDelete();
+		} catch {
+			toast.error('An error has occurred.');
+		}
+	}
+
+	async function removeImageFromBoard() {
+		try {
+			const response = await fetch(`https://localhost:7146/api/v1/board/${page.params.id}/${id}`, {
+				method: 'delete'
+			});
+
+			if (!response.ok) {
+				throw new Error('Something wrong');
+			}
+
+			appState.boards = appState.boards.map((board) =>
+				board.id === page.params.id
+					? { ...board, imageIds: board.imageIds.filter((imageId) => imageId !== id) }
+					: board
+			);
+
+			onDelete();
+
+			toast.success('Successfully removed image from board.');
 		} catch {
 			toast.error('An error has occurred.');
 		}
@@ -227,6 +253,11 @@
 		<DropdownMenu.Item onclick={() => (isAddToBoardDialogOpen = !isAddToBoardDialogOpen)}>
 			<Plus /> Add to Board
 		</DropdownMenu.Item>
+		{#if page.params.id}
+			<DropdownMenu.Item onclick={removeImageFromBoard}>
+				<CircleMinus /> Remove from this Board
+			</DropdownMenu.Item>
+		{/if}
 		<DropdownMenu.Item
 			onclick={() => downloadImage(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`, path)}
 		>

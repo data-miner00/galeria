@@ -33,10 +33,21 @@ namespace WebApi.Repositories
         public async Task<DatabaseOperationStatus> RemoveImageFromBoardAsync(
             string id,
             string partitionKey,
-            string imageId,
+            int imageIndex,
             CancellationToken ct)
         {
-            // TODO
+            var patchOperations = new[]
+            {
+                PatchOperation.Remove("/ImageIds/" + imageIndex) 
+            };
+
+            ItemResponse<dynamic> response = await this.container.PatchItemAsync<dynamic>(
+                id,
+                partitionKey: new PartitionKey(partitionKey),
+                patchOperations: patchOperations,
+                cancellationToken: ct
+            );
+
             return DatabaseOperationStatus.Success;
         }
 

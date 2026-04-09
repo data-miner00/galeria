@@ -82,6 +82,27 @@ namespace WebApi.Controllers.V1
             return this.Ok();
         }
 
+        [HttpDelete("{boardId}/{imageId}")]
+        public async Task<IActionResult> RemoveImage(string boardId, string imageId)
+        {
+            var board = await this.repository.GetByIdAsync(boardId, BoardDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (board is null)
+            {
+                return this.NotFound();
+            }
+
+            var imageIndex = board.ImageIds.FindIndex(x => x.Equals(imageId, StringComparison.OrdinalIgnoreCase));
+            var status = await this.repository.RemoveImageFromBoardAsync(boardId, BoardDocument.PartitionKeyValue, imageIndex, this.CancellationToken);
+
+            if (status != Models.DatabaseOperationStatus.Success)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
