@@ -17,3 +17,18 @@ services:
       - 10003:10000
       - 10001:10001
       - 10002:10002
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.41.0
+    container_name: meilisearch-galeria
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=YOUR_MASTER_KEY_HERE
+      - MEILI_ENV=development
+    volumes:
+      - ./meili_data:/meili_data
+
+volumes:
+  meili_data:
+    driver: local
