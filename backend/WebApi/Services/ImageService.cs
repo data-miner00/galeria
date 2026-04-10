@@ -16,15 +16,18 @@ public sealed class ImageService
 {
     private readonly ImageRepository repository;
     private readonly IImageClient blobClient;
+    private readonly ImageSearchService searchService;
     private readonly ILogger<ImageService> logger;
  
     public ImageService(
         ImageRepository repository,
         IImageClient blobClient,
+        ImageSearchService searchService,
         ILogger<ImageService> logger)
     {
         this.repository = repository;
         this.blobClient = blobClient;
+        this.searchService = searchService;
         this.logger = logger;
     }
  
@@ -133,6 +136,7 @@ public sealed class ImageService
 
             record.Status = UploadStatus.Suceeded;
             await this.repository.UpsertAsync(record, ct);
+            await this.searchService.IndexAsync(record);
 
             this.logger.LogInformation("Image record {Id} uploaded successfully with variants.", record.Id);
         }
@@ -206,6 +210,7 @@ public sealed class ImageService
             this.blobClient.DeleteAsync(record.Path, ct),
             this.blobClient.DeleteAsync(record.ThumbnailPath, ct),
             this.blobClient.DeleteAsync(record.MediumPath, ct),
+            this.searchService.RemoveIndexAsync(imageId),
         ];
 
         await Task.WhenAll(tasks);

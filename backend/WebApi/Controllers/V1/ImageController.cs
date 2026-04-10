@@ -14,12 +14,14 @@ namespace WebApi.Controllers.V1
         private const int TwentyMegabytes = 20 * 1024 * 1024;
 
         private readonly ImageRepository repository;
+        private readonly ImageSearchService searchService;
         private readonly ImageService service;
 
-        public ImageController(ImageService service, ImageRepository repository)
+        public ImageController(ImageService service, ImageRepository repository, ImageSearchService searchService)
         {
             this.service = service;
             this.repository = repository;
+            this.searchService = searchService;
         }
 
         private CancellationToken CancellationToken => this.HttpContext.RequestAborted;
@@ -124,6 +126,19 @@ namespace WebApi.Controllers.V1
             var categories = await this.repository.GetUniqueCategories(this.CancellationToken);
 
             return this.Ok(categories);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Image>>> Search(
+            [FromQuery] string q,
+            [FromQuery] string[]? tags = null,
+            [FromQuery] int limit = 20)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest("Query parameter 'q' is required.");
+
+            var results = await searchService.SearchAsync(q, tags, limit, this.CancellationToken);
+            return Ok(results);
         }
 
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)

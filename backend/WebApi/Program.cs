@@ -1,5 +1,6 @@
 
 using Azure.Storage.Blobs;
+using Meilisearch;
 using Microsoft.Azure.Cosmos;
 using WebApi.Options;
 using WebApi.Repositories;
@@ -20,12 +21,15 @@ namespace WebApi
             builder.ConfigureClients();
             builder.Services.AddSingleton<ImageService>();
             builder.ConfigureCors();
+            builder.ConfigureMeilisearch();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
+
+            app.Services.GetRequiredService<ImageSearchService>().ConfigureIndexAsync().GetAwaiter().GetResult();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -103,6 +107,19 @@ namespace WebApi
                               .WithMethods(corsOptions.AllowedMethods);
                     });
             });
+
+            return builder;
+        }
+
+        private static WebApplicationBuilder ConfigureMeilisearch(this WebApplicationBuilder builder)
+        {
+            var options = builder.Configuration.GetSection("Meilisearch").Get<MeilisearchOptions>()
+                ?? throw new InvalidOperationException("Meilisearch option not found.");
+
+            var client = new MeilisearchClient(options.Host, options.ApiKey);
+
+            builder.Services.AddSingleton(client);
+            builder.Services.AddSingleton<ImageSearchService>();
 
             return builder;
         }
