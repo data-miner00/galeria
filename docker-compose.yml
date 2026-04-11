@@ -7,6 +7,8 @@ services:
     ports:
       - 8081:8081
       - 1235:1234
+    volumes:
+      - ./data/cosmos_data:/data
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -17,6 +19,8 @@ services:
       - 10003:10000
       - 10001:10001
       - 10002:10002
+    volumes:
+      - ./data/azurite_data:/data
 
   meilisearch:
     image: getmeili/meilisearch:v1.41.0
@@ -27,8 +31,4 @@ services:
       - MEILI_MASTER_KEY=YOUR_MASTER_KEY_HERE
       - MEILI_ENV=development
     volumes:
-      - ./meili_data:/meili_data
-
-volumes:
-  meili_data:
-    driver: local
+      - ./data/meili_data:/meili_data
