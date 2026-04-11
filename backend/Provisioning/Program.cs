@@ -127,8 +127,10 @@ async Task ProvisionBlobAsync(IConfiguration config)
                 ctx.Status($"Creating blob container {container}...");
                 try
                 {
-                    await blobClient.CreateBlobContainerAsync(container);
+                    var response = await blobClient.CreateBlobContainerAsync(container);
                     AnsiConsole.MarkupLineInterpolated($"[green]Created container:[/] {container}");
+                    await response.Value.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+                    AnsiConsole.MarkupLineInterpolated($"[green]Enabled public blob access for container:[/] {container}");
                 }
                 catch (Azure.RequestFailedException ex) when (ex.Status == 409)
                 {
