@@ -90,7 +90,7 @@
 				>
 					Cancel
 				</Dialog.Close>
-				<Button disabled={!boardId} type="submit" onclick={addImageToBoard}>Save changes</Button>
+				<Button disabled={!boardId} type="submit" onclick={addImageToBoard}>Add Image</Button>
 			</Dialog.Footer>
 		</Dialog.Content>
 	</form>

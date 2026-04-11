@@ -79,7 +79,7 @@
 				>
 					Cancel
 				</Dialog.Close>
-				<Button type="submit" onclick={createBoard}>Save changes</Button>
+				<Button type="submit" onclick={createBoard}>Create</Button>
 			</Dialog.Footer>
 		</Dialog.Content>
 	</form>

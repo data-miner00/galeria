@@ -12,6 +12,7 @@ export type ImageRecord = {
 	path: string;
 	originalFileName: string;
 	contentType: string;
+	title?: string;
 	description?: string;
 	status: number;
 	createdAt: string;

@@ -7,6 +7,7 @@
 	import { appState } from '$lib/states.svelte';
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
+	import Textarea from '../ui/textarea/textarea.svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -29,17 +30,20 @@
 
 	function resetForm() {
 		if (!currentImageRecord) return;
+		title = currentImageRecord.title || '';
 		description = currentImageRecord.description || '';
 		category = currentImageRecord.category || '';
 		tags = currentImageRecord.tags.join(', ');
 	}
 
+	let title = $state('');
 	let description = $state('');
 	let category = $state('');
 	let tags = $state('');
 
 	onMount(() => {
 		if (currentImageRecord) {
+			title = currentImageRecord.title || '';
 			description = currentImageRecord.description || '';
 			category = currentImageRecord.category || '';
 			tags = currentImageRecord.tags.join(', ');
@@ -50,6 +54,7 @@
 		if (!currentImageRecord) return;
 
 		const body = {
+			title,
 			description,
 			category,
 			tags: tags.split(',').map((tag) => tag.trim())
@@ -82,7 +87,7 @@
 </script>
 
 <Sheet.Root bind:open={isOpen}>
-	<Sheet.Content side="right">
+	<Sheet.Content side="right" class="overflow-y-scroll">
 		<Sheet.Header>
 			<Sheet.Title>Image Details</Sheet.Title>
 			<Sheet.Description>
@@ -97,8 +102,16 @@
 					<Input id="id" value={currentImageRecord.id} disabled />
 				</div>
 				<div class="grid gap-3">
+					<Label for="title" class="text-end">Title</Label>
+					<Input id="title" placeholder="Enter image title" bind:value={title} />
+				</div>
+				<div class="grid gap-3">
 					<Label for="description" class="text-end">Description</Label>
-					<Input id="description" placeholder="Enter image description" bind:value={description} />
+					<Textarea
+						id="description"
+						placeholder="Enter image description"
+						bind:value={description}
+					/>
 				</div>
 				<div class="grid gap-3">
 					<Label for="category" class="text-end">Category</Label>

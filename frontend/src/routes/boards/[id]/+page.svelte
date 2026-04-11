@@ -196,7 +196,7 @@
 						<ImageCard
 							id={record.id}
 							path={record.path}
-							description={record.description}
+							title={record.title}
 							onDelete={() => onDelete(record.id)}
 							isCensored={record.isCensored}
 							thumbnailPath={record.thumbnailPath}

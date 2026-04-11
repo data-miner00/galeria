@@ -67,7 +67,7 @@ public sealed class ImageService
             OriginalFileName = file.FileName,
             Path = originalPath,
             ContentType = file.ContentType,
-            Description = request.Description,
+            Title = request.Title,
             Status = UploadStatus.Pending,
             CreatedAt = DateTime.UtcNow,
             IsCensored = request.IsCensored,
@@ -136,7 +136,7 @@ public sealed class ImageService
 
             record.Status = UploadStatus.Suceeded;
             await this.repository.UpsertAsync(record, ct);
-            await this.searchService.IndexAsync(record);
+            //await this.searchService.IndexAsync(record);
 
             this.logger.LogInformation("Image record {Id} uploaded successfully with variants.", record.Id);
         }
@@ -210,7 +210,7 @@ public sealed class ImageService
             this.blobClient.DeleteAsync(record.Path, ct),
             this.blobClient.DeleteAsync(record.ThumbnailPath, ct),
             this.blobClient.DeleteAsync(record.MediumPath, ct),
-            this.searchService.RemoveIndexAsync(imageId),
+            //this.searchService.RemoveIndexAsync(imageId),
         ];
 
         await Task.WhenAll(tasks);

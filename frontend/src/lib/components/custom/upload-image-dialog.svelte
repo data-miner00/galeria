@@ -15,7 +15,7 @@
 
 	let { isDialogOpen = $bindable(false) }: Props = $props();
 
-	let description = $state('');
+	let title = $state('');
 	let isCensored = $state(false);
 	let files: FileList | undefined = $state();
 	let image: HTMLImageElement | undefined = $state();
@@ -56,7 +56,7 @@
 			formData.append('File', new File([blob], fileName, { type: blob.type }));
 		}
 
-		formData.append('Description', description);
+		formData.append('Title', title);
 		formData.append('IsCensored', isCensored.toString());
 
 		try {
@@ -82,7 +82,7 @@
 	}
 
 	function clearInput() {
-		description = '';
+		title = '';
 		imageUrl = '';
 		isCensored = false;
 		files = undefined;
@@ -106,12 +106,12 @@
 				<Tabs.Content value="file">
 					<div class="grid gap-4">
 						<div class="grid gap-3">
-							<Label for="description">Description</Label>
+							<Label for="title">Title</Label>
 							<Input
-								bind:value={description}
-								id="description"
-								name="description"
-								placeholder="e.g. A very cool photograph of volcano"
+								bind:value={title}
+								id="title"
+								name="title"
+								placeholder="e.g. Icelandic volcano"
 							/>
 						</div>
 						<div class="grid gap-3">
@@ -143,12 +143,12 @@
 				<Tabs.Content value="url">
 					<div class="grid gap-4">
 						<div class="grid gap-3">
-							<Label for="description">Description</Label>
+							<Label for="title">Title</Label>
 							<Input
-								bind:value={description}
-								id="description"
-								name="description"
-								placeholder="e.g. A very cool photograph of volcano"
+								bind:value={title}
+								id="title"
+								name="title"
+								placeholder="e.g. Icelandic volcano"
 							/>
 						</div>
 						<div class="grid gap-3">
@@ -181,7 +181,7 @@
 				>
 					Cancel
 				</Dialog.Close>
-				<Button type="submit" onclick={uploadImage}>Save changes</Button>
+				<Button type="submit" onclick={uploadImage}>Upload</Button>
 			</Dialog.Footer>
 		</Dialog.Content>
 	</form>

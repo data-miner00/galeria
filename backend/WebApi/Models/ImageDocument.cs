@@ -10,6 +10,8 @@
 
         public string ContentType { get; set; }
 
+        public string? Title { get; set; }
+
         public string? Description { get; set; }
 
         public UploadStatus Status { get; set; }
@@ -43,6 +45,7 @@
             {
                 Path = Path,
                 Id = Id,
+                Title = Title,
                 Description = Description,
                 CreatedAt = CreatedAt,
                 ETag = ETag,
@@ -69,6 +72,7 @@
             {
                 Id = entity.Id,
                 CreatedAt = entity.CreatedAt,
+                Title = entity.Title,
                 Description = entity.Description,
                 ETag = entity.ETag,
                 Path = entity.Path,

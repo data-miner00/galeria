@@ -143,6 +143,11 @@ namespace WebApi.Controllers.V1
 
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)
         {
+            if (!string.IsNullOrWhiteSpace(request.Title))
+            {
+                image.Title = request.Title;
+            }
+
             if (!string.IsNullOrWhiteSpace(request.Description))
             {
                 image.Description = request.Description;

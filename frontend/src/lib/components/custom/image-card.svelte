@@ -9,7 +9,7 @@
 		path: string;
 		thumbnailPath: string;
 		mediumPath: string;
-		description?: string;
+		title?: string;
 		onDelete: () => void;
 		isCensored: boolean;
 		isFavorite: boolean;
@@ -22,7 +22,7 @@
 	const {
 		id,
 		path,
-		description,
+		title,
 		onDelete,
 		thumbnailPath,
 		mediumPath,
@@ -79,7 +79,7 @@
 	>
 		<img
 			class="h-full w-full object-cover"
-			alt={description ?? 'Gallery image'}
+			alt={title ?? 'Gallery image'}
 			src={`http://127.0.0.1:10003/devstoreaccount1/images/${path}`}
 		/>
 
@@ -94,7 +94,7 @@
 
 	<div class="flex items-center justify-between">
 		<div>
-			<p class="max-w-40 truncate text-sm">{description}</p>
+			<p class="max-w-40 truncate text-sm">{title}</p>
 		</div>
 		<CardActionsButton
 			{id}
@@ -134,7 +134,7 @@
 
 			<img
 				class="max-h-[85vh] max-w-[85vw] object-contain"
-				alt={description ?? 'Gallery image preview'}
+				alt={title ?? 'Gallery image preview'}
 				src={`http://127.0.0.1:10003/devstoreaccount1/images/${path}`}
 			/>
 		</div>
