@@ -117,9 +117,7 @@ namespace WebApi
             var client = new MeilisearchClient(options.Host, options.ApiKey);
             var index = client.Index(options.IndexName);
 
-            builder.Services.AddSingleton(client);
             builder.Services.AddSingleton(index);
-            builder.Services.AddSingleton<ImageSearchService>();
 
             return builder;
         }

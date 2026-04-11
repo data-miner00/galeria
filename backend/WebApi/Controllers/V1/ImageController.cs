@@ -14,14 +14,17 @@ namespace WebApi.Controllers.V1
         private const int TwentyMegabytes = 20 * 1024 * 1024;
 
         private readonly ImageRepository repository;
-        private readonly ImageSearchService searchService;
+        private readonly Meilisearch.Index index;
         private readonly ImageService service;
 
-        public ImageController(ImageService service, ImageRepository repository, ImageSearchService searchService)
+        public ImageController(
+            ImageService service,
+            ImageRepository repository,
+            Meilisearch.Index index)
         {
             this.service = service;
             this.repository = repository;
-            this.searchService = searchService;
+            this.index = index;
         }
 
         private CancellationToken CancellationToken => this.HttpContext.RequestAborted;
@@ -104,6 +107,7 @@ namespace WebApi.Controllers.V1
             PatchImageFromRequest(image, request);
 
             await this.repository.UpsertAsync(image, this.CancellationToken);
+            await this.index.AddDocumentsAsync([IndexedImage.From(image)]);
 
             return this.Ok(image);
         }
@@ -137,7 +141,7 @@ namespace WebApi.Controllers.V1
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Query parameter 'q' is required.");
 
-            var results = await searchService.SearchAsync(q, tags, limit, this.CancellationToken);
+            var results = await this.service.SearchAsync(q, tags, limit, this.CancellationToken);
             return Ok(results);
         }
 

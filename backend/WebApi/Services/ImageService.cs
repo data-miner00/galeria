@@ -17,18 +17,18 @@ public sealed class ImageService
 {
     private readonly ImageRepository repository;
     private readonly IImageClient blobClient;
-    private readonly ImageSearchService searchService;
+    private readonly Meilisearch.Index index;
     private readonly ILogger<ImageService> logger;
  
     public ImageService(
         ImageRepository repository,
         IImageClient blobClient,
-        ImageSearchService searchService,
+        Meilisearch.Index index,
         ILogger<ImageService> logger)
     {
         this.repository = repository;
         this.blobClient = blobClient;
-        this.searchService = searchService;
+        this.index = index;
         this.logger = logger;
     }
  
@@ -160,7 +160,7 @@ public sealed class ImageService
 
             record.Status = UploadStatus.Suceeded;
             await this.repository.UpsertAsync(record, ct);
-            //await this.searchService.IndexAsync(record);
+            await this.index.AddDocumentsAsync([record]);
 
             this.logger.LogInformation("Image record {Id} uploaded successfully with variants.", record.Id);
         }
@@ -234,7 +234,7 @@ public sealed class ImageService
             this.blobClient.DeleteAsync(record.Path, ct),
             this.blobClient.DeleteAsync(record.ThumbnailPath, ct),
             this.blobClient.DeleteAsync(record.MediumPath, ct),
-            //this.searchService.RemoveIndexAsync(imageId),
+            this.index.DeleteOneDocumentAsync(imageId),
         ];
 
         await Task.WhenAll(tasks);
@@ -258,5 +258,26 @@ public sealed class ImageService
         await Task.WhenAll(deleteTasks);
 
         return true;
+    }
+
+    public async Task<List<ImageRecord>> SearchAsync(
+        string query,
+        string[]? filterTags = null,
+        int limit = 20,
+        CancellationToken ct = default)
+    {
+        var searchParams = new Meilisearch.SearchQuery
+        {
+            Limit = limit,
+            Filter = filterTags?.Length > 0
+                ? $"tags IN [{string.Join(", ", filterTags.Select(t => $"\"{t}\""))}]"
+                : null,
+        };
+
+        var result = await this.index.SearchAsync<IndexedImage>(query, searchParams);
+        var ids = result.Hits.Select(h => h.Id).ToList();
+        var records = await this.repository.GetByIdsAsync(ids, ct);
+
+        return records.ToList();
     }
 }

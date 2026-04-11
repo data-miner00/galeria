@@ -8,6 +8,8 @@
 
         public string ContentType { get; set; }
 
+        public string? Title { get; set; }
+
         public string? Description { get; set; }
 
         public string? Category { get; set; }
@@ -24,6 +26,7 @@
                 Description = image.Description,
                 Category = image.Category,
                 Tags = image.Tags,
+                Title = image.Title,
             };
         }
     }
