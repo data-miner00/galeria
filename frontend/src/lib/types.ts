@@ -26,6 +26,10 @@ export type ImageRecord = {
 	size: number;
 	category?: string;
 	tags: string[];
+	cameraModel?: string;
+	cameraMake?: string;
+	takenAt?: string;
+	orientation?: number;
 };
 
 export type UserProfile = {

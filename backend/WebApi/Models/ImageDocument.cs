@@ -36,6 +36,14 @@
 
         public List<string> Tags { get; set; } = [];
 
+        public string? CameraMake { get; set; }
+
+        public string? CameraModel { get; set; }
+
+        public string? TakenAt { get; set; }
+
+        public ushort? Orientation { get; set; }
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -63,6 +71,10 @@
                 IsSoftDeleted = IsSoftDeleted,
                 Category = Category,
                 Tags = Tags,
+                CameraMake = CameraMake,
+                CameraModel = CameraModel,
+                TakenAt = TakenAt,
+                Orientation = Orientation,
             };
         }
 
@@ -91,6 +103,10 @@
                 IsSoftDeleted = entity.IsSoftDeleted,
                 Category = entity.Category,
                 Tags = entity.Tags,
+                CameraMake = entity.CameraMake,
+                CameraModel = entity.CameraModel,
+                TakenAt = entity.TakenAt,
+                Orientation = entity.Orientation,
             };
         }
     }

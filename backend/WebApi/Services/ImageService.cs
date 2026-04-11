@@ -9,6 +9,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixImage = SixLabors.ImageSharp.Image;
 using ImageRecord = WebApi.Models.Image;
+using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 
 namespace WebApi.Services;
 
@@ -77,6 +78,29 @@ public sealed class ImageService
             ThumbnailPath = thumbPath,
             MediumPath = mediumPath,
         };
+
+        if (metadata.Metadata.ExifProfile is { } exif)
+        {
+            if (exif.TryGetValue(ExifTag.Make, out var exifMake))
+            {
+                record.CameraMake = exifMake.Value;
+            }
+
+            if (exif.TryGetValue(ExifTag.Model, out var exifModel))
+            {
+                record.CameraModel = exifModel.Value;
+            }
+
+            if (exif.TryGetValue(ExifTag.DateTimeOriginal, out var exifOriginal))
+            {
+                record.TakenAt = exifOriginal.Value;
+            }
+
+            if (exif.TryGetValue(ExifTag.Orientation, out var exifOrientation))
+            {
+                record.Orientation = exifOrientation.Value;
+            }
+        }
 
         await this.repository.UpsertAsync(record, ct);
 

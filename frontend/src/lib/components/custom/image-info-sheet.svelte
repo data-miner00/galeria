@@ -137,8 +137,37 @@
 					<Label for="createdAt" class="text-end">Created At</Label>
 					<Input id="createdAt" value={currentImageRecord.createdAt} disabled />
 				</div>
+
+				{#if currentImageRecord.cameraMake}
+					<div class="grid gap-3">
+						<Label for="cameraMake" class="text-end">Camera Make</Label>
+						<Input id="cameraMake" value={currentImageRecord.cameraMake} disabled />
+					</div>
+				{/if}
+
+				{#if currentImageRecord.cameraModel}
+					<div class="grid gap-3">
+						<Label for="cameraModel" class="text-end">Camera Model</Label>
+						<Input id="cameraModel" value={currentImageRecord.cameraModel} disabled />
+					</div>
+				{/if}
+
+				{#if currentImageRecord.takenAt}
+					<div class="grid gap-3">
+						<Label for="takenAt" class="text-end">Taken At</Label>
+						<Input id="takenAt" value={currentImageRecord.takenAt} disabled />
+					</div>
+				{/if}
+
+				{#if currentImageRecord.orientation}
+					<div class="grid gap-3">
+						<Label for="orientation" class="text-end">Orientation</Label>
+						<Input id="orientation" value={currentImageRecord.orientation} disabled />
+					</div>
+				{/if}
 			</div>
 		{:else}
+			<!-- Fix this -->
 			<p>Image not found.</p>
 		{/if}
 		<Sheet.Footer>

@@ -33,5 +33,13 @@
         public string? Category { get; set; }
 
         public List<string> Tags { get; set; } = [];
+
+        public string? CameraMake { get; set; }
+
+        public string? CameraModel { get; set; }
+
+        public string? TakenAt { get; set; }
+
+        public ushort? Orientation { get; set; }
     }
 }
