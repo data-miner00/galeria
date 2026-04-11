@@ -4,26 +4,23 @@ using WebApi.Repositories;
 
 public sealed class ImageSearchService
 {
-    private readonly MeilisearchClient client;
+    private readonly Meilisearch.Index index;
     private readonly ImageRepository repository;
-    private const string IndexName = "images";
 
-    public ImageSearchService(MeilisearchClient client, ImageRepository repository)
+    public ImageSearchService(Meilisearch.Index index, ImageRepository repository)
     {
-        this.client = client;
+        this.index = index;
         this.repository = repository;
     }
 
     public async Task IndexAsync(Image record)
     {
-        var index = client.Index(IndexName);
         var doc = IndexedImage.From(record);
         await index.AddDocumentsAsync([doc]);
     }
 
     public async Task RemoveIndexAsync(string imageId)
     {
-        var index = client.Index(IndexName);
         await index.DeleteOneDocumentAsync(imageId);
     }
 
@@ -33,8 +30,6 @@ public sealed class ImageSearchService
         int limit = 20,
         CancellationToken ct = default)
     {
-        var index = client.Index(IndexName);
-
         var searchParams = new SearchQuery
         {
             Limit = limit,
