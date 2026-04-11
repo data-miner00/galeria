@@ -14,23 +14,6 @@ public sealed class ImageSearchService
         this.repository = repository;
     }
 
-    // Call this once at startup / after schema changes
-    public async Task ConfigureIndexAsync()
-    {
-        var index = client.Index(IndexName);
-
-        // Tell Meilisearch which fields to search and how to rank them
-        await index.UpdateSearchableAttributesAsync(
-            ["originalFileName", "description", "tags", "category", "contentType"]);
-
-        await index.UpdateRankingRulesAsync(
-            ["words", "typo", "proximity", "attribute", "sort", "exactness"]);
-
-        // Allow filtering by date or tags without full-text search
-        await index.UpdateFilterableAttributesAsync(["tags"]);
-        //await index.UpdateSortableAttributesAsync(["takenAt"]);
-    }
-
     public async Task IndexAsync(Image record)
     {
         var index = client.Index(IndexName);

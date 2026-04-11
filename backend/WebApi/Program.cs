@@ -29,8 +29,6 @@ namespace WebApi
 
             var app = builder.Build();
 
-            app.Services.GetRequiredService<ImageSearchService>().ConfigureIndexAsync().GetAwaiter().GetResult();
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

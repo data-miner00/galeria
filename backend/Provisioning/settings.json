@@ -15,5 +15,30 @@
     "Containers": [
       "images"
     ]
+  },
+  "Meilisearch": {
+    "Host": "http://localhost:7700",
+    "ApiKey": "YOUR_MASTER_KEY_HERE",
+    "IndexName": "images",
+    "SearchableAttributes": [
+      "originalFileName",
+      "title",
+      "description",
+      "tags",
+      "category",
+      "contentType"
+    ],
+    "RankingRules": [
+      "words",
+      "typos",
+      "proximity",
+      "attribute",
+      "sort",
+      "exact"
+    ],
+    "FilterableAttributes": [
+      "tags"
+    ],
+    "SortableAttributes": []
   }
 }
