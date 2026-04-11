@@ -50,14 +50,24 @@
 		}
 	});
 
+	type UpdateImageDetailsRequest = {
+		title: string;
+		description: string;
+		category: string;
+		tags?: string[];
+	};
+
 	async function saveChanges() {
 		if (!currentImageRecord) return;
 
-		const body = {
+		const body: UpdateImageDetailsRequest = {
 			title,
 			description,
 			category,
-			tags: tags.split(',').map((tag) => tag.trim())
+			tags: tags
+				.split(',')
+				.map((t) => t.trim())
+				.filter((t) => t.length > 0)
 		};
 
 		try {
