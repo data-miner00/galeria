@@ -30,11 +30,11 @@
     ],
     "RankingRules": [
       "words",
-      "typos",
+      "typo",
       "proximity",
       "attribute",
       "sort",
-      "exact"
+      "exactness"
     ],
     "FilterableAttributes": [
       "tags"
