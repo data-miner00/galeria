@@ -16,7 +16,7 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
-	const cardWidth = 247.5; // Assuming each card has a fixed width of 240px
+	const cardWidth = 247.5;
 	const containerPadding = 16 * 2;
 	let gap = $derived(16 * (columns - 1));
 
@@ -126,10 +126,18 @@
 	</div>
 	<div>
 		<ButtonGroup.Root>
-			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'masonry')}>
+			<Button
+				variant={layoutType === 'masonry' ? 'default' : 'outline'}
+				size="icon-sm"
+				onclick={() => (layoutType = 'masonry')}
+			>
 				<LayoutDashboardIcon />
 			</Button>
-			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'grid')}>
+			<Button
+				variant={layoutType === 'grid' ? 'default' : 'outline'}
+				size="icon-sm"
+				onclick={() => (layoutType = 'grid')}
+			>
 				<LayoutGridIcon />
 			</Button>
 			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>

@@ -153,10 +153,18 @@
 	</div>
 	<div class="flex items-center gap-1">
 		<ButtonGroup.Root>
-			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'masonry')}>
+			<Button
+				variant={layoutType === 'masonry' ? 'default' : 'outline'}
+				size="icon-sm"
+				onclick={() => (layoutType = 'masonry')}
+			>
 				<LayoutDashboardIcon />
 			</Button>
-			<Button variant="outline" size="icon-sm" onclick={() => (layoutType = 'grid')}>
+			<Button
+				variant={layoutType === 'grid' ? 'default' : 'outline'}
+				size="icon-sm"
+				onclick={() => (layoutType = 'grid')}
+			>
 				<LayoutGridIcon />
 			</Button>
 			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>
