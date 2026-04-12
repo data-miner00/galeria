@@ -11,7 +11,7 @@
 	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import CreateBoardDialog from '$lib/components/custom/create-board-dialog.svelte';
-	import { page } from '$app/state';
+	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { onMount } from 'svelte';
 	import { appState } from '$lib/states.svelte';
 	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
@@ -21,6 +21,7 @@
 	import CommandPalette from '$lib/components/custom/command-palette.svelte';
 	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
 	import type { Board } from '$lib/types';
+	import { goto } from '$app/navigation';
 
 	let { children } = $props();
 
@@ -76,6 +77,19 @@
 		if ((e.key === 'j' && (e.metaKey || e.ctrlKey)) || e.key === '/') {
 			e.preventDefault();
 			isCommandPaletteOpen = !isCommandPaletteOpen;
+		} else if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			searchInputRef?.focus();
+		}
+	}
+
+	let searchQuery = $state('');
+	let searchInputRef: HTMLInputElement | null = $state(null);
+
+	function handleSearch(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			goto('/search?q=' + encodeURIComponent(searchQuery));
+			searchQuery = '';
 		}
 	}
 </script>
@@ -121,9 +135,17 @@
 					</Breadcrumb.Root>
 				</div>
 				<div class="flex items-center gap-2">
-					<Button variant="ghost" size="icon">
-						<SearchIcon />
-					</Button>
+					<InputGroup.Root>
+						<InputGroup.Input
+							bind:ref={searchInputRef}
+							placeholder="Search..."
+							bind:value={searchQuery}
+							onkeyup={handleSearch}
+						/>
+						<InputGroup.Addon>
+							<SearchIcon />
+						</InputGroup.Addon>
+					</InputGroup.Root>
 
 					<ThemeButton />
 

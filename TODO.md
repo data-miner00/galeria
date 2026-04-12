@@ -13,7 +13,7 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Favorites
 - [x] Recycle Bin
 - [x] Download
-- [ ] Fuzzy search (filename, desc, metadata, tags)
+- [x] Fuzzy search (filename, desc, metadata, tags)
 
 ## Presentation
 
@@ -65,6 +65,7 @@ A self-hosted authenticationless image board used for managing personal images.
 ## Enhancement
 
 - [ ] Move in-memory upload of different size image to a scheduled job instead.
+- [ ] Make search indexing in the background. NotIndexed, Indexed, NeedsReindex
 
 ## Deployment/Build
 
