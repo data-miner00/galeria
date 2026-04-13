@@ -3,7 +3,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import type { Board } from '$lib/types';
-	import { FrameIcon, PinIcon } from '@lucide/svelte';
+	import { FrameIcon, PinIcon, PinOffIcon } from '@lucide/svelte';
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
 	import FolderIcon from '@lucide/svelte/icons/folder';
 	import ShareIcon from '@lucide/svelte/icons/share';
@@ -43,6 +43,23 @@
 		id = selectedId;
 		isDeleteDialogOpen = true;
 	}
+
+	async function togglePin(board: Board) {
+		board.isPinned = !board.isPinned;
+
+		try {
+			await fetch(`https://localhost:7146/api/v1/board/${board.id}`, {
+				method: 'PATCH',
+				body: JSON.stringify({ isPinned: board.isPinned }),
+				headers: { 'Content-Type': 'application/json' }
+			});
+
+			toast.success(`Board ${board.isPinned ? 'pinned' : 'unpinned'} successfully.`);
+		} catch (error) {
+			toast.error('Failed to update board pin status.');
+			board.isPinned = !board.isPinned;
+		}
+	}
 </script>
 
 <Sidebar.Group class="group-data-[collapsible=icon]:hidden">
@@ -76,6 +93,13 @@
 						side={sidebar.isMobile ? 'bottom' : 'right'}
 						align={sidebar.isMobile ? 'end' : 'start'}
 					>
+						<DropdownMenu.Item onclick={togglePin.bind(null, item)}>
+							{#if item.isPinned}
+								<PinOffIcon /> Unpin
+							{:else}
+								<PinIcon /> Pin
+							{/if}
+						</DropdownMenu.Item>
 						<DropdownMenu.Item>
 							<a href={`/boards/${item.id}`} class="flex items-center gap-2">
 								<FolderIcon class="text-muted-foreground" />
