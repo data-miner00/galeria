@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Provisioning/Provisioning.csproj" Id="af68bf61-7702-4dc0-941f-20e95ce28f05" />
   <Project Path="WebApi/WebApi.csproj" />
+  <Project Path="WebJobs/WebJobs.csproj" Id="72eb0943-586e-45e6-9589-d19f9688cb67" />
 </Solution>

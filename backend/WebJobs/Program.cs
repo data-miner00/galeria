@@ -1,0 +1,38 @@
+﻿using Autofac;
+using Microsoft.Extensions.Hosting;
+
+namespace WebJobs
+{
+    internal class Program
+    {
+        static async Task Main(string[] args)
+        {
+            var container = ContainerConfig.Configure();
+
+            var service = container.Resolve<IHostedService>();
+
+            using var cancellationTokenSource = new CancellationTokenSource();
+
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(CancelKeyPress);
+
+            await service.StartAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+
+            while (!cancellationTokenSource.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+
+            await service.StopAsync(default).ConfigureAwait(false);
+
+            Console.WriteLine("Program stopped...");
+
+            void CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+            {
+                Console.WriteLine("CTRL+C pressed, cancelling operation");
+                cancellationTokenSource.Cancel();
+
+                e.Cancel = true;
+            }
+        }
+    }
+}
