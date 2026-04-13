@@ -27,6 +27,9 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Mobile responsive
 - [ ] 404 page
 - [x] Swap between masonry to squared layout
+- [ ] Album view
+- [ ] Timeline view
+- [ ] Select mode
 
 ## Extra
 
@@ -47,11 +50,16 @@ A self-hosted authenticationless image board used for managing personal images.
 - [ ] Usage analytics (to think what to analyse)
 - [ ] Add Log aggregator like logseq or loki to monitor API calls
 - [ ] Optional Authentication
-- [ ] Optional TOTP MFA
+- [x] Optional TOTP MFA
 - [ ] Craft image from text and emoji icons and backgrounds
 - [ ] Optional watermarks for downloaded image
 - [x] Add image from URL
 - [ ] Bulk select for actions
+- [ ] AI Prompts
+- [ ] AI Auto tagging
+- [ ] Auditing
+- [ ] Video
+- [ ] Live image
 
 ## Performance
 

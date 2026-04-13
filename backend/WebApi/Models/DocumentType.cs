@@ -6,5 +6,6 @@
         Board,
         UserProfile,
         UserSettings,
+        SecuritySettings,
     }
 }

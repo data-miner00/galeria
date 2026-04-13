@@ -69,6 +69,7 @@ namespace WebApi
             builder.Services.AddSingleton(repositoryFactory.CreateBoardRepository());
             builder.Services.AddSingleton(repositoryFactory.CreateUserProfileRepository());
             builder.Services.AddSingleton(repositoryFactory.CreateUserSettingsRepository());
+            builder.Services.AddSingleton(repositoryFactory.CreateSecuritySettingsRepository());
 
             return builder;
         }

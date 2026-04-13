@@ -57,9 +57,7 @@ export type GeneralSettings = {
 };
 
 export type SecuritySettings = {
-	enablePassword?: boolean;
-	enable2FA?: boolean;
-	rememberMeDuration?: number;
+	isTotpEnabled: boolean;
 };
 
 export type LayoutType = 'masonry' | 'grid';

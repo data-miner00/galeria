@@ -42,5 +42,12 @@ namespace WebApi.Repositories
             var container = this.cosmosClient.GetContainer(DatabaseName, ContainerName);
             return new UserSettingsRepository(container);
         }
+
+        public SecuritySettingsRepository CreateSecuritySettingsRepository()
+        {
+            const string ContainerName = "Metadata";
+            var container = this.cosmosClient.GetContainer(DatabaseName, ContainerName);
+            return new SecuritySettingsRepository(container);
+        }
     }
 }
