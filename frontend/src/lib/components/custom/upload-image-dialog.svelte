@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import Spinner from '../ui/spinner/spinner.svelte';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -23,6 +24,7 @@
 
 	type UploadMode = 'file' | 'url';
 	let uploadMode = $state<UploadMode>('file');
+	let isLoading = $state(false);
 
 	function onImageChange() {
 		if (files?.[0]) {
@@ -40,6 +42,7 @@
 	}
 
 	async function uploadImage() {
+		isLoading = true;
 		const formData = new FormData();
 
 		if (uploadMode === 'file') {
@@ -79,6 +82,8 @@
 		} catch (error) {
 			toast.error('Image upload failed. ' + (error as Error).message);
 		}
+
+		isLoading = false;
 	}
 
 	function clearInput() {
@@ -181,7 +186,12 @@
 				>
 					Cancel
 				</Dialog.Close>
-				<Button type="submit" onclick={uploadImage}>Upload</Button>
+				<Button type="submit" onclick={uploadImage} disabled={isLoading}>
+					{#if isLoading}
+						<Spinner />
+					{/if}
+					{isLoading ? 'Uploading...' : 'Upload'}
+				</Button>
 			</Dialog.Footer>
 		</Dialog.Content>
 	</form>
