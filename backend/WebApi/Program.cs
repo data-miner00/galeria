@@ -1,5 +1,6 @@
 
 using Azure.Storage.Blobs;
+using Google.GenAI;
 using Meilisearch;
 using Microsoft.Azure.Cosmos;
 using WebApi.Options;
@@ -16,12 +17,13 @@ namespace WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.ConfigureRepositories();
-            builder.ConfigureClients();
+            builder.ConfigureRepositories()
+                .ConfigureClients()
+                .ConfigureCors()
+                .ConfigureMeilisearch()
+                .ConfigureGeminiClient();
+
             builder.Services.AddSingleton<ImageService>();
-            builder.ConfigureCors();
-            builder.ConfigureMeilisearch();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -119,6 +121,19 @@ namespace WebApi
             var index = client.Index(options.IndexName);
 
             builder.Services.AddSingleton(index);
+
+            return builder;
+        }
+
+        private static WebApplicationBuilder ConfigureGeminiClient(this WebApplicationBuilder builder)
+        {
+            var options = builder.Configuration.GetSection("Gemini").Get<GeminiOptions>()
+                ?? throw new InvalidOperationException("Gemini option not found.");
+
+            var client = new Client(apiKey: options.ApiKey);
+
+            builder.Services.AddSingleton(client);
+            builder.Services.AddSingleton(options);
 
             return builder;
         }

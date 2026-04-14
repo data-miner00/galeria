@@ -10,25 +10,37 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixImage = SixLabors.ImageSharp.Image;
 using ImageRecord = WebApi.Models.Image;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
+using Google.GenAI;
+using Google.GenAI.Types;
+using System.Text.Json;
 
 namespace WebApi.Services;
 
 public sealed class ImageService
 {
+    private const string CaptionPrompt = """Caption the image and generate at least 3 relevant tags. Return the response strictly in parsable plain JSON format. Do not use markdown fenced block. Format: {"description": "<caption>", "tags": ["tag1", "tag2"]}""";
+    private static JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     private readonly ImageRepository repository;
     private readonly IImageClient blobClient;
     private readonly Meilisearch.Index index;
+    private readonly Client client;
     private readonly ILogger<ImageService> logger;
  
     public ImageService(
         ImageRepository repository,
         IImageClient blobClient,
         Meilisearch.Index index,
+        Client client,
         ILogger<ImageService> logger)
     {
         this.repository = repository;
         this.blobClient = blobClient;
         this.index = index;
+        this.client = client;
         this.logger = logger;
     }
  
@@ -62,6 +74,33 @@ public sealed class ImageService
         var metadata = SixImage.Identify(buffered);
         buffered.Position = 0;
 
+        Schema responseSchema = new Schema {
+            Properties = new Dictionary<string, Schema>
+            {
+                {
+                    "description", new Schema { Type = Google.GenAI.Types.Type.String, Title = "Description" }
+                },
+                {
+                    "tags", new Schema { Type = Google.GenAI.Types.Type.Array, Title = "Tags" }
+                },
+            },
+            PropertyOrdering = new List<string> { "description", "tags" },
+            Required = new List<string> { "description", "tags" },
+            Title = "Response", Type = Google.GenAI.Types.Type.Object,
+        };
+
+        var response = await client.Models.GenerateContentAsync(
+            model: "gemini-2.5-flash", // Use latest vision-capable model
+            contents: new List<Content>
+            {
+                new Content { Parts = [ new Part { Text = CaptionPrompt }]},
+                new Content { Parts = [ Part.FromBytes(buffered.ToArray(), MimeTypes.GetMimeType(file.FileName)) ]}
+            });
+
+        buffered.Position = 0;
+
+        var parsedResponse = JsonSerializer.Deserialize<CaptionResponse>(response.Text, SerializerOptions);
+
         var record = new ImageRecord
         {
             Id = id,
@@ -77,6 +116,8 @@ public sealed class ImageService
             Size = buffered.Length,
             ThumbnailPath = thumbPath,
             MediumPath = mediumPath,
+            Description = parsedResponse.Description,
+            Tags = parsedResponse.Tags,
         };
 
         if (metadata.Metadata.ExifProfile is { } exif)
