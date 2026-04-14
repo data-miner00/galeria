@@ -22,6 +22,7 @@
 	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
 	import type { Board } from '$lib/types';
 	import { goto } from '$app/navigation';
+	import OtpDialog from '$lib/components/custom/otp-dialog.svelte';
 
 	let { children } = $props();
 
@@ -29,6 +30,7 @@
 	let isCreateBoardDialogOpen = $state(false);
 	let isImageInfoSheetOpen = $state(false);
 	let isBoardInfoSheetOpen = $state(false);
+	let isOtpDialogOpen = $state(false);
 
 	$effect(() => {
 		if (appState.infoSheetData.isOpen) isImageInfoSheetOpen = true;
@@ -68,6 +70,12 @@
 		const resProfile = await fetch('https://localhost:7146/api/v1/UserProfile');
 		if (resProfile.ok) {
 			appState.profile = await resProfile.json();
+		}
+
+		const securitySettingsRes = await fetch('https://localhost:7146/api/v1/auth');
+		if (securitySettingsRes.ok) {
+			const securitySettings = await securitySettingsRes.json();
+			isOtpDialogOpen = securitySettings.isTotpEnabled;
 		}
 	});
 
@@ -165,6 +173,7 @@
 <CreateBoardDialog bind:isDialogOpen={isCreateBoardDialogOpen} />
 <ImageInfoSheet bind:isOpen={isImageInfoSheetOpen} />
 <BoardInfoSheet bind:isOpen={isBoardInfoSheetOpen} />
+<OtpDialog bind:isDialogOpen={isOtpDialogOpen} />
 
 <ToTopButton />
 

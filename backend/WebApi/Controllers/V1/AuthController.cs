@@ -32,7 +32,7 @@ namespace WebApi.Controllers.V1
                 return this.NotFound();
             }
 
-            return this.Ok(settings);
+            return this.Ok(Dtos.SecuritySettings.FromInternal(settings));
         }
 
         [HttpPost("totp/enable")]

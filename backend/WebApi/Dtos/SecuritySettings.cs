@@ -4,7 +4,7 @@
     {
         public bool IsTotpEnabled { get; set; }
 
-        public SecuritySettings FromInternal(Models.SecuritySettings settings)
+        public static SecuritySettings FromInternal(Models.SecuritySettings settings)
         {
             return new SecuritySettings
             {
