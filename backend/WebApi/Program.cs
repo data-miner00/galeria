@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using Google.GenAI;
 using Meilisearch;
 using Microsoft.Azure.Cosmos;
+using WebApi.Clients;
 using WebApi.Options;
 using WebApi.Repositories;
 using WebApi.Services;
@@ -134,6 +135,7 @@ namespace WebApi
 
             builder.Services.AddSingleton(client);
             builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IGenAiClient, GeminiClient>();
 
             return builder;
         }

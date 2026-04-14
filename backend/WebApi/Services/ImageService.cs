@@ -11,36 +11,29 @@ using SixImage = SixLabors.ImageSharp.Image;
 using ImageRecord = WebApi.Models.Image;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 using Google.GenAI;
-using Google.GenAI.Types;
-using System.Text.Json;
+using WebApi.Clients;
 
 namespace WebApi.Services;
 
 public sealed class ImageService
 {
-    private const string CaptionPrompt = """Caption the image and generate at least 3 relevant tags. Return the response strictly in parsable plain JSON format. Do not use markdown fenced block. Format: {"description": "<caption>", "tags": ["tag1", "tag2"]}""";
-    private static JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
     private readonly ImageRepository repository;
     private readonly IImageClient blobClient;
     private readonly Meilisearch.Index index;
-    private readonly Client client;
+    private readonly IGenAiClient genai;
     private readonly ILogger<ImageService> logger;
  
     public ImageService(
         ImageRepository repository,
         IImageClient blobClient,
         Meilisearch.Index index,
-        Client client,
+        IGenAiClient genai,
         ILogger<ImageService> logger)
     {
         this.repository = repository;
         this.blobClient = blobClient;
         this.index = index;
-        this.client = client;
+        this.genai = genai;
         this.logger = logger;
     }
  
@@ -54,7 +47,7 @@ public sealed class ImageService
         CancellationToken ct = default)
     {
         var file = request.File;
- 
+
         // 1. Pre-compute deterministic blob paths so clients can construct
         //    variant URLs from the image id without reading the DB.
         var extension = Path.GetExtension(file.FileName);
@@ -71,36 +64,6 @@ public sealed class ImageService
         await uploadedStream.CopyToAsync(buffered, ct);
         buffered.Position = 0;
 
-        var metadata = SixImage.Identify(buffered);
-        buffered.Position = 0;
-
-        Schema responseSchema = new Schema {
-            Properties = new Dictionary<string, Schema>
-            {
-                {
-                    "description", new Schema { Type = Google.GenAI.Types.Type.String, Title = "Description" }
-                },
-                {
-                    "tags", new Schema { Type = Google.GenAI.Types.Type.Array, Title = "Tags" }
-                },
-            },
-            PropertyOrdering = new List<string> { "description", "tags" },
-            Required = new List<string> { "description", "tags" },
-            Title = "Response", Type = Google.GenAI.Types.Type.Object,
-        };
-
-        var response = await client.Models.GenerateContentAsync(
-            model: "gemini-2.5-flash", // Use latest vision-capable model
-            contents: new List<Content>
-            {
-                new Content { Parts = [ new Part { Text = CaptionPrompt }]},
-                new Content { Parts = [ Part.FromBytes(buffered.ToArray(), MimeTypes.GetMimeType(file.FileName)) ]}
-            });
-
-        buffered.Position = 0;
-
-        var parsedResponse = JsonSerializer.Deserialize<CaptionResponse>(response.Text, SerializerOptions);
-
         var record = new ImageRecord
         {
             Id = id,
@@ -111,36 +74,19 @@ public sealed class ImageService
             Status = UploadStatus.Pending,
             CreatedAt = DateTime.UtcNow,
             IsCensored = request.IsCensored,
-            Width = metadata.Width,
-            Height = metadata.Height,
             Size = buffered.Length,
             ThumbnailPath = thumbPath,
             MediumPath = mediumPath,
-            Description = parsedResponse.Description,
-            Tags = parsedResponse.Tags,
         };
 
-        if (metadata.Metadata.ExifProfile is { } exif)
+        PopulateMetadata(buffered, record);
+
+        var captionResponse = await this.genai.GenerateCaptionAsync(buffered, MimeTypes.GetMimeType(file.Name));
+
+        if (captionResponse is not null)
         {
-            if (exif.TryGetValue(ExifTag.Make, out var exifMake))
-            {
-                record.CameraMake = exifMake.Value;
-            }
-
-            if (exif.TryGetValue(ExifTag.Model, out var exifModel))
-            {
-                record.CameraModel = exifModel.Value;
-            }
-
-            if (exif.TryGetValue(ExifTag.DateTimeOriginal, out var exifOriginal))
-            {
-                record.TakenAt = exifOriginal.Value;
-            }
-
-            if (exif.TryGetValue(ExifTag.Orientation, out var exifOrientation))
-            {
-                record.Orientation = exifOrientation.Value;
-            }
+            record.Description = captionResponse.Description;
+            record.Tags = captionResponse.Tags;
         }
 
         await this.repository.UpsertAsync(record, ct);
@@ -207,7 +153,6 @@ public sealed class ImageService
         }
         catch (Exception ex)
         {
-            // Mark as failed — do NOT delete the DB record.
             this.logger.LogError(ex, "Blob upload failed for image record {Id}.", record.Id);
 
             record.Status = UploadStatus.Failed;
@@ -215,35 +160,6 @@ public sealed class ImageService
         }
 
         return record;
-    }
- 
-    /// <summary>
-    /// Retries uploading a previously Failed image.
-    /// Call this from an admin endpoint or a background job.
-    /// </summary>
-    public async Task<bool> RetryFailedUploadAsync(string imageId, IFormFile file, CancellationToken ct = default)
-    {
-        var record = await this.repository.GetByIdAsync(imageId, ImageDocument.PartitionKeyValue, ct);
- 
-        if (record is null || record.Status == UploadStatus.Suceeded)
-        {
-            return false;
-        }
- 
-        try
-        {
-            await using var stream = file.OpenReadStream();
-            await blobClient.UploadAsync(stream, record.Path, record.ContentType, ct);
- 
-            record.Status = UploadStatus.Suceeded;
-            await this.repository.UpsertAsync(record, ct);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            this.logger.LogError(ex, "Retry upload failed for image record {Id}.", record.Id);
-            return false;
-        }
     }
 
     /// <summary>
@@ -320,5 +236,37 @@ public sealed class ImageService
         var records = await this.repository.GetByIdsAsync(ids, ct);
 
         return records.ToList();
+    }
+
+    private static void PopulateMetadata(MemoryStream buffered, ImageRecord record)
+    {
+        var metadata = SixImage.Identify(buffered);
+        buffered.Position = 0;
+
+        record.Width = metadata.Width;
+        record.Height = metadata.Height;
+
+        if (metadata.Metadata.ExifProfile is { } exif)
+        {
+            if (exif.TryGetValue(ExifTag.Make, out var exifMake))
+            {
+                record.CameraMake = exifMake.Value;
+            }
+
+            if (exif.TryGetValue(ExifTag.Model, out var exifModel))
+            {
+                record.CameraModel = exifModel.Value;
+            }
+
+            if (exif.TryGetValue(ExifTag.DateTimeOriginal, out var exifOriginal))
+            {
+                record.TakenAt = exifOriginal.Value;
+            }
+
+            if (exif.TryGetValue(ExifTag.Orientation, out var exifOrientation))
+            {
+                record.Orientation = exifOrientation.Value;
+            }
+        }
     }
 }

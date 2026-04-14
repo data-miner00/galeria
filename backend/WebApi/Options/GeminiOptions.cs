@@ -4,6 +4,8 @@
     {
         public string ApiKey { get; set; }
 
+        public string Model { get; set; }
+
         public bool IsEnabled { get; set; }
     }
 }
