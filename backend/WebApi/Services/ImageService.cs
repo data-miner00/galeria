@@ -81,7 +81,7 @@ public sealed class ImageService
 
         PopulateMetadata(buffered, record);
 
-        var captionResponse = await this.genai.GenerateCaptionAsync(buffered, MimeTypes.GetMimeType(file.Name));
+        var captionResponse = await this.genai.GenerateCaptionAsync(buffered, MimeTypes.GetMimeType(file.FileName));
 
         if (captionResponse is not null)
         {

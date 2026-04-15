@@ -10,7 +10,7 @@ namespace WebApi.Clients;
 public class GeminiClient : IGenAiClient
 {
     private const string CaptionPrompt = """Caption the image and generate at least 3 relevant tags. Return the response strictly in parsable plain JSON format. Do not use markdown fenced block. Format: {"description": "<caption>", "tags": ["tag1", "tag2"]}""";
-    private static JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
     {
         PropertyNameCaseInsensitive = true
     };
@@ -64,7 +64,12 @@ public class GeminiClient : IGenAiClient
                     "description", new Schema { Type = GoogleType.String, Title = "Description" }
                 },
                 {
-                    "tags", new Schema { Type = GoogleType.Array, Title = "Tags" }
+                    "tags", new Schema
+                    {
+                        Type = GoogleType.Array,
+                        Title = "Tags",
+                        Items = new Schema { Type = GoogleType.String, Title = "Tag" }
+                    }
                 },
             },
             PropertyOrdering = ["description", "tags"],

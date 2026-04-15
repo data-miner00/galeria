@@ -4,6 +4,6 @@ namespace WebApi.Clients
 {
     public interface IGenAiClient
     {
-        Task<CaptionResponse> GenerateCaptionAsync(MemoryStream imageStream, string mimeType);
+        Task<CaptionResponse?> GenerateCaptionAsync(MemoryStream imageStream, string mimeType);
     }
 }
