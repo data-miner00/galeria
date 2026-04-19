@@ -51,16 +51,24 @@
 			formData.append('File', file);
 		} else {
 			if (!imageUrl) return;
-			const response = await fetch(imageUrl);
-			const fileName = imageUrl.split('/').pop() || 'image';
 
-			const blob = await response.blob();
+			try {
+				const response = await fetch(imageUrl);
+				const fileName = imageUrl.split('/').pop() || 'image';
 
-			formData.append('File', new File([blob], fileName, { type: blob.type }));
+				const blob = await response.blob();
+
+				formData.append('File', new File([blob], fileName, { type: blob.type }));
+			} catch (error) {
+				toast.error('Failed to fetch image from URL. ' + (error as Error).message);
+				isLoading = false;
+				return;
+			}
 		}
 
 		formData.append('Title', title);
 		formData.append('IsCensored', isCensored.toString());
+		formData.append('OriginalUrl', imageUrl);
 
 		try {
 			const response = await fetch('https://localhost:7146/api/v1/image', {
