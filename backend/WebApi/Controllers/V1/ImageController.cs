@@ -181,6 +181,11 @@ namespace WebApi.Controllers.V1
             {
                 image.Tags = request.Tags;
             }
+
+            if (!string.IsNullOrWhiteSpace(request.OriginalUrl))
+            {
+                image.OriginalUrl = request.OriginalUrl;
+            }
         }
     }
 }

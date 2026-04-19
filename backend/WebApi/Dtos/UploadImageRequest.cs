@@ -7,5 +7,7 @@
         public string? Title { get; set; }
 
         public bool IsCensored { get; set; }
+
+        public string? OriginalUrl { get; set; }
     }
 }

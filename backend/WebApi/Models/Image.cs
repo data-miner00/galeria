@@ -41,5 +41,7 @@
         public string? TakenAt { get; set; }
 
         public ushort? Orientation { get; set; }
+
+        public string? OriginalUrl { get; set; }
     }
 }

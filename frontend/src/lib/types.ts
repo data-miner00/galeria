@@ -30,6 +30,7 @@ export type ImageRecord = {
 	cameraMake?: string;
 	takenAt?: string;
 	orientation?: number;
+	originalUrl?: string;
 };
 
 export type UserProfile = {

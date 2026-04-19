@@ -34,12 +34,14 @@
 		description = currentImageRecord.description || '';
 		category = currentImageRecord.category || '';
 		tags = currentImageRecord.tags.join(', ');
+		originalUrl = currentImageRecord.originalUrl || '';
 	}
 
 	let title = $state('');
 	let description = $state('');
 	let category = $state('');
 	let tags = $state('');
+	let originalUrl = $state('');
 
 	onMount(() => {
 		if (currentImageRecord) {
@@ -47,6 +49,7 @@
 			description = currentImageRecord.description || '';
 			category = currentImageRecord.category || '';
 			tags = currentImageRecord.tags.join(', ');
+			originalUrl = currentImageRecord.originalUrl || '';
 		}
 	});
 
@@ -55,6 +58,7 @@
 		description: string;
 		category: string;
 		tags?: string[];
+		originalUrl?: string;
 	};
 
 	async function saveChanges() {
@@ -67,7 +71,8 @@
 			tags: tags
 				.split(',')
 				.map((t) => t.trim())
-				.filter((t) => t.length > 0)
+				.filter((t) => t.length > 0),
+			originalUrl: originalUrl.trim()
 		};
 
 		try {
@@ -142,6 +147,10 @@
 				<div class="grid gap-3">
 					<Label for="size" class="text-end">Size</Label>
 					<Input id="size" value={currentImageRecord.size} disabled />
+				</div>
+				<div class="grid gap-3">
+					<Label for="originalUrl" class="text-end">Original URL</Label>
+					<Input id="originalUrl" placeholder="Enter original URL" bind:value={originalUrl} />
 				</div>
 				<div class="grid gap-3">
 					<Label for="createdAt" class="text-end">Created At</Label>

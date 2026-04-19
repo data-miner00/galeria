@@ -44,6 +44,8 @@
 
         public ushort? Orientation { get; set; }
 
+        public string? OriginalUrl { get; set; }
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -75,6 +77,7 @@
                 CameraModel = CameraModel,
                 TakenAt = TakenAt,
                 Orientation = Orientation,
+                OriginalUrl = OriginalUrl,
             };
         }
 
@@ -107,6 +110,7 @@
                 CameraModel = entity.CameraModel,
                 TakenAt = entity.TakenAt,
                 Orientation = entity.Orientation,
+                OriginalUrl = entity.OriginalUrl,
             };
         }
     }

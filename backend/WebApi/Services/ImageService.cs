@@ -79,6 +79,11 @@ public sealed class ImageService
             MediumPath = mediumPath,
         };
 
+        if (!string.IsNullOrWhiteSpace(request.OriginalUrl))
+        {
+            record.OriginalUrl = request.OriginalUrl;
+        }
+
         PopulateMetadata(buffered, record);
 
         var captionResponse = await this.genai.GenerateCaptionAsync(buffered, MimeTypes.GetMimeType(file.FileName));
