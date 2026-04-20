@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
 	import Textarea from '../ui/textarea/textarea.svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	type Props = {
 		isOpen: boolean;
@@ -76,7 +77,7 @@
 		};
 
 		try {
-			const response = await fetch(`https://localhost:7146/api/v1/image/${currentImageRecord.id}`, {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/${currentImageRecord.id}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'

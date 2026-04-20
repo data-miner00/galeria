@@ -10,13 +10,14 @@
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/states.svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let profile = $state<UserProfile>({});
 
 	onMount(async () => {
 		appState.headerTitle = 'Profile Settings';
 
-		const res = await fetch('https://localhost:7146/api/v1/UserProfile');
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserProfile`);
 		profile = await res.json();
 	});
 
@@ -25,7 +26,7 @@
 	async function saveProfile() {
 		isSaving = true;
 
-		const request = await fetch('https://localhost:7146/api/v1/UserProfile', {
+		const request = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserProfile`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json'

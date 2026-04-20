@@ -3,6 +3,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { toast } from 'svelte-sonner';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -13,7 +14,7 @@
 	let otp = $state('');
 
 	async function verifyOtp() {
-		const res = await fetch(`https://localhost:7146/api/v1/auth/totp/validate/${otp}`, {
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/auth/totp/validate/${otp}`, {
 			method: 'POST'
 		});
 

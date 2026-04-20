@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import type { Board } from '$lib/types';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -24,7 +24,7 @@
 	let boards = $state<Board[]>([]);
 
 	onMount(async () => {
-		const res = await fetch('https://localhost:7146/api/v1/board');
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board`);
 		if (!res.ok) {
 			toast.error('Failed to fetch boards.');
 			return;
@@ -38,7 +38,7 @@
 			return;
 		}
 
-		const res = await fetch(`https://localhost:7146/api/v1/board/${boardId}/${imageId}`, {
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board/${boardId}/${imageId}`, {
 			method: 'post'
 		});
 

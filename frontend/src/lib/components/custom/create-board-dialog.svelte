@@ -5,6 +5,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { appState } from '$lib/states.svelte';
 	import { toast } from 'svelte-sonner';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -21,7 +22,7 @@
 	}
 
 	async function createBoard() {
-		const res = await fetch('https://localhost:7146/api/v1/board', {
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json'

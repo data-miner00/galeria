@@ -9,6 +9,7 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import Spinner from '../ui/spinner/spinner.svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -71,7 +72,7 @@
 		formData.append('OriginalUrl', imageUrl);
 
 		try {
-			const response = await fetch('https://localhost:7146/api/v1/image', {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
 				method: 'POST',
 				body: formData
 			});

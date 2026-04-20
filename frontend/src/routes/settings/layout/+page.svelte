@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/states.svelte';
 	import { onMount } from 'svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let isSaving = $state(false);
 	let noOfColumnsInput = $state(appState.settings.noOfColumns || 5);
@@ -19,7 +20,7 @@
 	async function saveSettings() {
 		isSaving = true;
 
-		const request = await fetch('https://localhost:7146/api/v1/UserSettings', {
+		const request = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserSettings`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json'

@@ -10,6 +10,7 @@
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/states.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let settings = $state({});
 
@@ -40,7 +41,7 @@
 	let otpImageBlobUrl = $state('');
 
 	async function requestEnableTotp() {
-		const response = await fetch('https://localhost:7146/api/v1/auth/totp/enable', {
+		const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/auth/totp/enable`, {
 			method: 'POST'
 		});
 		const blobImage = await response.blob();
@@ -63,7 +64,7 @@
 
 		isSaving = true;
 
-		const response = await fetch('https://localhost:7146/api/v1/auth/totp/validate/' + otp, {
+		const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/auth/totp/validate/${otp}`, {
 			method: 'POST'
 		});
 

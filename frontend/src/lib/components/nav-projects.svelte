@@ -11,6 +11,7 @@
 	import { toast } from 'svelte-sonner';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { appState } from '$lib/states.svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let {
 		boards
@@ -25,7 +26,7 @@
 	let id = $state('');
 
 	async function deleteBoard() {
-		const res = await fetch(`https://localhost:7146/api/v1/board/${id}`, {
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board/${id}`, {
 			method: 'delete'
 		});
 
@@ -48,7 +49,7 @@
 		board.isPinned = !board.isPinned;
 
 		try {
-			await fetch(`https://localhost:7146/api/v1/board/${board.id}`, {
+			await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board/${board.id}`, {
 				method: 'PATCH',
 				body: JSON.stringify({ isPinned: board.isPinned }),
 				headers: { 'Content-Type': 'application/json' }

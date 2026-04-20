@@ -15,6 +15,7 @@
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { page } from '$app/state';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 	const cardWidth = 247.5;
@@ -43,7 +44,7 @@
 			return;
 		}
 
-		const res = await fetch('https://localhost:7146/api/v1/image/search?q=' + searchQuery);
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/search?q=` + searchQuery);
 		results = await res.json();
 		isLoading = false;
 	}

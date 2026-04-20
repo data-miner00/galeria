@@ -22,12 +22,13 @@
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import { toast } from 'svelte-sonner';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let isLoading = $state(true);
 	let isPinned = $state(false);
 
 	async function loadBoard(boardId: string) {
-		const res = await fetch(`https://localhost:7146/api/v1/board/${boardId}`);
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board/${boardId}`);
 		const board = (await res.json()) as Board;
 
 		isPinned = board.isPinned;
@@ -36,7 +37,7 @@
 
 		// Question: Should fetch by passing params or post body
 		if (board.imageIds.length > 0) {
-			const response = await fetch(`https://localhost:7146/api/v1/image/getbyids`, {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/getbyids`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -109,7 +110,7 @@
 
 	async function onPinToggle() {
 		try {
-			const res = await fetch(`https://localhost:7146/api/v1/board/${page.params.id}`, {
+			const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board/${page.params.id}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'

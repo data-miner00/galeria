@@ -18,6 +18,7 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { toast } from 'svelte-sonner';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	onMount(async () => {
 		appState.headerTitle = 'Recycle Bin';
@@ -59,7 +60,7 @@
 
 	async function deleteAll() {
 		try {
-			await fetch('https://localhost:7146/api/v1/image/recyclebin/clear', {
+			await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/recyclebin/clear`, {
 				method: 'DELETE'
 			});
 

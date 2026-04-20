@@ -23,6 +23,7 @@
 	import type { Board } from '$lib/types';
 	import { goto } from '$app/navigation';
 	import OtpDialog from '$lib/components/custom/otp-dialog.svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let { children } = $props();
 
@@ -53,7 +54,7 @@
 	});
 
 	onMount(async () => {
-		const res = await fetch('https://localhost:7146/api/v1/board');
+		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board`);
 		if (res.ok) {
 			const boards = (await res.json()) as Board[];
 
@@ -62,17 +63,17 @@
 			);
 		}
 
-		const resSettings = await fetch('https://localhost:7146/api/v1/UserSettings');
+		const resSettings = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserSettings`);
 		if (resSettings.ok) {
 			appState.settings = await resSettings.json();
 		}
 
-		const resProfile = await fetch('https://localhost:7146/api/v1/UserProfile');
+		const resProfile = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserProfile`);
 		if (resProfile.ok) {
 			appState.profile = await resProfile.json();
 		}
 
-		const securitySettingsRes = await fetch('https://localhost:7146/api/v1/auth');
+		const securitySettingsRes = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/auth`);
 		if (securitySettingsRes.ok) {
 			const securitySettings = await securitySettingsRes.json();
 			isOtpDialogOpen = securitySettings.isTotpEnabled;

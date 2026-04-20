@@ -20,6 +20,7 @@
 	import AddToBoardDialog from './add-to-board-dialog.svelte';
 	import { appState } from '$lib/states.svelte';
 	import { page } from '$app/state';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -49,7 +50,7 @@
 
 	async function removeImage() {
 		try {
-			const response = await fetch('https://localhost:7146/api/v1/image/' + id, {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/${id}`, {
 				method: 'delete'
 			});
 
@@ -68,7 +69,7 @@
 
 	async function removeImageFromBoard() {
 		try {
-			const response = await fetch(`https://localhost:7146/api/v1/board/${page.params.id}/${id}`, {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board/${page.params.id}/${id}`, {
 				method: 'delete'
 			});
 
@@ -119,7 +120,7 @@
 
 	async function setAsProfilePicture(imageSrc: string) {
 		try {
-			const response = await fetch('https://localhost:7146/api/v1/UserProfile', {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserProfile`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
@@ -184,7 +185,7 @@
 		toastMessageOpposite: string = 'Successfully updated image.'
 	) {
 		try {
-			const response = await fetch(`https://localhost:7146/api/v1/image/${id}`, {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/${id}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
