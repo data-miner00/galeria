@@ -1,0 +1,80 @@
+services:
+  cosmos-emulator:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+    container_name: cosmos-emulator-prod
+    hostname: cosmos-emulator
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+      - "1235:1234"
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=10
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+    volumes:
+      - cosmos_data_prod:/data
+    networks:
+      - galeria-prod
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite-emulator-prod
+    hostname: azurite-emulator
+    restart: unless-stopped
+    ports:
+      - "10003:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite_data_prod:/data
+    networks:
+      - galeria-prod
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.41.0
+    container_name: meilisearch-prod
+    restart: unless-stopped
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-changeme123}
+      - MEILI_ENV=production
+      - MEILI_NO_ANALYTICS=true
+    volumes:
+      - meili_data_prod:/meili_data
+    networks:
+      - galeria-prod
+
+  webapi:
+    build:
+      context: ./backend/WebApi
+      dockerfile: Dockerfile
+    container_name: galeria-api
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__CosmosDb=AccountEndpoint=http://cosmos-emulator:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;
+      - ConnectionStrings__StorageAccount=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite-emulator:10000/devstoreaccount1;QueueEndpoint=http://azurite-emulator:10001/devstoreaccount1;TableEndpoint=http://azurite-emulator:10002/devstoreaccount1;
+      - Meilisearch__Host=http://meilisearch:7700
+      - Meilisearch__ApiKey=${MEILI_MASTER_KEY}
+      - Gemini__ApiKey=${GEMINI_API_KEY}
+    depends_on:
+      - cosmos-emulator
+      - azurite
+      - meilisearch
+    networks:
+      - galeria-prod
+
+volumes:
+  cosmos_data_prod:
+    driver: local
+  azurite_data_prod:
+    driver: local
+  meili_data_prod:
+    driver: local
+
+networks:
+  galeria-prod:
+    driver: bridge
