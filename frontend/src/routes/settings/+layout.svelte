@@ -17,7 +17,7 @@
 		<a href="/settings/security" class:underline={page.url.pathname === '/settings/security'}
 			>Security Settings</a
 		>
-		<a href="/settings/privacy" class:underline={page.url.pathname === '/settings/privacy'}
+		<a href="/settings/privacy" class:underline={page.url.pathname === '/settings/general'}
 			>Privacy Policy</a
 		>
 	</aside>
