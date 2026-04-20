@@ -68,6 +68,19 @@ services:
     networks:
       - galeria-prod
 
+  webapp:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - PUBLIC_API_BASE_URL=http://localhost:5001
+    container_name: galeria-webapp
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - webapi
+
 volumes:
   cosmos_data_prod:
     driver: local
