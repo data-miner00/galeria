@@ -14,6 +14,25 @@ namespace WebApi
     {
         private static readonly string CorsPolicyName = "GaleriaPolicy";
 
+        private class CosmosRedirectHandler : HttpClientHandler
+        {
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                if (request.RequestUri?.Host == "127.0.0.1" && request.RequestUri?.Port == 8081)
+                {
+                    var builder = new UriBuilder(request.RequestUri)
+                    {
+                        Host = "cosmos-emulator",
+                        Port = 8081,
+                        Scheme = "http"
+                    };
+                    request.RequestUri = builder.Uri;
+                }
+
+                return await base.SendAsync(request, cancellationToken);
+            }
+        }
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -33,14 +52,11 @@ namespace WebApi
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            app.MapOpenApi();
+            app.UseSwaggerUI(opt =>
             {
-                app.MapOpenApi();
-                app.UseSwaggerUI(opt =>
-                {
-                    opt.SwaggerEndpoint("/openapi/v1.json", "Galeria API V1"); // /swagger/index
-                });
-            }
+                opt.SwaggerEndpoint("/openapi/v1.json", "Galeria API V1"); // /swagger/index
+            });
 
             app.UseHttpsRedirection();
 
@@ -59,10 +75,17 @@ namespace WebApi
             var cosmosConnectionString = builder.Configuration.GetConnectionString("CosmosDb")
                 ?? throw new InvalidOperationException("Cannot find Cosmos connection string");
 
+            var isProduction = builder.Environment.IsProduction();
+
             var opt = new CosmosClientOptions
             {
                 ConnectionMode = ConnectionMode.Gateway,
             };
+
+            if (isProduction)
+            {
+                opt.HttpClientFactory = () => new HttpClient(new CosmosRedirectHandler());
+            }
 
             var cosmosClient = new CosmosClient(cosmosConnectionString, opt);
 
