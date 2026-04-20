@@ -48,15 +48,15 @@ A self-hosted authenticationless image board used for managing personal images.
 - [ ] Identify similar (vector database)
 - [ ] Identify duplicates (vector database)
 - [ ] Usage analytics (to think what to analyse)
-- [ ] Add Log aggregator like logseq or loki to monitor API calls
+- [ ] Add Log aggregator like loki to monitor API calls
 - [ ] Optional Authentication
 - [x] Optional TOTP MFA
 - [ ] Craft image from text and emoji icons and backgrounds
 - [ ] Optional watermarks for downloaded image
-- [x] Add image from URL
+- [ ] Add image from URL (not working for most becoz CORS block, need implement backend)
 - [ ] Bulk select for actions
 - [ ] AI Prompts
-- [ ] AI Auto tagging
+- [x] AI Auto tagging
 - [ ] Auditing
 - [ ] Video
 - [ ] Live image
@@ -77,24 +77,7 @@ A self-hosted authenticationless image board used for managing personal images.
 
 ## Deployment/Build
 
-- [ ] Docker image for frontend/backend
-- [ ] Docker compose for dev environment & prod environment
+- [x] Docker image for frontend/backend
+- [x] Docker compose for dev environment & prod environment
 
 ~~Should be simple and quick. Aim to get MVP by 22 March 2026.~~
-
-## Image Store
-
-1. File storage repository.
-2. Azure Storage Account (Emulator)
-3. Azure Cosmos DB
-
-## References
-
-- [Pinterest](https://www.pinterest.com/)
-- [Midjourney](https://www.midjourney.com/explore?tab=video_top)
-- [Mobbin Gallery](https://mobbin.com/glossary/gallery)
-- [Masonry Layout](https://piccalil.li/blog/a-simple-masonry-like-composable-layout/)
-- [Behance](https://www.behance.net/#)
-- [Tailwind Aspect Ratio](https://tailwindcss.com/docs/aspect-ratio)
-- [Shadcn/Svelte](https://shadcn-svelte.com/)
-- [Svelte](https://svelte.dev/)
