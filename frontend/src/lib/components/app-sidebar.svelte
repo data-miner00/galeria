@@ -7,12 +7,10 @@
 	import CommandIcon from '@lucide/svelte/icons/command';
 	import { type ComponentProps } from 'svelte';
 	import Button from './ui/button/button.svelte';
-	import { PlusIcon } from '@lucide/svelte';
+	import { LayoutGridIcon, PlusIcon } from '@lucide/svelte';
 	import type { Board } from '$lib/types';
 	import { appState } from '$lib/states.svelte';
 
-	import BookOpenIcon from '@lucide/svelte/icons/book-open';
-	import BotIcon from '@lucide/svelte/icons/bot';
 	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
 	import SendIcon from '@lucide/svelte/icons/send';
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
@@ -35,50 +33,31 @@
 						url: '/favorites'
 					},
 					{
+						title: 'Drafts',
+						url: '/drafts'
+					},
+					{
 						title: 'Experiment',
 						url: '/experiment'
 					}
 				]
 			},
 			{
-				title: 'Models',
+				title: 'Layouts',
 				url: '#',
-				icon: BotIcon,
+				icon: LayoutGridIcon,
 				items: [
 					{
-						title: 'Genesis',
-						url: '#'
+						title: 'Timeline',
+						url: '/timeline'
 					},
 					{
-						title: 'Explorer',
-						url: '#'
+						title: 'Carousel',
+						url: '/carousel'
 					},
 					{
-						title: 'Quantum',
-						url: '#'
-					}
-				]
-			},
-			{
-				title: 'Documentation',
-				url: '#',
-				icon: BookOpenIcon,
-				items: [
-					{
-						title: 'Introduction',
-						url: '#'
-					},
-					{
-						title: 'Get Started',
-						url: '#'
-					},
-					{
-						title: 'Tutorials',
-						url: '#'
-					},
-					{
-						title: 'Changelog',
-						url: '#'
+						title: 'Transition', // full screen background transition
+						url: '/transition'
 					}
 				]
 			}
