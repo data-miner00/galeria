@@ -14,24 +14,15 @@
 	} from '@lucide/svelte';
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 	const cardWidth = 247.5;
 	const containerPadding = 16 * 2;
 	let gap = $derived(16 * (columns - 1));
 
-	let isLoading = $state(true);
+	let isLoading = $derived(appState.isLoading);
 	onMount(async () => {
 		appState.headerTitle = 'Home';
-
-		if (appState.images.length > 0) {
-			isLoading = false;
-			return;
-		}
-		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`);
-		appState.images = await res.json();
-		isLoading = false;
 	});
 
 	onMount(() => {
@@ -46,7 +37,6 @@
 			}
 		});
 
-		// Start observing the element
 		resizeObserver.observe(targetElement!);
 
 		return () => {

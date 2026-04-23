@@ -1,6 +1,7 @@
 import type { Board, ImageRecord, InfoSheetData, UserProfile, UserSettings } from './types';
 
 export type AppState = {
+	isLoading: boolean;
 	headerTitle: string;
 	images: ImageRecord[];
 	boards: Board[];
@@ -11,6 +12,7 @@ export type AppState = {
 };
 
 export let appState = $state<AppState>({
+	isLoading: true,
 	headerTitle: 'Home',
 	images: [],
 	boards: [],

@@ -4,19 +4,10 @@
 	import { ArrowUpRightIcon, ImageIcon } from '@lucide/svelte';
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
-	let isLoading = $state(true);
+	let isLoading = $derived(appState.isLoading);
 	onMount(async () => {
 		appState.headerTitle = 'Timeline';
-
-		if (appState.images.length > 0) {
-			isLoading = false;
-			return;
-		}
-		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`);
-		appState.images = await res.json();
-		isLoading = false;
 	});
 
 	type Groupings = 'year' | 'month' | 'none';
