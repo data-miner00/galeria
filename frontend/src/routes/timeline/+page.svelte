@@ -191,5 +191,5 @@
 		</Empty.Root>
 	{/if}
 {:else}
-	<LoadingImagesSkeleton />
+	<LoadingImagesSkeleton layout="timeline" />
 {/if}

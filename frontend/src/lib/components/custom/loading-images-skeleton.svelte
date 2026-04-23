@@ -1,36 +1,50 @@
 <script lang="ts">
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+
+	type Props = {
+		layout?: 'masonry' | 'timeline';
+	};
+
+	const { layout = 'masonry' }: Props = $props();
 </script>
 
-<div class="flex space-x-4">
-	<div class="flex flex-1 flex-col gap-4">
-		<Skeleton class="h-[300px] w-full" />
-		<Skeleton class="h-[280px] w-full" />
-		<Skeleton class="h-[400px] w-full" />
-		<Skeleton class="h-[300px] w-full" />
+{#if layout === 'masonry'}
+	<div class="flex space-x-4">
+		<div class="flex flex-1 flex-col gap-4">
+			<Skeleton class="h-75 w-full" />
+			<Skeleton class="h-70 w-full" />
+			<Skeleton class="h-100 w-full" />
+			<Skeleton class="h-75 w-full" />
+		</div>
+		<div class="flex flex-1 flex-col gap-4">
+			<Skeleton class="h-100 w-full" />
+			<Skeleton class="h-70 w-full" />
+			<Skeleton class="h-50 w-full" />
+			<Skeleton class="h-75 w-full" />
+		</div>
+		<div class="flex flex-1 flex-col gap-4">
+			<Skeleton class="h-45 w-full" />
+			<Skeleton class="h-70 w-full" />
+			<Skeleton class="h-37.5 w-full" />
+			<Skeleton class="h-75 w-full" />
+		</div>
+		<div class="flex flex-1 flex-col gap-4">
+			<Skeleton class="h-75 w-full" />
+			<Skeleton class="h-40 w-full" />
+			<Skeleton class="h-55 w-full" />
+			<Skeleton class="h-75 w-full" />
+		</div>
+		<div class="flex flex-1 flex-col gap-4">
+			<Skeleton class="h-75 w-full" />
+			<Skeleton class="h-70 w-full" />
+			<Skeleton class="h-100 w-full" />
+			<Skeleton class="h-75 w-full" />
+		</div>
 	</div>
-	<div class="flex flex-1 flex-col gap-4">
-		<Skeleton class="h-[400px] w-full" />
-		<Skeleton class="h-[280px] w-full" />
-		<Skeleton class="h-[200px] w-full" />
-		<Skeleton class="h-[300px] w-full" />
+{:else}
+	<div class="flex flex-wrap gap-1">
+		{#each Array(20)}
+			<Skeleton class="h-25 w-25" />
+		{/each}
 	</div>
-	<div class="flex flex-1 flex-col gap-4">
-		<Skeleton class="h-[180px] w-full" />
-		<Skeleton class="h-[280px] w-full" />
-		<Skeleton class="h-[150px] w-full" />
-		<Skeleton class="h-[300px] w-full" />
-	</div>
-	<div class="flex flex-1 flex-col gap-4">
-		<Skeleton class="h-[300px] w-full" />
-		<Skeleton class="h-[160px] w-full" />
-		<Skeleton class="h-[220px] w-full" />
-		<Skeleton class="h-[300px] w-full" />
-	</div>
-	<div class="flex flex-1 flex-col gap-4">
-		<Skeleton class="h-[300px] w-full" />
-		<Skeleton class="h-[280px] w-full" />
-		<Skeleton class="h-[400px] w-full" />
-		<Skeleton class="h-[300px] w-full" />
-	</div>
-</div>
+{/if}
