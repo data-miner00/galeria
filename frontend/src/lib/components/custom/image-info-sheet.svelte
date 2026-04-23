@@ -9,6 +9,8 @@
 	import { onMount } from 'svelte';
 	import Textarea from '../ui/textarea/textarea.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import { ClipboardIcon } from '@lucide/svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -115,7 +117,19 @@
 			<div class="grid flex-1 auto-rows-min gap-6 px-4">
 				<div class="grid gap-3">
 					<Label for="id" class="text-end">Id</Label>
-					<Input id="id" value={currentImageRecord.id} disabled />
+					<InputGroup.Root>
+						<InputGroup.Input id="id" value={currentImageRecord.id} disabled />
+						<InputGroup.Addon align="inline-end">
+							<InputGroup.Button
+								aria-label="Copy"
+								title="Copy"
+								size="icon-xs"
+								onclick={() => navigator.clipboard.writeText(currentImageRecord.id)}
+							>
+								<ClipboardIcon />
+							</InputGroup.Button>
+						</InputGroup.Addon>
+					</InputGroup.Root>
 				</div>
 				<div class="grid gap-3">
 					<Label for="title" class="text-end">Title</Label>
