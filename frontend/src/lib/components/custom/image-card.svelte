@@ -3,6 +3,7 @@
 	import CardActionsButton from './card-actions-button.svelte';
 	import { EyeOffIcon } from '@lucide/svelte';
 	import type { LayoutType } from '$lib/types';
+	import { B } from '$lib/helpers';
 
 	type Props = {
 		id: string;
@@ -77,11 +78,7 @@
 		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}
 		aria-label="Open image preview"
 	>
-		<img
-			class="h-full w-full object-cover"
-			alt={title ?? 'Gallery image'}
-			src={`http://127.0.0.1:10003/devstoreaccount1/images/${path}`}
-		/>
+		<img class="h-full w-full object-cover" alt={title ?? 'Gallery image'} src={B(path)} />
 
 		{#if isCensored && !revealCensoredImage}
 			<div class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xl">
@@ -135,7 +132,7 @@
 			<img
 				class="max-h-[85vh] max-w-[85vw] object-contain"
 				alt={title ?? 'Gallery image preview'}
-				src={`http://127.0.0.1:10003/devstoreaccount1/images/${path}`}
+				src={B(path)}
 			/>
 		</div>
 	</div>

@@ -46,6 +46,7 @@
 		isCensored
 	}: Props = $props();
 
+	import { B } from '$lib/helpers';
 	let isAddToBoardDialogOpen = $state(false);
 
 	async function removeImage() {
@@ -140,15 +141,15 @@
 	}
 
 	function openOriginal() {
-		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`, '_blank');
+		window.open(B(path), '_blank');
 	}
 
 	function openMedium() {
-		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${mediumPath}`, '_blank');
+		window.open(B(mediumPath), '_blank');
 	}
 
 	function openThumbnail() {
-		window.open(`http://127.0.0.1:10003/devstoreaccount1/images/${thumbnailPath}`, '_blank');
+		window.open(B(thumbnailPath), '_blank');
 	}
 
 	function toggleFavorite() {
@@ -259,15 +260,10 @@
 				<CircleMinus /> Remove from this Board
 			</DropdownMenu.Item>
 		{/if}
-		<DropdownMenu.Item
-			onclick={() => downloadImage(`http://127.0.0.1:10003/devstoreaccount1/images/${path}`, path)}
-		>
+		<DropdownMenu.Item onclick={() => downloadImage(B(path), path)}>
 			<Download /> Download
 		</DropdownMenu.Item>
-		<DropdownMenu.Item
-			onclick={() =>
-				setAsProfilePicture(`http://127.0.0.1:10003/devstoreaccount1/images/${thumbnailPath}`)}
-		>
+		<DropdownMenu.Item onclick={() => setAsProfilePicture(B(thumbnailPath))}>
 			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator />

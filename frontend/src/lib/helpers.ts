@@ -1,3 +1,5 @@
+import { PUBLIC_BLOB_BASE_URL } from '$env/static/public';
+
 export function debounce<T extends (...args: any[]) => any>(
 	func: T,
 	wait: number
@@ -9,3 +11,9 @@ export function debounce<T extends (...args: any[]) => any>(
 		timeout = setTimeout(() => func(...args), wait);
 	};
 }
+
+export function createBlobUrl(relativePath: string): string {
+	return PUBLIC_BLOB_BASE_URL + '/devstoreaccount1/images/' + relativePath;
+}
+
+export const B = createBlobUrl;
