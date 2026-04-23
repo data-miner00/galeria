@@ -12,6 +12,7 @@ using ImageRecord = WebApi.Models.Image;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 using Google.GenAI;
 using WebApi.Clients;
+using System.Globalization;
 
 namespace WebApi.Services;
 
@@ -265,13 +266,40 @@ public sealed class ImageService
 
             if (exif.TryGetValue(ExifTag.DateTimeOriginal, out var exifOriginal))
             {
-                record.TakenAt = exifOriginal.Value;
+                if (TryParseToIso8601(exifOriginal.Value!, out var parsed))
+                {
+                    record.TakenAt = parsed;
+                }
+                else
+                {
+                    record.TakenAt = exifOriginal.Value;
+                }
             }
 
             if (exif.TryGetValue(ExifTag.Orientation, out var exifOrientation))
             {
                 record.Orientation = exifOrientation.Value;
             }
+        }
+    }
+
+    public static bool TryParseToIso8601(string timestamp, out string converted)
+    {
+        try
+        {
+            DateTime dt = DateTime.ParseExact(
+                timestamp,
+                "yyyy:MM:dd HH:mm:ss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+            );
+            converted = dt.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            return true;
+        }
+        catch
+        {
+            converted = string.Empty;
+            return false;
         }
     }
 }
