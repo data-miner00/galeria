@@ -54,6 +54,11 @@
 	});
 
 	onMount(async () => {
+		const imgRes = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`);
+		if (imgRes.ok) {
+			appState.images = await imgRes.json();
+		}
+
 		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board`);
 		if (res.ok) {
 			const boards = (await res.json()) as Board[];
@@ -78,6 +83,8 @@
 			const securitySettings = await securitySettingsRes.json();
 			isOtpDialogOpen = securitySettings.isTotpEnabled;
 		}
+
+		appState.isLoading = false;
 	});
 
 	let isCommandPaletteOpen = $state(false);

@@ -12,6 +12,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { appState } from '$lib/states.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { goto } from '$app/navigation';
 
 	let {
 		boards
@@ -121,7 +122,7 @@
 			</Sidebar.MenuItem>
 		{/each}
 		<Sidebar.MenuItem>
-			<Sidebar.MenuButton>
+			<Sidebar.MenuButton onclick={() => goto('/boards')}>
 				<EllipsisIcon />
 				<span>More</span>
 			</Sidebar.MenuButton>
