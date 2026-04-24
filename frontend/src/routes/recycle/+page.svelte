@@ -30,7 +30,13 @@
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 	let softDeletedImages = $derived(appState.images.filter((image) => image.isSoftDeleted));
-
+	let categories = $derived(
+		softDeletedImages
+			.map((image) => image.category)
+			.filter((value, index, self) => self.indexOf(value) === index)
+			.filter((category) => !!category)
+	);
+	let activeCategory = $state<string>('All');
 	let chunkedRecords = $derived(
 		(() => {
 			let images: ImageRecord[][] = [];
@@ -77,11 +83,25 @@
 
 <div class="flex justify-between">
 	<div class="flex gap-2">
-		<Button size="sm">All</Button>
-		<Button size="sm" variant="ghost">Photography</Button>
-		<Button size="sm" variant="ghost">Gadgets</Button>
-		<Button size="sm" variant="ghost">Books</Button>
-		<Button size="sm" variant="ghost">Cars</Button>
+		<Button
+			size="sm"
+			variant={activeCategory === 'All' ? 'default' : 'outline'}
+			onclick={() => (activeCategory = 'All')}
+			class="cursor-pointer"
+		>
+			All
+		</Button>
+
+		{#each categories as category}
+			<Button
+				size="sm"
+				variant={activeCategory === category ? 'default' : 'outline'}
+				onclick={() => (activeCategory = category!)}
+				class="cursor-pointer"
+			>
+				{category}
+			</Button>
+		{/each}
 	</div>
 	<div class="flex gap-2">
 		<ButtonGroup.Root>

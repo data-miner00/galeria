@@ -46,8 +46,10 @@
 
 	let orders = $state<'newest' | 'oldest'>('newest');
 
+	let nonSoftDeletedImages = $derived(appState.images.filter((image) => !image.isSoftDeleted));
+
 	let categories = $derived(
-		appState.images
+		nonSoftDeletedImages
 			.map((image) => image.category)
 			.filter((value, index, self) => self.indexOf(value) === index)
 			.filter((category) => !!category)
@@ -57,8 +59,8 @@
 
 	let filteredImages = $derived(
 		activeCategory === 'All'
-			? appState.images.filter((image) => !image.isSoftDeleted)
-			: appState.images.filter((image) => !image.isSoftDeleted && image.category === activeCategory)
+			? nonSoftDeletedImages
+			: nonSoftDeletedImages.filter((image) => image.category === activeCategory)
 	);
 
 	let chunkedRecords = $derived(
