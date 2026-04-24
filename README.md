@@ -48,7 +48,7 @@ Backend:
 1. Copy and update the env
 1. Spin up the infra
    ```
-   docker-compose -f docker-compose-prod.yml -d .
+   docker-compose -f docker-compose-prod.yml up -d
    ```
 1. Run the provisioning tool. This is why we still need to expose the ports in prod.
    ```
