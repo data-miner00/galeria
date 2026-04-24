@@ -78,21 +78,20 @@ public sealed class ImageService
             Size = buffered.Length,
             ThumbnailPath = thumbPath,
             MediumPath = mediumPath,
+            OriginalUrl = request.OriginalUrl,
         };
-
-        if (!string.IsNullOrWhiteSpace(request.OriginalUrl))
-        {
-            record.OriginalUrl = request.OriginalUrl;
-        }
 
         PopulateMetadata(buffered, record);
 
-        var captionResponse = await this.genai.GenerateCaptionAsync(buffered, MimeTypes.GetMimeType(file.FileName));
-
-        if (captionResponse is not null)
+        if (request.IsAutoCaption)
         {
-            record.Description = captionResponse.Description;
-            record.Tags = captionResponse.Tags;
+            var captionResponse = await this.genai.GenerateCaptionAsync(buffered, MimeTypes.GetMimeType(file.FileName));
+
+            if (captionResponse is not null)
+            {
+                record.Description = captionResponse.Description;
+                record.Tags = captionResponse.Tags;
+            }
         }
 
         await this.repository.UpsertAsync(record, ct);

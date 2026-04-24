@@ -19,6 +19,7 @@
 
 	let title = $state('');
 	let isCensored = $state(false);
+	let isAutocaption = $state(false);
 	let files: FileList | undefined = $state();
 	let image: HTMLImageElement | undefined = $state();
 	let imageUrl = $state('');
@@ -70,6 +71,7 @@
 		formData.append('Title', title);
 		formData.append('IsCensored', isCensored.toString());
 		formData.append('OriginalUrl', imageUrl);
+		formData.append('IsAutoCaption', isAutocaption.toString());
 
 		try {
 			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
@@ -138,6 +140,11 @@
 							<Label for="is-censored">Censor Image</Label>
 						</div>
 
+						<div class="flex items-center gap-3">
+							<Switch id="is-autocaption" bind:checked={isAutocaption} />
+							<Label for="is-autocaption">Auto caption</Label>
+						</div>
+
 						{#if files}
 							<div class="relative">
 								<Button
@@ -182,6 +189,10 @@
 						<div class="flex items-center gap-3">
 							<Switch id="is-censored" bind:checked={isCensored} />
 							<Label for="is-censored">Censor Image</Label>
+						</div>
+						<div class="flex items-center gap-3">
+							<Switch id="is-autocaption" bind:checked={isAutocaption} />
+							<Label for="is-autocaption">Auto caption</Label>
 						</div>
 					</div>
 				</Tabs.Content>

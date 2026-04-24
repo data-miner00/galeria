@@ -9,5 +9,7 @@
         public bool IsCensored { get; set; }
 
         public string? OriginalUrl { get; set; }
+
+        public bool IsAutoCaption { get; set; }
     }
 }
