@@ -46,6 +46,8 @@
 
         public string? OriginalUrl { get; set; }
 
+        public bool IsHidden { get; set; }
+
         public Image ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -78,6 +80,7 @@
                 TakenAt = TakenAt,
                 Orientation = Orientation,
                 OriginalUrl = OriginalUrl,
+                IsHidden = IsHidden,
             };
         }
 
@@ -111,6 +114,7 @@
                 TakenAt = entity.TakenAt,
                 Orientation = entity.Orientation,
                 OriginalUrl = entity.OriginalUrl,
+                IsHidden = entity.IsHidden,
             };
         }
     }

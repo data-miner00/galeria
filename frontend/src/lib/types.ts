@@ -31,6 +31,7 @@ export type ImageRecord = {
 	takenAt?: string;
 	orientation?: number;
 	originalUrl?: string;
+	isHidden: boolean;
 };
 
 export type UserProfile = {

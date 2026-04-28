@@ -9,6 +9,8 @@
 		Eye,
 		EyeOff,
 		GitForkIcon,
+		ImageIcon,
+		ImageOffIcon,
 		Info,
 		Plus,
 		RecycleIcon,
@@ -33,6 +35,7 @@
 		isFavorite: boolean;
 		isSoftDeleted: boolean;
 		isCensored: boolean;
+		isHidden: boolean;
 	};
 
 	const {
@@ -43,7 +46,8 @@
 		onDelete,
 		isFavorite,
 		isSoftDeleted,
-		isCensored
+		isCensored,
+		isHidden
 	}: Props = $props();
 
 	import { B } from '$lib/helpers';
@@ -179,6 +183,15 @@
 		);
 	}
 
+	function toggleHidden() {
+		return patchImageProperty(
+			'isHidden',
+			!isHidden,
+			'Successfully hide image.',
+			'Successfully unhide image.'
+		);
+	}
+
 	async function patchImageProperty(
 		property: string,
 		value: any,
@@ -271,14 +284,21 @@
 			{#if isCensored}
 				<Eye /> Reveal Image temporarily
 			{:else}
-				<EyeOff /> Hide Image temporarily
+				<EyeOff /> Blur Image temporarily
 			{/if}
 		</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={toggleCensored}>
 			{#if isCensored}
 				<Eye /> Reveal Image
 			{:else}
-				<EyeOff /> Hide Image
+				<EyeOff /> Blur Image
+			{/if}
+		</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={toggleHidden}>
+			{#if isHidden}
+				<ImageIcon /> Unhide Image
+			{:else}
+				<ImageOffIcon /> Hide Image
 			{/if}
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator />

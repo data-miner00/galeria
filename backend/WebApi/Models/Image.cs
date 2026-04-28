@@ -43,5 +43,7 @@
         public ushort? Orientation { get; set; }
 
         public string? OriginalUrl { get; set; }
+
+        public bool IsHidden { get; set; }
     }
 }

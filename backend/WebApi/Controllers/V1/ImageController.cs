@@ -186,6 +186,11 @@ namespace WebApi.Controllers.V1
             {
                 image.OriginalUrl = request.OriginalUrl;
             }
+
+            if (request.IsHidden.HasValue)
+            {
+                image.IsHidden = request.IsHidden.Value;
+            }
         }
     }
 }

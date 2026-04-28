@@ -37,6 +37,10 @@
 						url: '/drafts'
 					},
 					{
+						title: 'Hidden',
+						url: '/hidden'
+					},
+					{
 						title: 'Experiment',
 						url: '/experiment'
 					}
@@ -58,6 +62,14 @@
 					{
 						title: 'Transition', // full screen background transition
 						url: '/transition'
+					},
+					{
+						title: 'Memories',
+						url: '/memories'
+					},
+					{
+						title: 'People',
+						url: '/people'
 					}
 				]
 			}
