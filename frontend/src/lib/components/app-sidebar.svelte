@@ -7,14 +7,13 @@
 	import CommandIcon from '@lucide/svelte/icons/command';
 	import { type ComponentProps } from 'svelte';
 	import Button from './ui/button/button.svelte';
-	import { LayoutGridIcon, PlusIcon } from '@lucide/svelte';
+	import { BracesIcon, DatabaseIcon, LayoutGridIcon, PlusIcon } from '@lucide/svelte';
 	import type { Board } from '$lib/types';
 	import { appState } from '$lib/states.svelte';
 
-	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
-	import SendIcon from '@lucide/svelte/icons/send';
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
 	import { SIDEBAR, t } from '$lib/i18n/translations.svelte';
+	import { PUBLIC_API_BASE_URL, PUBLIC_COSMOS_BASE_URL } from '$env/static/public';
 
 	const data = {
 		navMain: [
@@ -76,14 +75,16 @@
 		],
 		navSecondary: [
 			{
-				title: 'Support',
-				url: '#',
-				icon: LifeBuoyIcon
+				title: 'Database',
+				url: PUBLIC_COSMOS_BASE_URL,
+				icon: DatabaseIcon,
+				external: true
 			},
 			{
-				title: 'Feedback',
-				url: '#',
-				icon: SendIcon
+				title: 'Swagger',
+				url: `${PUBLIC_API_BASE_URL}/swagger/index.html`,
+				icon: BracesIcon,
+				external: true
 			}
 		]
 	};

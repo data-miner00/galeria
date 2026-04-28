@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import type { Component, ComponentProps } from "svelte";
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import type { Component, ComponentProps } from 'svelte';
 
 	let {
 		ref = $bindable(null),
@@ -11,6 +11,7 @@
 			title: string;
 			url: string;
 			icon: Component;
+			external?: boolean;
 		}[];
 	} & ComponentProps<typeof Sidebar.Group> = $props();
 </script>
@@ -22,7 +23,7 @@
 				<Sidebar.MenuItem>
 					<Sidebar.MenuButton size="sm">
 						{#snippet child({ props })}
-							<a href={item.url} {...props}>
+							<a href={item.url} {...props} target={item.external ? '_blank' : '_self'}>
 								<item.icon />
 								<span>{item.title}</span>
 							</a>
