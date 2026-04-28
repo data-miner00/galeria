@@ -25,7 +25,7 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Censor/blur option
 - [x] Filter base on tags / category
 - [x] Mobile responsive
-- [ ] 404 page
+- [x] 404 page
 - [x] Swap between masonry to squared layout
 - [ ] Album view
 - [ ] Timeline view
