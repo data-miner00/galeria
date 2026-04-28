@@ -11,4 +11,6 @@ public interface IImageClient
     Uri GetPublicUri(string blobName);
 
     Task<string> UploadAsync(Stream imageStream, string fileName, string contentType, CancellationToken ct = default);
+
+    Task<Stream> DownloadAllAsync(CancellationToken ct = default);
 }

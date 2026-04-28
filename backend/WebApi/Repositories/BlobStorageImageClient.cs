@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Microsoft.Extensions.Options;
+using System.IO.Compression;
 using WebApi.Repositories;
 
 /// <summary>
@@ -102,5 +102,49 @@ public sealed class BlobStorageImageClient : IImageClient
 
         var blobClient = this.container.GetBlobClient(blobName);
         return blobClient.Uri;
+    }
+
+    // Can we stream download without holding everything into memory to the frontend?
+    /// <inheritdoc/>
+    public async Task<Stream> DownloadAllAsync(CancellationToken ct = default)
+    {
+        int dummyLimit = 3;
+        var blobs = this.container.GetBlobsAsync();
+        using var memoryStream = new MemoryStream();
+
+        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+        {
+            await foreach (var blob in blobs)
+            {
+                var blobClient = this.container.GetBlobClient(blob.Name);
+                var response = await blobClient.DownloadStreamingAsync(cancellationToken: ct);
+                var entry = archive.CreateEntry(blob.Name, CompressionLevel.Optimal);
+
+                using (var entryStream = entry.Open())
+                {
+                    var array = StreamToByteArray(response.Value.Content);
+                    entryStream.Write(array, 0, array.Length);
+                }
+
+                // Because poc, we limit to 3 for now.
+                dummyLimit--;
+
+                if (dummyLimit == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        return memoryStream;
+    }
+
+    public static byte[] StreamToByteArray(Stream input)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            input.CopyTo(ms);
+            return ms.ToArray();
+        }
     }
 }

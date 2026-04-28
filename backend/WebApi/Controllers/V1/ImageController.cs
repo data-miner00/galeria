@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using WebApi.Dtos;
 using WebApi.Extensions;
 using WebApi.Models;
@@ -14,16 +15,19 @@ namespace WebApi.Controllers.V1
         private const int TwentyMegabytes = 20 * 1024 * 1024;
 
         private readonly ImageRepository repository;
+        private readonly IImageClient client;
         private readonly Meilisearch.Index index;
         private readonly ImageService service;
 
         public ImageController(
             ImageService service,
             ImageRepository repository,
+            IImageClient client,
             Meilisearch.Index index)
         {
             this.service = service;
             this.repository = repository;
+            this.client = client;
             this.index = index;
         }
 
@@ -35,6 +39,14 @@ namespace WebApi.Controllers.V1
             var images = await this.repository.GetAllAsync(this.CancellationToken);
 
             return this.Ok(images);
+        }
+
+        [HttpGet("download")]
+        public async Task<IActionResult> DownloadAll()
+        {
+            var zipStream = await this.client.DownloadAllAsync(this.CancellationToken);
+
+            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, "download.zip");
         }
 
         [HttpGet("{id}")]
