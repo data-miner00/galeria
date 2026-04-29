@@ -1,7 +1,13 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
-	import { ArrowUpRightIcon, ImageIcon } from '@lucide/svelte';
+	import {
+		ArrowUpRightIcon,
+		DownloadIcon,
+		ImageIcon,
+		RecycleIcon,
+		Trash2Icon
+	} from '@lucide/svelte';
 	import { appState } from '$lib/states.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 
@@ -66,6 +72,8 @@
 	let mappedImages = $derived(
 		filteredImages.map((image) => ({ date: new Date(image.takenAt ?? image.createdAt), ...image }))
 	);
+	let selectedImageIds = $state<string[]>([]);
+	let selectedImageSize = $state(0);
 
 	let groupedImages = $derived.by(() => {
 		switch (groupings) {
@@ -85,34 +93,110 @@
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 	import { B } from '$lib/helpers';
 	import * as Select from '$lib/components/ui/select/index.js';
+
+	function capitalize(str: string): string {
+		return str[0].toUpperCase() + str.slice(1);
+	}
+
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+
+	let isSelectMode = $state(false);
+
+	function imageCheckChange(isChecked: boolean, id: string, sizeInBytes: number) {
+		if (isChecked) {
+			selectedImageIds.push(id);
+			selectedImageSize += sizeInBytes;
+		} else {
+			selectedImageIds = selectedImageIds.filter((imageId) => imageId !== id);
+			selectedImageSize -= sizeInBytes;
+		}
+	}
+
+	function deleteSelectedImages(isSoftDelete: boolean = true) {
+		try {
+			fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
+				method: 'DELETE',
+				body: JSON.stringify({
+					isSoftDelete,
+					requestedIds: selectedImageIds
+				})
+			});
+
+			if (isSoftDelete) {
+				for (var id of selectedImageIds) {
+					const image = appState.images.find((image) => image.id == id);
+					image!.isSoftDeleted = true;
+				}
+				toast.success(`Successfully moved ${selectedImageIds.length} images to recycle bin.`);
+			} else {
+				appState.images = appState.images.filter((image) => !selectedImageIds.includes(image.id));
+				isDeleteDialogOpen = false;
+				toast.success(`Successfully deleted ${selectedImageIds.length} images.`);
+			}
+
+			isSelectMode = false;
+			selectedImageIds = [];
+			selectedImageSize = 0;
+		} catch (error) {
+			toast.error(`Something wrong happened. ${error}`);
+		}
+	}
+
+	let isDeleteDialogOpen = $state(false);
+
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { toast } from 'svelte-sonner';
 </script>
 
 <div class="flex justify-between">
-	<div class="flex gap-2">
-		<Button
-			size="sm"
-			variant={activeCategory === 'All' ? 'default' : 'outline'}
-			onclick={() => (activeCategory = 'All')}
-			class="cursor-pointer"
-		>
-			All
-		</Button>
-
-		{#each categories as category}
+	{#if !isSelectMode}
+		<div class="flex gap-2">
 			<Button
 				size="sm"
-				variant={activeCategory === category ? 'default' : 'outline'}
-				onclick={() => (activeCategory = category!)}
+				variant={activeCategory === 'All' ? 'default' : 'outline'}
+				onclick={() => (activeCategory = 'All')}
 				class="cursor-pointer"
 			>
-				{category}
+				All
 			</Button>
-		{/each}
-	</div>
+
+			{#each categories as category}
+				<Button
+					size="sm"
+					variant={activeCategory === category ? 'default' : 'outline'}
+					onclick={() => (activeCategory = category!)}
+					class="cursor-pointer"
+				>
+					{category}
+				</Button>
+			{/each}
+		</div>
+	{:else}
+		<div class="flex items-center gap-2">
+			<div class="mr-3 rounded-xl bg-red-50 px-2 py-1 text-sm text-red-700">
+				{selectedImageIds.length} selected • {selectedImageSize} bytes
+			</div>
+			<Separator orientation="vertical" />
+			<Button variant="ghost" onclick={() => (isDeleteDialogOpen = !isDeleteDialogOpen)}
+				><Trash2Icon /></Button
+			>
+			<Button variant="ghost" onclick={() => deleteSelectedImages(true)}><RecycleIcon /></Button>
+			<Button variant="ghost"><DownloadIcon /></Button>
+		</div>
+	{/if}
 	<div class="flex items-center gap-2">
+		<div class="flex items-center gap-3">
+			<Switch id="is-selectmode" bind:checked={isSelectMode} />
+			<Label for="is-selectmode">Select Mode</Label>
+		</div>
+
 		<Select.Root type="single" name="groupings" bind:value={groupings}>
 			<Select.Trigger class="w-full">
-				{groupings}
+				{capitalize(groupings)}
 			</Select.Trigger>
 			<Select.Content>
 				<Select.Group>
@@ -126,7 +210,7 @@
 		</Select.Root>
 		<Select.Root type="single" name="gaps" bind:value={gap}>
 			<Select.Trigger class="w-full">
-				{gap}
+				{capitalize(gap)}
 			</Select.Trigger>
 			<Select.Content>
 				<Select.Group>
@@ -149,7 +233,14 @@
 			{/if}
 			<div class="mb-8 flex flex-wrap" class:gap-1={gap === 'small'} class:gap-2={gap === 'medium'}>
 				{#each group[1] as image}
-					<div class="h-25 w-25">
+					<div class="relative h-25 w-25">
+						{#if isSelectMode}
+							<Checkbox
+								id={image.id}
+								onCheckedChange={(isChecked) => imageCheckChange(isChecked, image.id, image.size)}
+								class="absolute -top-0.5 -right-0.5 bg-background"
+							/>
+						{/if}
 						<img
 							src={B(image.thumbnailPath)}
 							class="h-full w-full object-cover"
@@ -184,3 +275,19 @@
 {:else}
 	<LoadingImagesSkeleton layout="timeline" />
 {/if}
+
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently delete your board and the data from the
+				server.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={() => deleteSelectedImages(false)}>Delete</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>

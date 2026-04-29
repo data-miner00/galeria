@@ -157,6 +157,22 @@ namespace WebApi.Controllers.V1
             return Ok(results);
         }
 
+        [HttpDelete]
+        public async Task<IActionResult> DeleteByIds(DeleteByIdsRequest request)
+        {
+            if (request.IsSoftDelete)
+            {
+                await this.repository.SoftDeleteByIdsAsync(request.RequestedIds, this.CancellationToken);
+            }
+            else
+            {
+                var tasks = request.RequestedIds.Select(id => this.service.DeleteAsync(id));
+                await Task.WhenAll(tasks);
+            }
+
+            return this.NoContent();
+        }
+
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)
         {
             if (!string.IsNullOrWhiteSpace(request.Title))

@@ -17,6 +17,14 @@ namespace WebApi.Repositories
             return this.QueryAllAsync(query, ct);
         }
 
+        public Task SoftDeleteByIdsAsync(List<string> ids, CancellationToken ct)
+        {
+            var tasks = ids.Select(
+                id => this.container.PatchItemAsync<ImageDocument>(id, new PartitionKey(ImageDocument.PartitionKeyValue), [PatchOperation.Replace("/IsSoftDeleted", true)]));
+
+            return Task.WhenAll(tasks);
+        }
+
         /// <summary>
         /// Gets all images that is not soft deleted.
         /// </summary>
