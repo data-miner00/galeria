@@ -13,6 +13,7 @@ namespace WebApi.Controllers.V1
     public class ImageController : ControllerBase
     {
         private const int TwentyMegabytes = 20 * 1024 * 1024;
+        private const string DefaultDownloadZipFileName = "download.zip";
 
         private readonly ImageRepository repository;
         private readonly IImageClient client;
@@ -44,9 +45,18 @@ namespace WebApi.Controllers.V1
         [HttpGet("download")]
         public async Task<IActionResult> DownloadAll()
         {
-            var zipStream = await this.client.DownloadAllAsync(this.CancellationToken);
+            using var zipStream = await this.client.DownloadAllAsync(this.CancellationToken);
 
-            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, "download.zip");
+            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
+        }
+
+        [HttpPost("download/multiple")]
+        public async Task<IActionResult> DownloadByIds(DownloadByIdsRequest request)
+        {
+            var images = await this.repository.GetByIdsAsync(request.RequestedIds, this.CancellationToken);
+            using var zipStream = await this.client.DownloadMultipleAsync(images.Select(x => x.Path).ToList(), this.CancellationToken);
+
+            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
         }
 
         [HttpGet("{id}")]

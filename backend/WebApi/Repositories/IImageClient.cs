@@ -13,4 +13,6 @@ public interface IImageClient
     Task<string> UploadAsync(Stream imageStream, string fileName, string contentType, CancellationToken ct = default);
 
     Task<Stream> DownloadAllAsync(CancellationToken ct = default);
+
+    Task<Stream> DownloadMultipleAsync(List<string> paths, CancellationToken ct = default);
 }

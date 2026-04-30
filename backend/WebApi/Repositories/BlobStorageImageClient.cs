@@ -110,7 +110,7 @@ public sealed class BlobStorageImageClient : IImageClient
     {
         int dummyLimit = 3;
         var blobs = this.container.GetBlobsAsync();
-        using var memoryStream = new MemoryStream();
+        var memoryStream = new MemoryStream();
 
         using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
         {
@@ -127,11 +127,34 @@ public sealed class BlobStorageImageClient : IImageClient
                 }
 
                 // Because poc, we limit to 3 for now.
-                dummyLimit--;
+                dummyLimit = ~-dummyLimit;
 
                 if (dummyLimit == 0)
                 {
                     break;
+                }
+            }
+        }
+
+        return memoryStream;
+    }
+
+    public async Task<Stream> DownloadMultipleAsync(List<string> paths, CancellationToken ct = default)
+    {
+        var memoryStream = new MemoryStream();
+
+        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+        {
+            foreach (var path in paths)
+            {
+                var blobClient = this.container.GetBlobClient(path);
+                var response = await blobClient.DownloadStreamingAsync(cancellationToken: ct);
+                var entry = archive.CreateEntry(blobClient.Name, CompressionLevel.Optimal);
+
+                using (var entryStream = entry.Open())
+                {
+                    var array = StreamToByteArray(response.Value.Content);
+                    entryStream.Write(array, 0, array.Length);
                 }
             }
         }
