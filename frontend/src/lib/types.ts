@@ -46,6 +46,7 @@ export type UserProfile = {
 
 export type UserSettings = {
 	noOfColumns?: number;
+	watermark?: string;
 };
 
 export type InfoSheetData = {

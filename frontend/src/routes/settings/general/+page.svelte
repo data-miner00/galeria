@@ -1,9 +1,6 @@
 <script lang="ts">
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Label from '$lib/components/ui/label/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import InfoIcon from '@lucide/svelte/icons/info';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
@@ -11,8 +8,6 @@
 	import { appState } from '$lib/states.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { setMode, mode } from 'mode-watcher';
-
-	let settings = $state({});
 
 	let isEnableLoggings = $state(false);
 
@@ -36,6 +31,8 @@
 	];
 
 	let value = $state<'light' | 'dark'>();
+	let watermark = $state(appState.settings.watermark);
+	let isWatermarkEnabled = $state(false);
 
 	const triggerContent = $derived(
 		themes.find((f) => f.value === mode.current)?.label ?? 'Select theme'
@@ -61,6 +58,28 @@
 		URL.revokeObjectURL(url);
 
 		toast.success('Download started...');
+	}
+
+	async function saveUserSettings() {
+		isSaving = true;
+
+		const request = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserSettings`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ watermark })
+		});
+
+		if (request.ok) {
+			appState.settings.watermark = watermark;
+			toast.success('Settings updated successfully!');
+		} else {
+			const error = await request.json();
+			toast.error(`Failed to update settings: ${error.errorMessage}`);
+		}
+
+		isSaving = false;
 	}
 </script>
 
@@ -110,13 +129,6 @@
 				</Select.Content>
 			</Select.Root>
 		</div>
-
-		<!-- <Button size="sm" disabled={isSaving}>
-			{#if isSaving}
-				<Spinner />
-			{/if}
-			{isSaving ? 'Submitting...' : 'Submit'}
-		</Button> -->
 	</div>
 
 	<Separator class="my-6 max-w-sm" />
@@ -133,6 +145,25 @@
 
 	<Separator class="my-6 max-w-sm" />
 
+	<h2 class="mb-1 text-lg font-semibold">Watermarking</h2>
+	<p class="mb-4 max-w-sm text-sm text-muted-foreground">
+		Manage watermarks for downloaded assets to prevent abuse.
+	</p>
+
+	<div class="mb-4 flex items-center gap-3">
+		<Switch id="is-censored" bind:checked={isWatermarkEnabled} />
+		<Label.Root for="is-censored">Enable Watermarks</Label.Root>
+	</div>
+
+	<InputGroup.Root class="max-w-sm">
+		<InputGroup.Input id="watermark" placeholder="SC" bind:value={watermark} />
+		<InputGroup.Addon align="block-start">
+			<Label.Root for="watermark" class="text-foreground">Watermark</Label.Root>
+		</InputGroup.Addon>
+	</InputGroup.Root>
+
+	<Separator class="my-6 max-w-sm" />
+
 	<h2 class="mb-1 text-lg font-semibold">Data Management</h2>
 	<p class="mb-4 max-w-sm text-sm text-muted-foreground">
 		Manage your application's data storage and backup preferences.
@@ -140,5 +171,16 @@
 
 	<div class="grid w-full max-w-sm gap-4">
 		<Button size="sm" variant="outline" onclick={downloadZip}>Download all as Zip</Button>
+	</div>
+
+	<Separator class="my-6 max-w-sm" />
+
+	<div class="grid w-full max-w-sm gap-4">
+		<Button size="sm" disabled={isSaving} onclick={saveUserSettings}>
+			{#if isSaving}
+				<Spinner />
+			{/if}
+			{isSaving ? 'Submitting...' : 'Submit'}
+		</Button>
 	</div>
 </section>

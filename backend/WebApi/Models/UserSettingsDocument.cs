@@ -6,6 +6,8 @@
 
         public int NoOfColumns { get; set; }
 
+        public string? Watermark { get; set; }
+
         public UserSettings ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -15,6 +17,7 @@
             { 
                 Id = Id,
                 NoOfColumns = NoOfColumns,
+                Watermark = Watermark,
                 CreatedAt = CreatedAt,
                 UpdatedAt = updatedAt,
                 ETag = ETag,
@@ -30,6 +33,7 @@
                 DocumentType = DocumentType.UserSettings,
                 CreatedAt = userSettings.CreatedAt,
                 NoOfColumns = userSettings.NoOfColumns,
+                Watermark = userSettings.Watermark,
                 ETag = userSettings.ETag,
             };
         }
