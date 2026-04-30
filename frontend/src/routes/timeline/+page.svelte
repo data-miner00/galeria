@@ -116,15 +116,22 @@
 		}
 	}
 
-	function deleteSelectedImages(isSoftDelete: boolean = true) {
+	async function deleteSelectedImages(isSoftDelete: boolean = true) {
 		try {
-			fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
+				headers: {
+					'Content-Type': 'application/json'
+				},
 				method: 'DELETE',
 				body: JSON.stringify({
 					isSoftDelete,
 					requestedIds: selectedImageIds
 				})
 			});
+
+			if (!response.ok) {
+				throw new Error('The response does not indicate success.');
+			}
 
 			if (isSoftDelete) {
 				for (var id of selectedImageIds) {
