@@ -10,6 +10,7 @@
 	import {
 		ArrowDown01Icon,
 		ArrowUp01Icon,
+		DownloadIcon,
 		ImageIcon,
 		InfoIcon,
 		LayoutDashboardIcon,
@@ -128,6 +129,36 @@
 			toast.error('Failed to update pin status');
 		}
 	}
+
+	async function downloadAll() {
+		try {
+			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/download/multiple`, {
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				body: JSON.stringify({
+					requestedIds: filteredImages.map((x) => x.id)
+				})
+			});
+			// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
+			const disposition = response.headers.get('Content-Disposition');
+			const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';
+
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			a.click();
+
+			URL.revokeObjectURL(url);
+
+			toast.success('Download started...');
+		} catch (error) {
+			toast.error(`Download failed. ${error}`);
+		}
+	}
 </script>
 
 <div class="flex justify-between">
@@ -152,7 +183,11 @@
 			</Button>
 		{/each}
 	</div>
-	<div class="flex items-center gap-1">
+	<div class="flex items-center gap-3">
+		<Button variant="outline" size="icon-sm" onclick={downloadAll}>
+			<DownloadIcon />
+		</Button>
+
 		<ButtonGroup.Root>
 			<Button
 				variant={layoutType === 'masonry' ? 'default' : 'outline'}
@@ -177,7 +212,7 @@
 			</Button>
 		</ButtonGroup.Root>
 
-		<Button variant="outline" size="icon-sm" onclick={onPinToggle} class="ms-2">
+		<Button variant="outline" size="icon-sm" onclick={onPinToggle}>
 			{#if isPinned}
 				<PinOffIcon />
 			{:else}
@@ -185,7 +220,7 @@
 			{/if}
 		</Button>
 
-		<Button variant="outline" size="icon-sm" onclick={onInfoClick} class="ms-2">
+		<Button variant="outline" size="icon-sm" onclick={onInfoClick}>
 			<InfoIcon />
 		</Button>
 	</div>
