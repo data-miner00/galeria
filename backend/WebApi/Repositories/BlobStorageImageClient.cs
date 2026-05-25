@@ -10,6 +10,7 @@ using WebApi.Repositories;
 /// </summary>
 public sealed class BlobStorageImageClient : IImageClient
 {
+    private const string OriginalImagePrefix = "original";
     private readonly BlobContainerClient container;
 
     public BlobStorageImageClient(BlobContainerClient container)
@@ -109,7 +110,7 @@ public sealed class BlobStorageImageClient : IImageClient
     public async Task<Stream> DownloadAllAsync(CancellationToken ct = default)
     {
         int dummyLimit = 3;
-        var blobs = this.container.GetBlobsAsync();
+        var blobs = this.container.GetBlobsAsync(prefix: OriginalImagePrefix);
         var memoryStream = new MemoryStream();
 
         using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))

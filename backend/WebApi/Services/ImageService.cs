@@ -53,10 +53,9 @@ public sealed class ImageService
         //    variant URLs from the image id without reading the DB.
         var extension = Path.GetExtension(file.FileName);
         var id = Guid.NewGuid().ToString();
-        var basePath = id;
-        var originalPath = $"{basePath}/original{extension}";
-        var thumbPath = $"{basePath}/thumb/150{extension}";
-        var mediumPath = $"{basePath}/medium/w1024{extension}";
+        var originalPath = $"original/{id}{extension}";
+        var thumbPath = $"thumb/w150/{id}{extension}";
+        var mediumPath = $"medium/w1024/{id}{extension}";
 
         // Read the incoming file into memory so we can upload multiple variants
         // and inspect metadata without re-reading the IFormFile stream.
