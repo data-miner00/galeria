@@ -51,6 +51,7 @@
 	}: Props = $props();
 
 	import { B } from '$lib/helpers';
+	import type { ImageRecord } from '$lib/types';
 	let isAddToBoardDialogOpen = $state(false);
 
 	async function removeImage() {
@@ -192,9 +193,9 @@
 		);
 	}
 
-	async function patchImageProperty(
-		property: string,
-		value: any,
+	async function patchImageProperty<K extends keyof ImageRecord>(
+		property: K,
+		value: ImageRecord[K],
 		toastMessage: string = 'Successfully updated image.',
 		toastMessageOpposite: string = 'Successfully updated image.'
 	) {
@@ -211,9 +212,9 @@
 				throw new Error('Something wrong');
 			}
 
-			appState.images = appState.images.map((image) =>
-				image.id === id ? { ...image, [property]: value } : image
-			);
+			const image = appState.images.find((image) => image.id === id);
+			if (!image) return;
+			image[property] = value;
 
 			toast.success(value ? toastMessage : toastMessageOpposite);
 		} catch {
