@@ -16,6 +16,7 @@
 		isFavorite: boolean;
 		isSoftDeleted: boolean;
 		layoutType?: LayoutType;
+		isHidden: boolean;
 	};
 
 	let revealCensoredImage = $state(false);
@@ -30,6 +31,7 @@
 		isCensored = false,
 		isFavorite = false,
 		isSoftDeleted = false,
+		isHidden = false,
 		layoutType = 'masonry'
 	}: Props = $props();
 
@@ -102,6 +104,7 @@
 			{isFavorite}
 			{isSoftDeleted}
 			{isCensored}
+			{isHidden}
 		/>
 	</div>
 </div>

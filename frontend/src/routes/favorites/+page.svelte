@@ -22,7 +22,9 @@
 	let orders = $state<'newest' | 'oldest'>('newest');
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
-	let favoriteImages = $derived(appState.images.filter((image) => image.isFavorite));
+	let favoriteImages = $derived(
+		appState.images.filter((image) => image.isFavorite && !image.isSoftDeleted && !image.isHidden)
+	);
 	let categories = $derived(
 		favoriteImages
 			.map((image) => image.category)
@@ -116,6 +118,7 @@
 						mediumPath={record.mediumPath}
 						isFavorite={record.isFavorite}
 						isSoftDeleted={record.isSoftDeleted}
+						isHidden={record.isHidden}
 					/>
 				{/each}
 			</div>

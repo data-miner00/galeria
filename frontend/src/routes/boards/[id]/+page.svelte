@@ -67,11 +67,15 @@
 			.filter((category) => !!category)
 	);
 
+	let nonSoftDeletedOrHiddenImages = $derived(
+		records.filter((image) => !image.isSoftDeleted && !image.isHidden)
+	);
+
 	let activeCategory = $state<string>('All');
 	let filteredImages = $derived(
 		activeCategory === 'All'
-			? records.filter((image) => !image.isSoftDeleted)
-			: records.filter((image) => !image.isSoftDeleted && image.category === activeCategory)
+			? nonSoftDeletedOrHiddenImages
+			: nonSoftDeletedOrHiddenImages.filter((image) => image.category === activeCategory)
 	);
 	let columns = $derived(appState.settings.noOfColumns || 5);
 	let orders = $state<'newest' | 'oldest'>('newest');
@@ -247,6 +251,7 @@
 							mediumPath={record.mediumPath}
 							isFavorite={record.isFavorite}
 							isSoftDeleted={record.isSoftDeleted}
+							isHidden={record.isHidden}
 							{layoutType}
 						/>
 					{/each}

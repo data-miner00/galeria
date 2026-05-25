@@ -169,6 +169,7 @@
 							mediumPath={record.mediumPath}
 							isFavorite={record.isFavorite}
 							isSoftDeleted={record.isSoftDeleted}
+							isHidden={record.isHidden}
 							{layoutType}
 						/>
 					{/each}
