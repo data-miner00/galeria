@@ -64,3 +64,13 @@ export type SecuritySettings = {
 };
 
 export type LayoutType = 'masonry' | 'grid';
+
+export type Draft = {
+	id?: string;
+	title?: string;
+	projectJson?: any;
+	previewPath?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	isPublished?: boolean;
+};
