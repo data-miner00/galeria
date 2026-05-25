@@ -232,6 +232,16 @@
 		appState.infoSheetData.id = id;
 		appState.infoSheetData.isOpen = true;
 	}
+
+	function extractFileNameWithExtensionFromPath(path: string) {
+		if (path.includes('/')) {
+			const parts = path.split('/');
+			return parts[parts.length - 1];
+		}
+		return path;
+	}
+
+	const fileName = extractFileNameWithExtensionFromPath;
 </script>
 
 <AddToBoardDialog imageId={id} bind:isDialogOpen={isAddToBoardDialogOpen} />
@@ -274,7 +284,7 @@
 				<CircleMinus /> Remove from this Board
 			</DropdownMenu.Item>
 		{/if}
-		<DropdownMenu.Item onclick={() => downloadImage(B(path), path)}>
+		<DropdownMenu.Item onclick={() => downloadImage(B(path), fileName(path))}>
 			<Download /> Download
 		</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={() => setAsProfilePicture(B(thumbnailPath))}>
