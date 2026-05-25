@@ -28,8 +28,8 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] 404 page
 - [x] Swap between masonry to squared layout
 - [ ] Album view
-- [ ] Timeline view
-- [ ] Select mode
+- [x] Timeline view
+- [x] Select mode
 
 ## Extra
 
@@ -60,6 +60,9 @@ A self-hosted authenticationless image board used for managing personal images.
 - [ ] Auditing
 - [ ] Video
 - [ ] Live image
+- [ ] OCR
+- [ ] Encryption
+- [ ] MCP Server
 
 ## Performance
 
@@ -81,3 +84,16 @@ A self-hosted authenticationless image board used for managing personal images.
 - [x] Docker compose for dev environment & prod environment
 
 ~~Should be simple and quick. Aim to get MVP by 22 March 2026.~~
+
+## What Can An Image do?
+
+1. Entertainment
+2. Training Photography
+3. Keeping Memories alive
+4. Maintaining Evidence
+5. Steganography
+6. Inspiration
+7. Knowledge / Learning (Infography, Comprehensible input)
+8. Daily Plog diary
+9. Storing Secrets
+10. Create drafts

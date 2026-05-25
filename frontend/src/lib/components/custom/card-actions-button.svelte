@@ -245,7 +245,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="start">
 		<DropdownMenu.Item onclick={onInfoClick}>
-			<Info /> View
+			<Info /> Details
 		</DropdownMenu.Item>
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger>
