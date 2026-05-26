@@ -59,6 +59,20 @@ namespace WebApi.Controllers.V1
             return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
         }
 
+        [HttpPost("download/{id}")]
+        public async Task<IActionResult> DownloadWithFilter([FromRoute] string id, [FromQuery] string filter)
+        {
+            var image = await this.repository.GetByIdAsync(id, ImageDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (image is null)
+            {
+                return this.NotFound();
+            }
+
+            var imageStream = await this.service.DownloadWithWatermarkAsync(id, string.Empty);
+            return this.File(imageStream, MediaTypeNames.Image.Jpeg, "File.jpg");
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Image>> GetById(string id)
         {

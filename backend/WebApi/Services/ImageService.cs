@@ -10,6 +10,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixImage = SixLabors.ImageSharp.Image;
 using ImageRecord = WebApi.Models.Image;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
+//using SixLabors.Fonts;
 using Google.GenAI;
 using WebApi.Clients;
 using System.Globalization;
@@ -240,6 +241,43 @@ public sealed class ImageService
         var records = await this.repository.GetByIdsAsync(ids, ct);
 
         return records.ToList();
+    }
+
+    public async Task<Stream> DownloadWithWatermarkAsync(string imageId, string watermark)
+    {
+        var record = await this.repository.GetByIdAsync(imageId, ImageDocument.PartitionKeyValue, default);
+        var image = await this.blobClient.DownloadAsync(record.Path);
+
+        using var imageSix = SixImage.Load(image);
+
+        // Create a font for the watermark text
+        //var font = SystemFonts.CreateFont(SystemFonts.Families.First().Name, 32, FontStyle.Regular);
+        //var textOptions = new TextOptions(font)
+        //{
+        //    HorizontalAlignment = HorizontalAlignment.Right,
+        //    VerticalAlignment = VerticalAlignment.Bottom,
+        //    Origin = new PointF(imageSix.Width - 10, imageSix.Height - 10),
+        //};
+
+        // Apply watermark with semi-transparent white text
+        //imageSix.Mutate(x => x.DrawText(textOptions, watermark, Color.White.WithAlpha(0.7f)));
+        imageSix.Mutate(x => x.Flip(FlipMode.Vertical));
+
+        // Save the watermarked image to a stream
+        var resultStream = new MemoryStream();
+
+        // Preserve the original format based on the record's content type
+        IImageEncoder encoder = record.ContentType.ToLowerInvariant() switch
+        {
+            "image/jpeg" => new JpegEncoder { Quality = 80 },
+            "image/png" => new PngEncoder { CompressionLevel = PngCompressionLevel.Level6 },
+            _ => new JpegEncoder { Quality = 80 },
+        };
+
+        await imageSix.SaveAsync(resultStream, encoder);
+        resultStream.Position = 0;
+
+        return resultStream;
     }
 
     private static void PopulateMetadata(MemoryStream buffered, ImageRecord record)
