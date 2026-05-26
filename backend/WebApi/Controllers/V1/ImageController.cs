@@ -42,37 +42,6 @@ namespace WebApi.Controllers.V1
             return this.Ok(images);
         }
 
-        [HttpGet("download")]
-        public async Task<IActionResult> DownloadAll()
-        {
-            using var zipStream = await this.client.DownloadAllAsync(this.CancellationToken);
-
-            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
-        }
-
-        [HttpPost("download/multiple")]
-        public async Task<IActionResult> DownloadByIds(DownloadByIdsRequest request)
-        {
-            var images = await this.repository.GetByIdsAsync(request.RequestedIds, this.CancellationToken);
-            using var zipStream = await this.client.DownloadMultipleAsync(images.Select(x => x.Path).ToList(), this.CancellationToken);
-
-            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
-        }
-
-        [HttpPost("download/{id}")]
-        public async Task<IActionResult> DownloadWithFilter([FromRoute] string id, [FromQuery] string filter)
-        {
-            var image = await this.repository.GetByIdAsync(id, ImageDocument.PartitionKeyValue, this.CancellationToken);
-
-            if (image is null)
-            {
-                return this.NotFound();
-            }
-
-            var imageStream = await this.service.DownloadWithWatermarkAsync(id, string.Empty);
-            return this.File(imageStream, MediaTypeNames.Image.Jpeg, "File.jpg");
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<Image>> GetById(string id)
         {
@@ -195,6 +164,37 @@ namespace WebApi.Controllers.V1
             }
 
             return this.NoContent();
+        }
+
+        [HttpGet("blob/download")]
+        public async Task<IActionResult> DownloadAll()
+        {
+            using var zipStream = await this.client.DownloadAllAsync(this.CancellationToken);
+
+            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
+        }
+
+        [HttpPost("blob/download/multiple")]
+        public async Task<IActionResult> DownloadByIds(DownloadByIdsRequest request)
+        {
+            var images = await this.repository.GetByIdsAsync(request.RequestedIds, this.CancellationToken);
+            using var zipStream = await this.client.DownloadMultipleAsync(images.Select(x => x.Path).ToList(), this.CancellationToken);
+
+            return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
+        }
+
+        [HttpPost("blob/{id}/download")]
+        public async Task<IActionResult> DownloadWithFilter([FromRoute] string id, [FromQuery] string filter)
+        {
+            var image = await this.repository.GetByIdAsync(id, ImageDocument.PartitionKeyValue, this.CancellationToken);
+
+            if (image is null)
+            {
+                return this.NotFound();
+            }
+
+            var imageStream = await this.service.DownloadWithWatermarkAsync(id, string.Empty);
+            return this.File(imageStream, MediaTypeNames.Image.Jpeg, "File.jpg");
         }
 
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)

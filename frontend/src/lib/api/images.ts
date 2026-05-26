@@ -25,11 +25,11 @@ export async function getByIds(imageIds: string[]): Promise<any> {
 }
 
 export async function downloadAll(): Promise<Response> {
-	return fetch(`${BASE}/download`);
+	return fetch(`${BASE}/blob/download`);
 }
 
 export async function downloadMultiple(requestedIds: string[]): Promise<Response> {
-	return fetch(`${BASE}/download/multiple`, {
+	return fetch(`${BASE}/blob/download/multiple`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ requestedIds })
