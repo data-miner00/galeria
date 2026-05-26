@@ -24,6 +24,7 @@
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import { toast } from 'svelte-sonner';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { getByIds, downloadMultiple } from '$lib/api/images';
 
 	let isLoading = $state(true);
 	let isPinned = $state(false);
@@ -38,14 +39,7 @@
 
 		// Question: Should fetch by passing params or post body
 		if (board.imageIds.length > 0) {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/getbyids`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ imageIds: board.imageIds })
-			});
-			records = await response.json();
+			records = await getByIds(board.imageIds);
 		} else {
 			records = [];
 		}
@@ -136,15 +130,7 @@
 
 	async function downloadAll() {
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/download/multiple`, {
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				body: JSON.stringify({
-					requestedIds: filteredImages.map((x) => x.id)
-				})
-			});
+			const response = await downloadMultiple(filteredImages.map((x) => x.id));
 			// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
 			const disposition = response.headers.get('Content-Disposition');
 			const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';

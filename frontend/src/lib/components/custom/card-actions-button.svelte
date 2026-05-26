@@ -11,6 +11,7 @@
 		GitForkIcon,
 		ImageIcon,
 		ImageOffIcon,
+		ImagesIcon,
 		Info,
 		Plus,
 		RecycleIcon,
@@ -23,6 +24,7 @@
 	import { appState } from '$lib/states.svelte';
 	import { page } from '$app/state';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { deleteById, patchImage } from '$lib/api/images';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -56,18 +58,14 @@
 
 	async function removeImage() {
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/${id}`, {
-				method: 'delete'
-			});
-
-			if (!response.ok) {
-				throw new Error('Something wrong');
+			try {
+				await deleteById(id);
+				toast.success('Successfully deleted image.');
+				isDeleteDialogOpen = false;
+				onDelete();
+			} catch {
+				toast.error('An error has occurred.');
 			}
-			toast.success('Successfully deleted image.');
-
-			isDeleteDialogOpen = false;
-
-			onDelete();
 		} catch {
 			toast.error('An error has occurred.');
 		}
@@ -200,23 +198,15 @@
 		toastMessageOpposite: string = 'Successfully updated image.'
 	) {
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/${id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ [property]: value })
-			});
-
-			if (!response.ok) {
-				throw new Error('Something wrong');
+			try {
+				await patchImage(id, { [property]: value });
+				const image = appState.images.find((image) => image.id === id);
+				if (!image) return;
+				image[property] = value;
+				toast.success(value ? toastMessage : toastMessageOpposite);
+			} catch {
+				toast.error('An error has occurred.');
 			}
-
-			const image = appState.images.find((image) => image.id === id);
-			if (!image) return;
-			image[property] = value;
-
-			toast.success(value ? toastMessage : toastMessageOpposite);
 		} catch {
 			toast.error('An error has occurred.');
 		}
@@ -278,6 +268,9 @@
 		<DropdownMenu.Item><GitForkIcon /> Fork this image</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={() => (isAddToBoardDialogOpen = !isAddToBoardDialogOpen)}>
 			<Plus /> Add to Board
+		</DropdownMenu.Item>
+		<DropdownMenu.Item>
+			<ImagesIcon /> Convert to Series
 		</DropdownMenu.Item>
 		{#if page.params.id}
 			<DropdownMenu.Item onclick={removeImageFromBoard}>

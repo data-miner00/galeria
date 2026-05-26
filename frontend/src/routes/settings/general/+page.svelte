@@ -23,6 +23,7 @@
 	import { availableLanguages } from '$lib/i18n/languages';
 	import { locale } from '$lib/i18n/translations.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { downloadAll } from '$lib/api/images';
 
 	const themes = [
 		{ value: 'light', label: 'Light' },
@@ -42,7 +43,7 @@
 	);
 
 	async function downloadZip() {
-		const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/download`);
+		const response = await downloadAll();
 
 		// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
 		const disposition = response.headers.get('Content-Disposition');

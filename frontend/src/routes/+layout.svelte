@@ -24,6 +24,7 @@
 	import { goto } from '$app/navigation';
 	import OtpDialog from '$lib/components/custom/otp-dialog.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { fetchAll as fetchImages } from '$lib/api/images';
 
 	let { children } = $props();
 
@@ -54,9 +55,10 @@
 	});
 
 	onMount(async () => {
-		const imgRes = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`);
-		if (imgRes.ok) {
-			appState.images = await imgRes.json();
+		try {
+			appState.images = await fetchImages();
+		} catch (e) {
+			console.error('Failed to fetch images', e);
 		}
 
 		const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/board`);

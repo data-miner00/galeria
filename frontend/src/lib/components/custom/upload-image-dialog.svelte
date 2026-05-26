@@ -10,6 +10,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import Spinner from '../ui/spinner/spinner.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { upload as uploadImageApi } from '$lib/api/images';
 
 	type Props = {
 		isDialogOpen: boolean;
@@ -74,21 +75,10 @@
 		formData.append('IsAutoCaption', isAutocaption.toString());
 
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (!response.ok) {
-				throw new Error(result.errorMessage || 'Something went wrong.');
-			}
-
+			const result = await uploadImageApi(formData);
 			appState.images.push(result);
 			toast.success('Image uploaded successfully.');
 			isDialogOpen = false;
-
 			clearInput();
 		} catch (error) {
 			toast.error('Image upload failed. ' + (error as Error).message);

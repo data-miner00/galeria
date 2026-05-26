@@ -5,6 +5,7 @@
 		ArrowUpRightIcon,
 		DownloadIcon,
 		ImageIcon,
+		ImagesIcon,
 		RecycleIcon,
 		Trash2Icon
 	} from '@lucide/svelte';
@@ -103,6 +104,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { deleteByIds, downloadMultiple } from '$lib/api/images';
 
 	let isSelectMode = $state(false);
 
@@ -118,20 +120,7 @@
 
 	async function deleteSelectedImages(isSoftDelete: boolean = true) {
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, {
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				method: 'DELETE',
-				body: JSON.stringify({
-					isSoftDelete,
-					requestedIds: selectedImageIds
-				})
-			});
-
-			if (!response.ok) {
-				throw new Error('The response does not indicate success.');
-			}
+			await deleteByIds(selectedImageIds, isSoftDelete);
 
 			if (isSoftDelete) {
 				for (var id of selectedImageIds) {
@@ -155,15 +144,7 @@
 
 	async function downloadSelectedImages() {
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/download/multiple`, {
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				body: JSON.stringify({
-					requestedIds: selectedImageIds
-				})
-			});
+			const response = await downloadMultiple(selectedImageIds);
 			// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
 			const disposition = response.headers.get('Content-Disposition');
 			const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';
@@ -223,6 +204,7 @@
 			>
 			<Button variant="ghost" onclick={() => deleteSelectedImages(true)}><RecycleIcon /></Button>
 			<Button variant="ghost" onclick={downloadSelectedImages}><DownloadIcon /></Button>
+			<Button variant="ghost" onclick={() => {}}><ImagesIcon /></Button>
 		</div>
 	{/if}
 	<div class="flex items-center gap-2">

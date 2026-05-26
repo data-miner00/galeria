@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import Textarea from '../ui/textarea/textarea.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { patchImage } from '$lib/api/images';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { ClipboardIcon } from '@lucide/svelte';
 
@@ -79,17 +80,7 @@
 		};
 
 		try {
-			const response = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/${currentImageRecord.id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(body)
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to update image details');
-			}
+			await patchImage(currentImageRecord.id, body);
 
 			appState.images = appState.images.map((img) =>
 				img.id === currentImageRecord.id ? { ...img, ...body } : img

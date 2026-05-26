@@ -1,4 +1,5 @@
 import { PUBLIC_API_BASE_URL } from '$env/static/public';
+import { upload as uploadImage } from '$lib/api/images';
 
 export async function saveImage(blob: Blob, filename = 'image.png') {
 	const fd = new FormData();
@@ -6,9 +7,7 @@ export async function saveImage(blob: Blob, filename = 'image.png') {
 	fd.append('Title', 'Draft Image');
 	fd.append('IsCensored', false.toString());
 	fd.append('IsAutoCaption', false.toString());
-	const res = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image`, { method: 'POST', body: fd });
-	if (!res.ok) throw new Error('Upload failed');
-	return res.json();
+	return uploadImage(fd);
 }
 
 export async function saveDraft(project: any, previewBlob?: Blob, title?: string) {

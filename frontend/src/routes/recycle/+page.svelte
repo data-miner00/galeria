@@ -19,6 +19,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { toast } from 'svelte-sonner';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { clearRecycleBin } from '$lib/api/images';
 
 	onMount(async () => {
 		appState.headerTitle = 'Recycle Bin';
@@ -66,9 +67,7 @@
 
 	async function deleteAll() {
 		try {
-			await fetch(`${PUBLIC_API_BASE_URL}/api/v1/image/recyclebin/clear`, {
-				method: 'DELETE'
-			});
+			await clearRecycleBin();
 
 			appState.images = appState.images.filter((record) => !record.isSoftDeleted);
 
