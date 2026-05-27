@@ -10,10 +10,12 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixImage = SixLabors.ImageSharp.Image;
 using ImageRecord = WebApi.Models.Image;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
-//using SixLabors.Fonts;
+using SixLabors.Fonts;
 using Google.GenAI;
 using WebApi.Clients;
 using System.Globalization;
+using SixLabors.ImageSharp.Drawing.Processing;
+using DownloadResponse = (System.IO.Stream, string, string);
 
 namespace WebApi.Services;
 
@@ -243,7 +245,7 @@ public sealed class ImageService
         return records.ToList();
     }
 
-    public async Task<Stream> DownloadWithWatermarkAsync(string imageId, string watermark)
+    public async Task<DownloadResponse> DownloadWithWatermarkAsync(string imageId, string watermark)
     {
         var record = await this.repository.GetByIdAsync(imageId, ImageDocument.PartitionKeyValue, default);
         var image = await this.blobClient.DownloadAsync(record.Path);
@@ -251,23 +253,24 @@ public sealed class ImageService
         using var imageSix = SixImage.Load(image);
 
         // Create a font for the watermark text
-        //var font = SystemFonts.CreateFont(SystemFonts.Families.First().Name, 32, FontStyle.Regular);
-        //var textOptions = new TextOptions(font)
-        //{
-        //    HorizontalAlignment = HorizontalAlignment.Right,
-        //    VerticalAlignment = VerticalAlignment.Bottom,
-        //    Origin = new PointF(imageSix.Width - 10, imageSix.Height - 10),
-        //};
 
-        // Apply watermark with semi-transparent white text
-        //imageSix.Mutate(x => x.DrawText(textOptions, watermark, Color.White.WithAlpha(0.7f)));
-        imageSix.Mutate(x => x.Flip(FlipMode.Vertical));
+        var font = SystemFonts.CreateFont(SystemFonts.Families.First().Name, 32, FontStyle.Regular);
+        var richTextOptions = new RichTextOptions(font)
+        {
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Origin = new PointF(imageSix.Width - 10, imageSix.Height - 10),
+        };
+
+        // Apply watermark with semi - transparent white text
+        imageSix.Mutate(x => x.DrawText(richTextOptions, watermark, Color.White.WithAlpha(0.7f)));
 
         // Save the watermarked image to a stream
         var resultStream = new MemoryStream();
 
         // Preserve the original format based on the record's content type
-        IImageEncoder encoder = record.ContentType.ToLowerInvariant() switch
+        var contentType = record.ContentType.ToLowerInvariant();
+        IImageEncoder encoder = contentType switch
         {
             "image/jpeg" => new JpegEncoder { Quality = 80 },
             "image/png" => new PngEncoder { CompressionLevel = PngCompressionLevel.Level6 },
@@ -277,7 +280,8 @@ public sealed class ImageService
         await imageSix.SaveAsync(resultStream, encoder);
         resultStream.Position = 0;
 
-        return resultStream;
+        var imageName = record.Path.Split("/").Last();
+        return (resultStream, imageName, contentType);
     }
 
     private static void PopulateMetadata(MemoryStream buffered, ImageRecord record)

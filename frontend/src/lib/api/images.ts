@@ -1,4 +1,5 @@
 import { PUBLIC_API_BASE_URL } from '$env/static/public';
+import { appState } from '$lib/states.svelte';
 
 const BASE = `${PUBLIC_API_BASE_URL}/api/v1/image`;
 
@@ -26,6 +27,12 @@ export async function getByIds(imageIds: string[]): Promise<any> {
 
 export async function downloadAll(): Promise<Response> {
 	return fetch(`${BASE}/blob/download`);
+}
+
+export async function downloadWithWatermark(id: string): Promise<Response> {
+	return fetch(
+		`${BASE}/blob/${id}/download?watermark=${encodeURIComponent(appState.settings.watermark || '')}`
+	);
 }
 
 export async function downloadMultiple(requestedIds: string[]): Promise<Response> {

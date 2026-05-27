@@ -24,7 +24,7 @@
 	import { appState } from '$lib/states.svelte';
 	import { page } from '$app/state';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { deleteById, patchImage } from '$lib/api/images';
+	import { deleteById, downloadWithWatermark, patchImage } from '$lib/api/images';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -116,6 +116,29 @@
 
 			// 5. Revoke the temporary URL to free up memory
 			window.URL.revokeObjectURL(href);
+			toast.success('The image has been downloaded');
+		} catch (error) {
+			toast.error('Error downloading image.');
+		}
+	}
+
+	async function downloadWithProcessing() {
+		try {
+			const response = await downloadWithWatermark(id);
+
+			// Read filename from header: Content-Disposition: attachment; filename="archive.jpg"
+			const disposition = response.headers.get('Content-Disposition');
+			const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.jpg';
+
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			a.click();
+
+			URL.revokeObjectURL(url);
+
 			toast.success('The image has been downloaded');
 		} catch (error) {
 			toast.error('Error downloading image.');
@@ -277,9 +300,19 @@
 				<CircleMinus /> Remove from this Board
 			</DropdownMenu.Item>
 		{/if}
-		<DropdownMenu.Item onclick={() => downloadImage(B(path), fileName(path))}>
-			<Download /> Download
-		</DropdownMenu.Item>
+
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>
+				<Download /> Download
+			</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<DropdownMenu.Item onclick={() => downloadImage(B(path), fileName(path))}>
+					Original</DropdownMenu.Item
+				>
+				<DropdownMenu.Item onclick={downloadWithProcessing}>With Watermark</DropdownMenu.Item>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+
 		<DropdownMenu.Item onclick={() => setAsProfilePicture(B(thumbnailPath))}>
 			<ExternalLink /> Set as profile picture
 		</DropdownMenu.Item>

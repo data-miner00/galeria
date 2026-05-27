@@ -183,8 +183,8 @@ namespace WebApi.Controllers.V1
             return this.File(((MemoryStream)zipStream).ToArray(), MediaTypeNames.Application.Zip, DefaultDownloadZipFileName);
         }
 
-        [HttpPost("blob/{id}/download")]
-        public async Task<IActionResult> DownloadWithFilter([FromRoute] string id, [FromQuery] string filter)
+        [HttpGet("blob/{id}/download")]
+        public async Task<IActionResult> Download([FromRoute] string id, [FromQuery] string? filter, [FromQuery] string? watermark)
         {
             var image = await this.repository.GetByIdAsync(id, ImageDocument.PartitionKeyValue, this.CancellationToken);
 
@@ -193,8 +193,15 @@ namespace WebApi.Controllers.V1
                 return this.NotFound();
             }
 
-            var imageStream = await this.service.DownloadWithWatermarkAsync(id, string.Empty);
-            return this.File(imageStream, MediaTypeNames.Image.Jpeg, "File.jpg");
+            var (imageStream, fileName, contentType) = await this.service.DownloadWithWatermarkAsync(id, watermark ?? string.Empty);
+
+            var mediaTypeName = contentType switch
+            {
+                "image/png" => MediaTypeNames.Image.Png,
+                _ => MediaTypeNames.Image.Jpeg,
+            };
+
+            return this.File(imageStream, mediaTypeName, fileName);
         }
 
         private static void PatchImageFromRequest(Image image, UpdateImageRequest request)
