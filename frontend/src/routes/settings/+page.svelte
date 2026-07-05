@@ -12,7 +12,7 @@
 	let isEnableLoggings = $state(false);
 
 	onMount(async () => {
-		appState.headerTitle = 'Security Settings';
+		appState.headerTitle = 'General Settings';
 		value = mode.current;
 	});
 
@@ -84,7 +84,7 @@
 	}
 </script>
 
-<h1 class="text-2xl font-bold">Application Generals</h1>
+<h1 class="text-2xl font-bold">General</h1>
 
 <p>Explore application preferences and settings suited for your use case.</p>
 

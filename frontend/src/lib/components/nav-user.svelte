@@ -3,7 +3,6 @@
 	import BellIcon from '@lucide/svelte/icons/bell';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	import SparklesIcon from '@lucide/svelte/icons/sparkles';
 
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -67,18 +66,11 @@
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<SparklesIcon />
-						Upgrade to Pro
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
 					<DropdownMenu.Item onclick={() => goto('/settings/profile')}>
 						<BadgeCheckIcon />
-						Account
+						Profile
 					</DropdownMenu.Item>
-					<DropdownMenu.Item onclick={() => goto('/settings/layout')}>
+					<DropdownMenu.Item onclick={() => goto('/settings')}>
 						<SettingsIcon />
 						Settings
 					</DropdownMenu.Item>

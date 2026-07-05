@@ -1,7 +1,6 @@
 <script lang="ts">
 	import CalculatorIcon from '@lucide/svelte/icons/calculator';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
-	import CreditCardIcon from '@lucide/svelte/icons/credit-card';
 	import SettingsIcon from '@lucide/svelte/icons/settings';
 	import SmileIcon from '@lucide/svelte/icons/smile';
 	import UserIcon from '@lucide/svelte/icons/user';
@@ -45,15 +44,10 @@
 				<span>Profile</span>
 				<Command.Shortcut>⌘P</Command.Shortcut>
 			</Command.Item>
-			<Command.Item onSelect={() => gotoPage('/settings/general')}>
-				<CreditCardIcon />
-				<span>General</span>
-				<Command.Shortcut>⌘B</Command.Shortcut>
-			</Command.Item>
-			<Command.Item>
+			<Command.Item onSelect={() => gotoPage('/settings')}>
 				<SettingsIcon />
 				<span>Settings</span>
-				<Command.Shortcut>⌘S</Command.Shortcut>
+				<Command.Shortcut>⌘B</Command.Shortcut>
 			</Command.Item>
 		</Command.Group>
 	</Command.List>
