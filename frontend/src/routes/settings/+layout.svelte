@@ -1,6 +1,7 @@
 <script lang="ts">
-	let { children } = $props();
 	import { page } from '$app/state';
+
+	let { children } = $props();
 </script>
 
 <div class="mt-10 flex px-4">
