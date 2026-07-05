@@ -1,19 +1,20 @@
 <script lang="ts">
+	import { BracesIcon, DatabaseIcon, LayoutGridIcon, PlusIcon } from '@lucide/svelte';
+	import CommandIcon from '@lucide/svelte/icons/command';
+	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
+	import { type ComponentProps } from 'svelte';
+
+	import { PUBLIC_API_BASE_URL, PUBLIC_COSMOS_BASE_URL } from '$env/static/public';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { SIDEBAR, t } from '$lib/i18n/translations.svelte';
+	import { appState } from '$lib/states.svelte';
+	import type { Board } from '$lib/types';
+
 	import NavMain from './nav-main.svelte';
 	import NavProjects from './nav-projects.svelte';
 	import NavSecondary from './nav-secondary.svelte';
 	import NavUser from './nav-user.svelte';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import CommandIcon from '@lucide/svelte/icons/command';
-	import { type ComponentProps } from 'svelte';
 	import Button from './ui/button/button.svelte';
-	import { BracesIcon, DatabaseIcon, LayoutGridIcon, PlusIcon } from '@lucide/svelte';
-	import type { Board } from '$lib/types';
-	import { appState } from '$lib/states.svelte';
-
-	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
-	import { SIDEBAR, t } from '$lib/i18n/translations.svelte';
-	import { PUBLIC_API_BASE_URL, PUBLIC_COSMOS_BASE_URL } from '$env/static/public';
 
 	const data = {
 		navMain: [
@@ -89,14 +90,17 @@
 		]
 	};
 
-	type Props = ComponentProps<typeof Sidebar.Root> & {
-		onCreateClick: () => void;
-		onCreateBoardClick: () => void;
-	};
-
-	let { ref = $bindable(null), onCreateClick, onCreateBoardClick, ...restProps }: Props = $props();
+	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
 	let boards = $derived<Board[]>(appState.boards);
+
+	function onCreateClick() {
+		appState.openState.isUploadImageDialogOpen = !appState.openState.isUploadImageDialogOpen;
+	}
+
+	function onCreateBoardClick() {
+		appState.openState.isCreateBoardDialogOpen = !appState.openState.isCreateBoardDialogOpen;
+	}
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import CalculatorIcon from '@lucide/svelte/icons/calculator';
-	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import { FolderIcon, ImageIcon } from '@lucide/svelte';
 	import SettingsIcon from '@lucide/svelte/icons/settings';
-	import SmileIcon from '@lucide/svelte/icons/smile';
 	import UserIcon from '@lucide/svelte/icons/user';
-	import * as Command from '$lib/components/ui/command/index.js';
+
 	import { goto } from '$app/navigation';
+	import * as Command from '$lib/components/ui/command/index.js';
+	import { appState } from '$lib/states.svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -17,6 +17,16 @@
 		goto(path);
 		isOpen = false;
 	}
+
+	function onUploadImage() {
+		appState.openState.isUploadImageDialogOpen = true;
+		isOpen = false;
+	}
+
+	function onCreateBoard() {
+		appState.openState.isCreateBoardDialogOpen = true;
+		isOpen = false;
+	}
 </script>
 
 <Command.Dialog class="rounded-lg border shadow-md md:min-w-112.5" bind:open={isOpen}>
@@ -24,17 +34,13 @@
 	<Command.List>
 		<Command.Empty>No results found.</Command.Empty>
 		<Command.Group heading="Suggestions">
-			<Command.Item>
-				<CalendarIcon />
-				<span>Calendar</span>
+			<Command.Item onSelect={onUploadImage}>
+				<ImageIcon />
+				<span>Upload Image</span>
 			</Command.Item>
-			<Command.Item>
-				<SmileIcon />
-				<span>Search Emoji</span>
-			</Command.Item>
-			<Command.Item disabled>
-				<CalculatorIcon />
-				<span>Calculator</span>
+			<Command.Item onSelect={onCreateBoard}>
+				<FolderIcon />
+				<span>Create Board</span>
 			</Command.Item>
 		</Command.Group>
 		<Command.Separator />

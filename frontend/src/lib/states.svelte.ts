@@ -9,6 +9,11 @@ export type AppState = {
 	profile: UserProfile;
 	infoSheetData: InfoSheetData;
 	boardInfoSheetData: InfoSheetData;
+	openState: {
+		isCommandPaletteOpen: boolean;
+		isUploadImageDialogOpen: boolean;
+		isCreateBoardDialogOpen: boolean;
+	};
 };
 
 export let appState = $state<AppState>({
@@ -19,5 +24,10 @@ export let appState = $state<AppState>({
 	settings: {},
 	profile: {},
 	infoSheetData: {},
-	boardInfoSheetData: {}
+	boardInfoSheetData: {},
+	openState: {
+		isCommandPaletteOpen: false,
+		isUploadImageDialogOpen: false,
+		isCreateBoardDialogOpen: false
+	}
 });

@@ -1,35 +1,34 @@
 <script lang="ts">
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { ArrowLeft, PlusIcon, SearchIcon } from '@lucide/svelte';
-
-	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
-	import { Button } from '$lib/components/ui/button';
-	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
-	import CreateBoardDialog from '$lib/components/custom/create-board-dialog.svelte';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { onMount } from 'svelte';
-	import { appState } from '$lib/states.svelte';
-	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
-	import ImageInfoSheet from '$lib/components/custom/image-info-sheet.svelte';
 	import { ModeWatcher } from 'mode-watcher';
-	import ThemeButton from '$lib/components/custom/theme-button.svelte';
-	import CommandPalette from '$lib/components/custom/command-palette.svelte';
-	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
-	import type { Board } from '$lib/types';
+	import { onMount } from 'svelte';
+
 	import { goto } from '$app/navigation';
-	import OtpDialog from '$lib/components/custom/otp-dialog.svelte';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import { fetchAll as fetchImages } from '$lib/api/images';
+	import favicon from '$lib/assets/favicon.svg';
+	import AppSidebar from '$lib/components/app-sidebar.svelte';
+	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
+	import CommandPalette from '$lib/components/custom/command-palette.svelte';
+	import CreateBoardDialog from '$lib/components/custom/create-board-dialog.svelte';
+	import ImageInfoSheet from '$lib/components/custom/image-info-sheet.svelte';
+	import OtpDialog from '$lib/components/custom/otp-dialog.svelte';
+	import ThemeButton from '$lib/components/custom/theme-button.svelte';
+	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
+	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import { Button } from '$lib/components/ui/button';
+	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { appState } from '$lib/states.svelte';
+	import type { Board } from '$lib/types';
+
+	import './layout.css';
 
 	let { children } = $props();
 
-	let isUploadImageDialogOpen = $state(false);
-	let isCreateBoardDialogOpen = $state(false);
 	let isImageInfoSheetOpen = $state(false);
 	let isBoardInfoSheetOpen = $state(false);
 	let isOtpDialogOpen = $state(false);
@@ -89,12 +88,10 @@
 		appState.isLoading = false;
 	});
 
-	let isCommandPaletteOpen = $state(false);
-
 	function handleKeydown(e: KeyboardEvent) {
 		if ((e.key === 'j' && (e.metaKey || e.ctrlKey)) || e.key === '/') {
 			e.preventDefault();
-			isCommandPaletteOpen = !isCommandPaletteOpen;
+			appState.openState.isCommandPaletteOpen = !appState.openState.isCommandPaletteOpen;
 		} else if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
 			searchInputRef?.focus();
@@ -124,10 +121,7 @@
 <ModeWatcher />
 
 <Sidebar.Provider>
-	<AppSidebar
-		onCreateClick={() => (isUploadImageDialogOpen = !isUploadImageDialogOpen)}
-		onCreateBoardClick={() => (isCreateBoardDialogOpen = !isCreateBoardDialogOpen)}
-	/>
+	<AppSidebar />
 	<Sidebar.Inset class="relative overflow-clip">
 		<header
 			class="sticky top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center gap-2 bg-background"
@@ -142,10 +136,6 @@
 					<Separator orientation="vertical" class="me-2 data-[orientation=vertical]:h-4" />
 					<Breadcrumb.Root>
 						<Breadcrumb.List>
-							<!-- <Breadcrumb.Item class="hidden md:block">
-								<Breadcrumb.Link href="##">At The Homepage</Breadcrumb.Link>
-							</Breadcrumb.Item>
-							<Breadcrumb.Separator class="hidden md:block" /> -->
 							<Breadcrumb.Item>
 								<Breadcrumb.Page>{appState.headerTitle}</Breadcrumb.Page>
 							</Breadcrumb.Item>
@@ -167,7 +157,11 @@
 
 					<ThemeButton />
 
-					<Button onclick={() => (isUploadImageDialogOpen = !isUploadImageDialogOpen)}>
+					<Button
+						onclick={() =>
+							(appState.openState.isUploadImageDialogOpen =
+								!appState.openState.isUploadImageDialogOpen)}
+					>
 						<PlusIcon /> Create
 					</Button>
 				</div>
@@ -179,12 +173,12 @@
 	</Sidebar.Inset>
 </Sidebar.Provider>
 
-<UploadImageDialog bind:isDialogOpen={isUploadImageDialogOpen} />
-<CreateBoardDialog bind:isDialogOpen={isCreateBoardDialogOpen} />
+<UploadImageDialog bind:isDialogOpen={appState.openState.isUploadImageDialogOpen} />
+<CreateBoardDialog bind:isDialogOpen={appState.openState.isCreateBoardDialogOpen} />
 <ImageInfoSheet bind:isOpen={isImageInfoSheetOpen} />
 <BoardInfoSheet bind:isOpen={isBoardInfoSheetOpen} />
 <OtpDialog bind:isDialogOpen={isOtpDialogOpen} />
 
 <ToTopButton />
 
-<CommandPalette bind:isOpen={isCommandPaletteOpen} />
+<CommandPalette bind:isOpen={appState.openState.isCommandPaletteOpen} />
