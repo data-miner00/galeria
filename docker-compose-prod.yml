@@ -46,7 +46,7 @@ services:
 
   webapi:
     build:
-      context: ./backend/WebApi
+      context: ./backend
       dockerfile: Dockerfile
     container_name: galeria-api
     restart: unless-stopped
