@@ -3,10 +3,11 @@ using Azure.Storage.Blobs;
 using Google.GenAI;
 using Meilisearch;
 using Microsoft.Azure.Cosmos;
-using WebApi.Clients;
+using Core.Clients;
+using Core.Options;
+using Core.Repositories;
+using Core.Services;
 using WebApi.Options;
-using WebApi.Repositories;
-using WebApi.Services;
 
 namespace WebApi
 {
@@ -37,7 +38,8 @@ namespace WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.ConfigureRepositories()
+            builder
+                .ConfigureRepositories()
                 .ConfigureClients()
                 .ConfigureCors()
                 .ConfigureMeilisearch()

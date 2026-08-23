@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using WebApi.Dtos;
-using WebApi.Extensions;
+using Core.Models;
+using Core.Repositories;
+using Core.Services;
 using WebApi.Models;
-using WebApi.Repositories;
-using WebApi.Services;
+using WebApi.Extensions;
 
 namespace WebApi.Controllers.V1
 {

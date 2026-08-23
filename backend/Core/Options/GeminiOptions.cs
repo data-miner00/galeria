@@ -1,0 +1,11 @@
+﻿namespace Core.Options
+{
+    public class GeminiOptions
+    {
+        public string ApiKey { get; set; }
+
+        public string Model { get; set; }
+
+        public bool IsEnabled { get; set; }
+    }
+}

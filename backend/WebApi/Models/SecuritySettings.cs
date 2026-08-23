@@ -1,9 +1,17 @@
-﻿namespace WebApi.Models
+﻿
+
+namespace WebApi.Models
 {
-    public class SecuritySettings : Entity
+    public class SecuritySettings
     {
         public bool IsTotpEnabled { get; set; }
 
-        public string? OtpSecret { get; set; }
+        public static SecuritySettings FromInternal(Core.Models.SecuritySettings settings)
+        {
+            return new SecuritySettings
+            {
+                IsTotpEnabled = settings.IsTotpEnabled,
+            };
+        }
     }
 }

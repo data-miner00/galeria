@@ -1,6 +1,6 @@
-﻿using System;
+﻿namespace WebApi.Extensions;
+
 using System.Linq;
-using System.Reflection;
 
 public static class ObjectExtensions
 {

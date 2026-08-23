@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using QRCoder;
-using WebApi.Dtos;
-using WebApi.Repositories;
+using Core.Repositories;
+using WebApi.Models;
 
 namespace WebApi.Controllers.V1
 {
@@ -23,7 +23,7 @@ namespace WebApi.Controllers.V1
         private CancellationToken CancellationToken => this.HttpContext.RequestAborted;
 
         [HttpGet]
-        public async Task<ActionResult<Dtos.SecuritySettings>> Get()
+        public async Task<ActionResult<WebApi.Models.SecuritySettings>> Get()
         {
             var settings = await this.repository.GetFirstAsync(this.CancellationToken);
 
@@ -32,7 +32,7 @@ namespace WebApi.Controllers.V1
                 return this.NotFound();
             }
 
-            return this.Ok(Dtos.SecuritySettings.FromInternal(settings));
+            return this.Ok(WebApi.Models.SecuritySettings.FromInternal(settings));
         }
 
         [HttpPost("totp/enable")]
@@ -59,7 +59,7 @@ namespace WebApi.Controllers.V1
             using var qrCode = new PngByteQRCode(qrCodeData);
             var qrCodeImage = qrCode.GetGraphic(10);
 
-            await this.repository.UpsertAsync(new Models.SecuritySettings
+            await this.repository.UpsertAsync(new Core.Models.SecuritySettings
             {
                 Id = "fixedId",
                 CreatedAt = DateTime.UtcNow,

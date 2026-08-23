@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.Repositories;
-using WebApi.Dtos;
-using BoardDocument = WebApi.Models.BoardDocument;
-using InternalBoard = WebApi.Models.Board;
+using Core.Repositories;
+using BoardDocument = Core.Models.BoardDocument;
+using InternalBoard = Core.Models.Board;
+using WebApi.Models;
 
 namespace WebApi.Controllers.V1
 {
@@ -57,7 +57,7 @@ namespace WebApi.Controllers.V1
 
             var result = await this.repository.UpsertAsync(board, this.CancellationToken);
 
-            if (result != Models.DatabaseOperationStatus.Success)
+            if (result != Core.Models.DatabaseOperationStatus.Success)
             {
                 return this.StatusCode(500, new ErrorResponse
                 {
@@ -74,7 +74,7 @@ namespace WebApi.Controllers.V1
         {
             var status = await this.repository.AddImageToBoardAsync(boardId, BoardDocument.PartitionKeyValue, imageId, this.CancellationToken);
 
-            if (status != Models.DatabaseOperationStatus.Success)
+            if (status != Core.Models.DatabaseOperationStatus.Success)
             {
                 return this.NotFound();
             }
@@ -95,7 +95,7 @@ namespace WebApi.Controllers.V1
             var imageIndex = board.ImageIds.FindIndex(x => x.Equals(imageId, StringComparison.OrdinalIgnoreCase));
             var status = await this.repository.RemoveImageFromBoardAsync(boardId, BoardDocument.PartitionKeyValue, imageIndex, this.CancellationToken);
 
-            if (status != Models.DatabaseOperationStatus.Success)
+            if (status != Core.Models.DatabaseOperationStatus.Success)
             {
                 return this.NotFound();
             }
@@ -108,7 +108,7 @@ namespace WebApi.Controllers.V1
         {
             var status = await this.repository.DeleteAsync(id, BoardDocument.PartitionKeyValue, this.CancellationToken);
 
-            if (status != Models.DatabaseOperationStatus.Success)
+            if (status != Core.Models.DatabaseOperationStatus.Success)
             {
                 return this.NotFound();
             }
