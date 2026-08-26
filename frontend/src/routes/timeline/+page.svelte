@@ -96,11 +96,34 @@
 			case 'year':
 				return Map.groupBy(mappedImages, ({ date }) => date.getFullYear());
 			case 'month':
-				return Map.groupBy(mappedImages, ({ date }) => date.getMonth());
+				return Map.groupBy(mappedImages, ({ date }) => `${date.getFullYear()}-${date.getMonth()}`);
 			default:
 				return Map.groupBy(mappedImages, () => true);
 		}
 	});
+
+	const monthNames = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+	];
+
+	function formatGroupHeader(key: string | number | boolean): string {
+		if (groupings === 'month') {
+			const [year, month] = String(key).split('-').map(Number);
+			return `${monthNames[month]} ${year}`;
+		}
+		return String(key);
+	}
 
 	function toggleOrder() {
 		orders = orders === 'newest' ? 'oldest' : 'newest';
@@ -317,7 +340,7 @@
 	{#if filteredImages.length > 0}
 		{#each groupedImages as group}
 			{#if groupings !== 'none'}
-				<h1 class="my-4 text-lg font-bold">{group[0]}</h1>
+				<h1 class="my-4 text-lg font-bold">{formatGroupHeader(group[0])}</h1>
 			{/if}
 			<div class="mb-8 flex flex-wrap" class:gap-1={gap === 'small'} class:gap-2={gap === 'medium'}>
 				{#each group[1] as image}
