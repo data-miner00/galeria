@@ -91,15 +91,45 @@
 	let selectedImageIds = $state<string[]>([]);
 	let selectedImageSize = $state(0);
 
+	function groupKeyToTimestamp(key: string | number | boolean): number {
+		if (groupings === 'year') {
+			return new Date(Number(key), 0).getTime();
+		}
+		if (groupings === 'month') {
+			const [year, month] = String(key).split('-').map(Number);
+			return new Date(year, month).getTime();
+		}
+		return 0;
+	}
+
 	let groupedImages = $derived.by(() => {
+		let map: Map<string | number | boolean, typeof mappedImages>;
 		switch (groupings) {
 			case 'year':
-				return Map.groupBy(mappedImages, ({ date }) => date.getFullYear());
+				map = Map.groupBy(mappedImages, ({ date }) => date.getFullYear());
+				break;
 			case 'month':
-				return Map.groupBy(mappedImages, ({ date }) => `${date.getFullYear()}-${date.getMonth()}`);
+				map = Map.groupBy(mappedImages, ({ date }) => `${date.getFullYear()}-${date.getMonth()}`);
+				break;
 			default:
-				return Map.groupBy(mappedImages, () => true);
+				map = Map.groupBy(mappedImages, () => true);
 		}
+
+		const entries = [...map.entries()];
+
+		entries.sort(([keyA], [keyB]) => {
+			const diff = groupKeyToTimestamp(keyA) - groupKeyToTimestamp(keyB);
+			return orders === 'newest' ? -diff : diff;
+		});
+
+		for (const [, images] of entries) {
+			images.sort((a, b) => {
+				const diff = a.date.getTime() - b.date.getTime();
+				return orders === 'newest' ? -diff : diff;
+			});
+		}
+
+		return entries;
 	});
 
 	const monthNames = [
