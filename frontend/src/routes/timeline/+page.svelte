@@ -155,6 +155,10 @@
 		return String(key);
 	}
 
+	function formatGroupCount(count: number): string {
+		return `${count} ${count === 1 ? 'photo' : 'photos'}`;
+	}
+
 	function toggleOrder() {
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
@@ -370,7 +374,12 @@
 	{#if filteredImages.length > 0}
 		{#each groupedImages as group}
 			{#if groupings !== 'none'}
-				<h1 class="my-4 text-lg font-bold">{formatGroupHeader(group[0])}</h1>
+				<h1 class="my-4 flex items-baseline gap-2 text-lg font-bold">
+					{formatGroupHeader(group[0])}
+					<span class="text-sm font-normal text-muted-foreground">
+						{formatGroupCount(group[1].length)}
+					</span>
+				</h1>
 			{/if}
 			<div class="mb-8 flex flex-wrap" class:gap-1={gap === 'small'} class:gap-2={gap === 'medium'}>
 				{#each group[1] as image}
