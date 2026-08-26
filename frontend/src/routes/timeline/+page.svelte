@@ -1,16 +1,31 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { onMount } from 'svelte';
 	import {
 		ArrowUpRightIcon,
+		ChevronLeftIcon,
+		ChevronRightIcon,
 		DownloadIcon,
+		EyeOffIcon,
 		ImageIcon,
 		ImagesIcon,
 		RecycleIcon,
 		Trash2Icon
 	} from '@lucide/svelte';
-	import { appState } from '$lib/states.svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
+	import { toast } from 'svelte-sonner';
+
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { deleteByIds, downloadMultiple } from '$lib/api/images';
+	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { B } from '$lib/helpers';
+	import { appState } from '$lib/states.svelte';
 
 	let isLoading = $derived(appState.isLoading);
 	onMount(async () => {
@@ -91,22 +106,79 @@
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
 
-	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
-	import { B } from '$lib/helpers';
-	import * as Select from '$lib/components/ui/select/index.js';
-
 	function capitalize(str: string): string {
 		return str[0].toUpperCase() + str.slice(1);
 	}
 
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { deleteByIds, downloadMultiple } from '$lib/api/images';
-
 	let isSelectMode = $state(false);
+
+	let revealedCensoredIds = $state<Set<string>>(new Set());
+	let lightboxIndex = $state<number | null>(null);
+	let lightboxCloseButton: HTMLButtonElement | null = $state(null);
+	let previousActiveElement: HTMLElement | null = $state(null);
+
+	let lightboxImage = $derived(lightboxIndex !== null ? mappedImages[lightboxIndex] : null);
+
+	function handleImageClick(image: (typeof mappedImages)[number]) {
+		if (isSelectMode) {
+			return;
+		}
+
+		if (image.isCensored && !revealedCensoredIds.has(image.id)) {
+			revealedCensoredIds = new Set(revealedCensoredIds).add(image.id);
+			return;
+		}
+
+		const index = mappedImages.findIndex((i) => i.id === image.id);
+		if (index === -1) {
+			return;
+		}
+
+		previousActiveElement = document.activeElement as HTMLElement | null;
+		lightboxIndex = index;
+	}
+
+	function closeLightbox() {
+		lightboxIndex = null;
+		previousActiveElement?.focus();
+	}
+
+	function showPrevImage() {
+		if (lightboxIndex === null) return;
+		lightboxIndex = (lightboxIndex - 1 + mappedImages.length) % mappedImages.length;
+	}
+
+	function showNextImage() {
+		if (lightboxIndex === null) return;
+		lightboxIndex = (lightboxIndex + 1) % mappedImages.length;
+	}
+
+	function handleLightboxKeyDown(event: KeyboardEvent) {
+		if (lightboxIndex === null) return;
+
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			closeLightbox();
+		} else if (event.key === 'ArrowLeft') {
+			event.preventDefault();
+			showPrevImage();
+		} else if (event.key === 'ArrowRight') {
+			event.preventDefault();
+			showNextImage();
+		}
+	}
+
+	$effect(() => {
+		if (lightboxIndex !== null) {
+			tick().then(() => lightboxCloseButton?.focus());
+		}
+	});
+
+	onDestroy(() => {
+		if (lightboxIndex !== null) {
+			closeLightbox();
+		}
+	});
 
 	function imageCheckChange(isChecked: boolean, id: string, sizeInBytes: number) {
 		if (isChecked) {
@@ -165,9 +237,6 @@
 	}
 
 	let isDeleteDialogOpen = $state(false);
-
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { toast } from 'svelte-sonner';
 </script>
 
 <div class="flex justify-between">
@@ -257,14 +326,28 @@
 							<Checkbox
 								id={image.id}
 								onCheckedChange={(isChecked) => imageCheckChange(isChecked, image.id, image.size)}
-								class="absolute -top-0.5 -right-0.5 bg-background"
+								class="absolute -top-0.5 -right-0.5 z-10 bg-background"
 							/>
 						{/if}
-						<img
-							src={B(image.thumbnailPath)}
-							class="h-full w-full object-cover"
-							alt={image.title || ''}
-						/>
+						<button
+							type="button"
+							class="relative h-full w-full cursor-pointer overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+							onclick={() => handleImageClick(image)}
+							aria-label="Open image preview"
+						>
+							<img
+								src={B(image.thumbnailPath)}
+								class="h-full w-full object-cover"
+								alt={image.title || ''}
+							/>
+							{#if image.isCensored && !revealedCensoredIds.has(image.id)}
+								<div
+									class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xl"
+								>
+									<EyeOffIcon class="text-white" />
+								</div>
+							{/if}
+						</button>
 					</div>
 				{/each}
 			</div>
@@ -310,3 +393,54 @@
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
+
+{#if lightboxImage}
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+		role="dialog"
+		aria-modal="true"
+		aria-label="Image preview dialog"
+		onclick={closeLightbox}
+		onkeydown={handleLightboxKeyDown}
+		tabindex="-1"
+	>
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="relative max-h-[90vh] max-w-[90vw]" onclick={(e) => e.stopPropagation()}>
+			<button
+				class="absolute top-2 right-2 z-20 rounded bg-white/90 px-3 py-1 text-sm font-medium text-slate-900 hover:bg-white"
+				type="button"
+				onclick={closeLightbox}
+				aria-label="Close image preview"
+				bind:this={lightboxCloseButton}
+			>
+				Close
+			</button>
+
+			{#if mappedImages.length > 1}
+				<button
+					class="absolute top-1/2 left-2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-slate-900 hover:bg-white"
+					type="button"
+					onclick={showPrevImage}
+					aria-label="Previous image"
+				>
+					<ChevronLeftIcon />
+				</button>
+				<button
+					class="absolute top-1/2 right-2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-slate-900 hover:bg-white"
+					type="button"
+					onclick={showNextImage}
+					aria-label="Next image"
+				>
+					<ChevronRightIcon />
+				</button>
+			{/if}
+
+			<img
+				class="max-h-[85vh] max-w-[85vw] object-contain"
+				alt={lightboxImage.title ?? 'Gallery image preview'}
+				src={B(lightboxImage.path)}
+			/>
+		</div>
+	</div>
+{/if}
