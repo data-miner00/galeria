@@ -69,6 +69,8 @@ namespace WebApi
 
             app.MapControllers();
 
+            app.MapGet("/health", () => Results.NoContent());
+
             app.Run();
         }
 
