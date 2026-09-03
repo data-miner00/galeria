@@ -13,8 +13,6 @@
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { deleteByIds, downloadMultiple } from '$lib/api/images';
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -25,6 +23,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { B } from '$lib/helpers';
+	import { deleteByIds, downloadMultiple } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 
 	let isLoading = $derived(appState.isLoading);
@@ -157,6 +156,30 @@
 
 	function formatGroupCount(count: number): string {
 		return `${count} ${count === 1 ? 'photo' : 'photos'}`;
+	}
+
+	function groupDomId(key: string | number | boolean): string {
+		return `timeline-group-${String(key)}`;
+	}
+
+	let yearJumpTargets = $derived.by(() => {
+		const targets = new Map<number, string>();
+		if (groupings === 'none') {
+			return targets;
+		}
+
+		for (const [key] of groupedImages) {
+			const year = groupings === 'month' ? Number(String(key).split('-')[0]) : Number(key);
+			if (!targets.has(year)) {
+				targets.set(year, groupDomId(key));
+			}
+		}
+
+		return targets;
+	});
+
+	function jumpToYear(id: string) {
+		document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 	}
 
 	function toggleOrder() {
@@ -373,45 +396,51 @@
 {#if !isLoading}
 	{#if filteredImages.length > 0}
 		{#each groupedImages as group}
-			{#if groupings !== 'none'}
-				<h1 class="my-4 flex items-baseline gap-2 text-lg font-bold">
-					{formatGroupHeader(group[0])}
-					<span class="text-sm font-normal text-muted-foreground">
-						{formatGroupCount(group[1].length)}
-					</span>
-				</h1>
-			{/if}
-			<div class="mb-8 flex flex-wrap" class:gap-1={gap === 'small'} class:gap-2={gap === 'medium'}>
-				{#each group[1] as image}
-					<div class="relative h-25 w-25">
-						{#if isSelectMode}
-							<Checkbox
-								id={image.id}
-								onCheckedChange={(isChecked) => imageCheckChange(isChecked, image.id, image.size)}
-								class="absolute -top-0.5 -right-0.5 z-10 bg-background"
-							/>
-						{/if}
-						<button
-							type="button"
-							class="relative h-full w-full cursor-pointer overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-							onclick={() => handleImageClick(image)}
-							aria-label="Open image preview"
-						>
-							<img
-								src={B(image.thumbnailPath)}
-								class="h-full w-full object-cover"
-								alt={image.title || ''}
-							/>
-							{#if image.isCensored && !revealedCensoredIds.has(image.id)}
-								<div
-									class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xl"
-								>
-									<EyeOffIcon class="text-white" />
-								</div>
+			<div id={groupDomId(group[0])}>
+				{#if groupings !== 'none'}
+					<h1 class="my-4 flex items-baseline gap-2 text-lg font-bold">
+						{formatGroupHeader(group[0])}
+						<span class="text-sm font-normal text-muted-foreground">
+							{formatGroupCount(group[1].length)}
+						</span>
+					</h1>
+				{/if}
+				<div
+					class="mb-8 flex flex-wrap"
+					class:gap-1={gap === 'small'}
+					class:gap-2={gap === 'medium'}
+				>
+					{#each group[1] as image}
+						<div class="relative h-25 w-25">
+							{#if isSelectMode}
+								<Checkbox
+									id={image.id}
+									onCheckedChange={(isChecked) => imageCheckChange(isChecked, image.id, image.size)}
+									class="absolute -top-0.5 -right-0.5 z-10 bg-background"
+								/>
 							{/if}
-						</button>
-					</div>
-				{/each}
+							<button
+								type="button"
+								class="relative h-full w-full cursor-pointer overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+								onclick={() => handleImageClick(image)}
+								aria-label="Open image preview"
+							>
+								<img
+									src={B(image.thumbnailPath)}
+									class="h-full w-full object-cover"
+									alt={image.title || ''}
+								/>
+								{#if image.isCensored && !revealedCensoredIds.has(image.id)}
+									<div
+										class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xl"
+									>
+										<EyeOffIcon class="text-white" />
+									</div>
+								{/if}
+							</button>
+						</div>
+					{/each}
+				</div>
 			</div>
 		{/each}
 	{:else}
@@ -438,6 +467,23 @@
 	{/if}
 {:else}
 	<LoadingImagesSkeleton layout="timeline" />
+{/if}
+
+{#if yearJumpTargets.size > 1}
+	<nav
+		class="fixed top-1/2 right-2 z-40 hidden -translate-y-1/2 flex-col items-end gap-0.5 sm:flex"
+		aria-label="Jump to year"
+	>
+		{#each yearJumpTargets as [year, id] (year)}
+			<button
+				type="button"
+				class="cursor-pointer rounded px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+				onclick={() => jumpToYear(id)}
+			>
+				{year}
+			</button>
+		{/each}
+	</nav>
 {/if}
 
 <AlertDialog.Root bind:open={isDeleteDialogOpen}>

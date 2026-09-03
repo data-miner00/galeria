@@ -1,5 +1,5 @@
 import { PUBLIC_API_BASE_URL } from '$env/static/public';
-import { upload as uploadImage } from '$lib/api/images';
+import { upload as uploadImage } from '$lib/services/imageService';
 
 export async function saveImage(blob: Blob, filename = 'image.png') {
 	const fd = new FormData();

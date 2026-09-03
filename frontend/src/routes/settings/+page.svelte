@@ -1,13 +1,20 @@
 <script lang="ts">
+	import { mode, setMode } from 'mode-watcher';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Label from '$lib/components/ui/label/index.js';
-	import { onMount } from 'svelte';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
-	import { toast } from 'svelte-sonner';
-	import { appState } from '$lib/states.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { setMode, mode } from 'mode-watcher';
+	import { availableLanguages } from '$lib/i18n/languages';
+	import { locale } from '$lib/i18n/translations.svelte';
+	import { downloadAll } from '$lib/services/imageService';
+	import { appState } from '$lib/states.svelte';
 
 	let isEnableLoggings = $state(false);
 
@@ -17,13 +24,6 @@
 	});
 
 	let isSaving = $state(false);
-
-	import * as Select from '$lib/components/ui/select/index.js';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { availableLanguages } from '$lib/i18n/languages';
-	import { locale } from '$lib/i18n/translations.svelte';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { downloadAll } from '$lib/api/images';
 
 	const themes = [
 		{ value: 'light', label: 'Light' },

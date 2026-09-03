@@ -1,6 +1,4 @@
 <script lang="ts">
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import {
 		CircleMinus,
 		Download,
@@ -19,12 +17,18 @@
 		Trash2
 	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import AddToBoardDialog from './add-to-board-dialog.svelte';
-	import { appState } from '$lib/states.svelte';
+
 	import { page } from '$app/state';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { deleteById, downloadWithWatermark, patchImage } from '$lib/api/images';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { B } from '$lib/helpers';
+	import { deleteById, downloadWithWatermark, patchImage } from '$lib/services/imageService';
+	import { appState } from '$lib/states.svelte';
+	import type { ImageRecord } from '$lib/types';
+
+	import AddToBoardDialog from './add-to-board-dialog.svelte';
 
 	let isDeleteDialogOpen = $state(false);
 
@@ -52,8 +56,6 @@
 		isHidden
 	}: Props = $props();
 
-	import { B } from '$lib/helpers';
-	import type { ImageRecord } from '$lib/types';
 	let isAddToBoardDialogOpen = $state(false);
 
 	async function removeImage() {

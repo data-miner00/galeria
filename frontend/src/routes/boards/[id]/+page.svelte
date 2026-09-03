@@ -1,12 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import type { Board, ImageRecord, LayoutType } from '$lib/types';
-
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-
-	import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
 	import {
 		ArrowDown01Icon,
 		ArrowUp01Icon,
@@ -18,13 +10,19 @@
 		PinIcon,
 		PinOffIcon
 	} from '@lucide/svelte';
+	import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
+	import { toast } from 'svelte-sonner';
 
-	import { appState } from '$lib/states.svelte';
+	import { page } from '$app/state';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import ImageCard from '$lib/components/custom/image-card.svelte';
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
-	import { toast } from 'svelte-sonner';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { getByIds, downloadMultiple } from '$lib/api/images';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { downloadMultiple, getByIds } from '$lib/services/imageService';
+	import { appState } from '$lib/states.svelte';
+	import type { Board, ImageRecord, LayoutType } from '$lib/types';
 
 	let isLoading = $state(true);
 	let isPinned = $state(false);

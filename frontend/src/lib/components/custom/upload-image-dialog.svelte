@@ -1,16 +1,17 @@
 <script lang="ts">
+	import { X } from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
+
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { appState } from '$lib/states.svelte';
-	import { X } from '@lucide/svelte';
-	import { toast } from 'svelte-sonner';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { upload as uploadImageApi } from '$lib/services/imageService';
+	import { appState } from '$lib/states.svelte';
+
 	import Spinner from '../ui/spinner/spinner.svelte';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { upload as uploadImageApi } from '$lib/api/images';
 
 	type Props = {
 		isDialogOpen: boolean;

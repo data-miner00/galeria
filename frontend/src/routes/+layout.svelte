@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { fetchAll as fetchImages } from '$lib/api/images';
 	import favicon from '$lib/assets/favicon.svg';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import BoardInfoSheet from '$lib/components/custom/board-info-sheet.svelte';
@@ -16,6 +15,7 @@
 	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { fetchAll as fetchImages } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 	import type { Board } from '$lib/types';
 

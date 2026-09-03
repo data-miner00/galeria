@@ -1,9 +1,4 @@
 <script lang="ts">
-	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { ImageRecord, LayoutType } from '$lib/types';
-	import { onMount } from 'svelte';
-	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import {
 		ArrowDown01Icon,
 		ArrowUp01Icon,
@@ -12,11 +7,17 @@
 		LayoutDashboardIcon,
 		LayoutGridIcon
 	} from '@lucide/svelte';
-	import { appState } from '$lib/states.svelte';
-	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { onMount } from 'svelte';
+
 	import { page } from '$app/state';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { search as searchImages } from '$lib/api/images';
+	import ImageCard from '$lib/components/custom/image-card.svelte';
+	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { search as searchImages } from '$lib/services/imageService';
+	import { appState } from '$lib/states.svelte';
+	import type { ImageRecord, LayoutType } from '$lib/types';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 	const cardWidth = 247.5;
@@ -113,8 +114,6 @@
 	function toggleOrder() {
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
-
-	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 
 	let layoutType = $state<LayoutType>('masonry');
 </script>

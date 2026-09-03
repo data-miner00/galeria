@@ -1,9 +1,4 @@
 <script lang="ts">
-	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { ImageRecord } from '$lib/types';
-	import { onMount } from 'svelte';
-	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import {
 		ArchiveRestoreIcon,
 		ArrowDown01Icon,
@@ -14,12 +9,17 @@
 		LayoutGridIcon,
 		Trash2Icon
 	} from '@lucide/svelte';
-	import { appState } from '$lib/states.svelte';
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import { clearRecycleBin } from '$lib/api/images';
+
+	import ImageCard from '$lib/components/custom/image-card.svelte';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { clearRecycleBin } from '$lib/services/imageService';
+	import { appState } from '$lib/states.svelte';
+	import type { ImageRecord } from '$lib/types';
 
 	onMount(async () => {
 		appState.headerTitle = 'Recycle Bin';
