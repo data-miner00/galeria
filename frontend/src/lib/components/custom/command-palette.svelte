@@ -16,34 +16,31 @@
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { appState } from '$lib/states.svelte';
 
-	type Props = {
-		isOpen: boolean;
-	};
-
-	let { isOpen = $bindable(false) }: Props = $props();
-
 	function gotoPage(path: string) {
 		goto(path);
-		isOpen = false;
+		appState.openState.isCommandPaletteOpen = false;
 	}
 
 	function onUploadImage() {
 		appState.openState.isUploadImageDialogOpen = true;
-		isOpen = false;
+		appState.openState.isCommandPaletteOpen = false;
 	}
 
 	function onCreateBoard() {
 		appState.openState.isCreateBoardDialogOpen = true;
-		isOpen = false;
+		appState.openState.isCommandPaletteOpen = false;
 	}
 
 	function goBack() {
 		history.back();
-		isOpen = false;
+		appState.openState.isCommandPaletteOpen = false;
 	}
 </script>
 
-<Command.Dialog class="rounded-lg border shadow-md md:min-w-112.5" bind:open={isOpen}>
+<Command.Dialog
+	class="rounded-lg border shadow-md md:min-w-112.5"
+	bind:open={appState.openState.isCommandPaletteOpen}
+>
 	<Command.Input placeholder="Type a command or search..." />
 	<Command.List>
 		<Command.Empty>No results found.</Command.Empty>

@@ -7,12 +7,6 @@
 	import { toast } from 'svelte-sonner';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
-	type Props = {
-		isDialogOpen: boolean;
-	};
-
-	let { isDialogOpen = $bindable(false) }: Props = $props();
-
 	let title = $state('');
 	let description = $state('');
 
@@ -44,11 +38,11 @@
 
 		appState.boards.push(await res.json());
 
-		isDialogOpen = false;
+		appState.openState.isCreateBoardDialogOpen = false;
 	}
 </script>
 
-<Dialog.Root bind:open={isDialogOpen}>
+<Dialog.Root bind:open={appState.openState.isCreateBoardDialogOpen}>
 	<form>
 		<Dialog.Content class="sm:max-w-106.25">
 			<Dialog.Header>

@@ -4,12 +4,7 @@
 	import { toast } from 'svelte-sonner';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-
-	type Props = {
-		isDialogOpen: boolean;
-	};
-
-	let { isDialogOpen = $bindable(false) }: Props = $props();
+	import { appState } from '$lib/states.svelte';
 
 	let otp = $state('');
 
@@ -24,11 +19,11 @@
 		}
 
 		toast.success('OTP verified successfully.');
-		isDialogOpen = false;
+		appState.openState.isOtpDialogOpen = false;
 	}
 </script>
 
-<Dialog.Root bind:open={isDialogOpen}>
+<Dialog.Root bind:open={appState.openState.isOtpDialogOpen}>
 	<form>
 		<Dialog.Content class="sm:max-w-106.25">
 			<Dialog.Header>

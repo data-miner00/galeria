@@ -25,7 +25,6 @@
 
 	let isImageInfoSheetOpen = $state(false);
 	let isBoardInfoSheetOpen = $state(false);
-	let isOtpDialogOpen = $state(false);
 
 	$effect(() => {
 		if (appState.infoSheetData.isOpen) isImageInfoSheetOpen = true;
@@ -76,7 +75,7 @@
 		const securitySettingsRes = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/auth`);
 		if (securitySettingsRes.ok) {
 			const securitySettings = await securitySettingsRes.json();
-			isOtpDialogOpen = securitySettings.isTotpEnabled;
+			appState.openState.isOtpDialogOpen = securitySettings.isTotpEnabled;
 		}
 
 		appState.isLoading = false;
@@ -116,12 +115,12 @@
 	</Sidebar.Inset>
 </Sidebar.Provider>
 
-<UploadImageDialog bind:isDialogOpen={appState.openState.isUploadImageDialogOpen} />
-<CreateBoardDialog bind:isDialogOpen={appState.openState.isCreateBoardDialogOpen} />
+<UploadImageDialog />
+<CreateBoardDialog />
 <ImageInfoSheet bind:isOpen={isImageInfoSheetOpen} />
 <BoardInfoSheet bind:isOpen={isBoardInfoSheetOpen} />
-<OtpDialog bind:isDialogOpen={isOtpDialogOpen} />
+<OtpDialog />
 
 <ToTopButton />
 
-<CommandPalette bind:isOpen={appState.openState.isCommandPaletteOpen} />
+<CommandPalette />

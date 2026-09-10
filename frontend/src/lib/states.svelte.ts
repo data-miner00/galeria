@@ -13,6 +13,7 @@ export type AppState = {
 		isCommandPaletteOpen: boolean;
 		isUploadImageDialogOpen: boolean;
 		isCreateBoardDialogOpen: boolean;
+		isOtpDialogOpen: boolean;
 	};
 };
 
@@ -28,6 +29,7 @@ export let appState = $state<AppState>({
 	openState: {
 		isCommandPaletteOpen: false,
 		isUploadImageDialogOpen: false,
-		isCreateBoardDialogOpen: false
+		isCreateBoardDialogOpen: false,
+		isOtpDialogOpen: false
 	}
 });

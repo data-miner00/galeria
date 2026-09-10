@@ -13,12 +13,6 @@
 
 	import Spinner from '../ui/spinner/spinner.svelte';
 
-	type Props = {
-		isDialogOpen: boolean;
-	};
-
-	let { isDialogOpen = $bindable(false) }: Props = $props();
-
 	let title = $state('');
 	let isCensored = $state(false);
 	let isAutocaption = $state(false);
@@ -79,7 +73,7 @@
 			const result = await uploadImageApi(formData);
 			appState.images.push(result);
 			toast.success('Image uploaded successfully.');
-			isDialogOpen = false;
+			appState.openState.isUploadImageDialogOpen = false;
 			clearInput();
 		} catch (error) {
 			toast.error('Image upload failed. ' + (error as Error).message);
@@ -97,7 +91,7 @@
 	}
 </script>
 
-<Dialog.Root bind:open={isDialogOpen}>
+<Dialog.Root bind:open={appState.openState.isUploadImageDialogOpen}>
 	<form>
 		<Dialog.Content class="max-h-[90dvh] overflow-y-auto sm:max-w-106.25">
 			<Dialog.Header>
