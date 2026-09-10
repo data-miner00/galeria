@@ -474,7 +474,7 @@
 		class="fixed top-1/2 right-2 z-40 hidden -translate-y-1/2 flex-col items-end gap-0.5 sm:flex"
 		aria-label="Jump to year"
 	>
-		{#each yearJumpTargets as [year, id] (year)}
+		{#each yearJumpTargets as [year, id] (isNaN(year) ? id : year)}
 			<button
 				type="button"
 				class="cursor-pointer rounded px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
