@@ -3,14 +3,12 @@
 
 	import { goto } from '$app/navigation';
 	import ThemeButton from '$lib/components/custom/theme-button.svelte';
-	import ToTopButton from '$lib/components/custom/to-top-button.svelte';
-	import UploadImageDialog from '$lib/components/custom/upload-image-dialog.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { appState } from '$lib/states.svelte';
+	import { appState, toggleUploadImageDialog } from '$lib/states.svelte';
 
 	let searchQuery = $state('');
 	function handleSearch(e: KeyboardEvent) {
@@ -61,11 +59,7 @@
 
 			<ThemeButton />
 
-			<Button
-				onclick={() =>
-					(appState.openState.isUploadImageDialogOpen =
-						!appState.openState.isUploadImageDialogOpen)}
-			>
+			<Button onclick={toggleUploadImageDialog}>
 				<PlusIcon /> Create
 			</Button>
 		</div>

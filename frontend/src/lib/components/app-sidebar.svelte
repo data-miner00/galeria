@@ -7,7 +7,7 @@
 	import { PUBLIC_API_BASE_URL, PUBLIC_COSMOS_BASE_URL } from '$env/static/public';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { SIDEBAR, t } from '$lib/i18n/translations.svelte';
-	import { appState } from '$lib/states.svelte';
+	import { appState, toggleCreateBoardDialog, toggleUploadImageDialog } from '$lib/states.svelte';
 	import type { Board } from '$lib/types';
 
 	import NavMain from './nav-main.svelte';
@@ -93,14 +93,6 @@
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
 	let boards = $derived<Board[]>(appState.boards);
-
-	function onCreateClick() {
-		appState.openState.isUploadImageDialogOpen = !appState.openState.isUploadImageDialogOpen;
-	}
-
-	function onCreateBoardClick() {
-		appState.openState.isCreateBoardDialogOpen = !appState.openState.isCreateBoardDialogOpen;
-	}
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
@@ -128,11 +120,11 @@
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
 		<NavProjects {boards} />
-		<Button variant="outline" onclick={onCreateBoardClick} class="cursor-pointer">
+		<Button variant="outline" onclick={toggleCreateBoardDialog} class="cursor-pointer">
 			<PlusIcon />
 			{t(SIDEBAR.CREATE_BOARD)}
 		</Button>
-		<Button onclick={onCreateClick} class="cursor-pointer">
+		<Button onclick={toggleUploadImageDialog} class="cursor-pointer">
 			<PlusIcon />
 			{t(SIDEBAR.CREATE_IMAGE)}
 		</Button>

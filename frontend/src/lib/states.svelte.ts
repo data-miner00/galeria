@@ -33,3 +33,11 @@ export let appState = $state<AppState>({
 		isOtpDialogOpen: false
 	}
 });
+
+export function toggleUploadImageDialog() {
+	appState.openState.isUploadImageDialogOpen = !appState.openState.isUploadImageDialogOpen;
+}
+
+export function toggleCreateBoardDialog() {
+	appState.openState.isCreateBoardDialogOpen = !appState.openState.isCreateBoardDialogOpen;
+}
