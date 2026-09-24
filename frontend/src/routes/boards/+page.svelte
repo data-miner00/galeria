@@ -4,6 +4,7 @@
 	import { appState } from '$lib/states.svelte';
 	import { onMount } from 'svelte';
 	import { B } from '$lib/helpers';
+	import { PinIcon } from '@lucide/svelte';
 
 	let orders = '';
 
@@ -30,8 +31,13 @@
 	{#each appState.boards as board (board.id)}
 		<a href={`/boards/${board.id}`}>
 			<div
-				class="mb-2 grid h-42.5 w-62.5 grid-cols-3 grid-rows-2 gap-px overflow-hidden rounded-lg"
+				class="relative mb-2 grid h-42.5 w-62.5 grid-cols-3 grid-rows-2 gap-px overflow-hidden rounded-lg"
 			>
+				{#if board.isPinned}
+					<div class="absolute top-1.5 right-1.5 z-10 rounded-full bg-background/80 p-1">
+						<PinIcon class="size-3.5" />
+					</div>
+				{/if}
 				<div class="col-span-2 row-span-2 bg-muted">
 					{#if board.imageIds[0]}
 						<img
