@@ -22,6 +22,10 @@
 	}
 </script>
 
+<p class="mb-4 text-sm text-muted-foreground">
+	{appState.boards.length} {appState.boards.length === 1 ? 'board' : 'boards'}
+</p>
+
 <div class="flex flex-wrap items-center gap-4">
 	{#each appState.boards as board (board.id)}
 		<a href={`/boards/${board.id}`}>
