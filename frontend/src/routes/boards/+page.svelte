@@ -34,6 +34,8 @@
 							class="h-full w-full object-cover"
 							src={B(getPathFromId(board.imageIds[0]))}
 							alt="first thumbnail"
+							loading="lazy"
+							decoding="async"
 						/>
 					{/if}
 				</div>
@@ -43,6 +45,8 @@
 							class="h-full w-full object-cover"
 							src={B(getPathFromId(board.imageIds[1]))}
 							alt="second thumbnail"
+							loading="lazy"
+							decoding="async"
 						/>
 					{/if}
 				</div>
@@ -52,6 +56,8 @@
 							class="h-full w-full object-cover"
 							src={B(getPathFromId(board.imageIds[2]))}
 							alt="third thumbnail"
+							loading="lazy"
+							decoding="async"
 						/>
 					{/if}
 				</div>

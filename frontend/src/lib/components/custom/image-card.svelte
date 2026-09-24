@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { onDestroy, tick } from 'svelte';
-	import CardActionsButton from './card-actions-button.svelte';
 	import { EyeOffIcon } from '@lucide/svelte';
-	import type { LayoutType } from '$lib/types';
+	import { onDestroy, tick } from 'svelte';
+
 	import { B } from '$lib/helpers';
+	import type { LayoutType } from '$lib/types';
+
+	import CardActionsButton from './card-actions-button.svelte';
 
 	type Props = {
 		id: string;
@@ -80,7 +82,13 @@
 		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}
 		aria-label="Open image preview"
 	>
-		<img class="h-full w-full object-cover" alt={title ?? 'Gallery image'} src={B(path)} />
+		<img
+			class="h-full w-full object-cover"
+			alt={title ?? 'Gallery image'}
+			src={B(path)}
+			loading="lazy"
+			decoding="async"
+		/>
 
 		{#if isCensored && !revealCensoredImage}
 			<div class="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xl">

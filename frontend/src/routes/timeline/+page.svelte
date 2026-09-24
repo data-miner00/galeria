@@ -429,6 +429,8 @@
 									src={B(image.thumbnailPath)}
 									class="h-full w-full object-cover"
 									alt={image.title || ''}
+									loading="lazy"
+									decoding="async"
 								/>
 								{#if image.isCensored && !revealedCensoredIds.has(image.id)}
 									<div

@@ -18,7 +18,12 @@
 					<div class="p-1">
 						<Card.Root>
 							<Card.Content class="flex items-center justify-center p-6">
-								<img src={B(image.mediumPath)} alt={image.title || image.description} />
+								<img
+									src={B(image.mediumPath)}
+									alt={image.title || image.description}
+									loading="lazy"
+									decoding="async"
+								/>
 							</Card.Content>
 						</Card.Root>
 					</div>
