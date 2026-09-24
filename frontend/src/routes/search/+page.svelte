@@ -20,9 +20,6 @@
 	import type { ImageRecord, LayoutType } from '$lib/types';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
-	const cardWidth = 247.5;
-	const containerPadding = 16 * 2;
-	let gap = $derived(16 * (columns - 1));
 
 	let isLoading = $state(true);
 	let searchQuery = $derived(page.url.searchParams.get('q') || '');
@@ -52,23 +49,6 @@
 
 	onMount(() => {
 		appState.headerTitle = 'Search Results';
-		const targetElement = document.querySelector('#layout-container');
-
-		const resizeObserver = new ResizeObserver((entries) => {
-			for (let entry of entries) {
-				const newWidth = entry.contentRect.width;
-				const availableWidth = newWidth - containerPadding - gap;
-				const newColumns = Math.max(1, Math.floor(availableWidth / cardWidth));
-				appState.settings.noOfColumns = newColumns;
-			}
-		});
-
-		// Start observing the element
-		resizeObserver.observe(targetElement!);
-
-		return () => {
-			resizeObserver.disconnect();
-		};
 	});
 
 	let orders = $state<'newest' | 'oldest'>('newest');
