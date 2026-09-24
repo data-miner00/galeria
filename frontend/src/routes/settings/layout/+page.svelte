@@ -13,12 +13,18 @@
 	let isSaving = $state(false);
 	let noOfColumnsInput = $state(appState.settings.noOfColumns || 5);
 
+	$effect(() => {
+		noOfColumnsInput = appState.settings.noOfColumns || 5;
+	});
+
 	onMount(() => {
 		appState.headerTitle = 'Layout Settings';
 	});
 
 	async function saveSettings() {
 		isSaving = true;
+
+		appState.settings.noOfColumns = noOfColumnsInput;
 
 		const request = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserSettings`, {
 			method: 'PATCH',
@@ -29,7 +35,6 @@
 		});
 
 		if (request.ok) {
-			appState.settings.noOfColumns = noOfColumnsInput;
 			toast.success('Settings updated successfully!');
 		} else {
 			const error = await request.json();
