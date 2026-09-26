@@ -23,6 +23,7 @@
 	type UploadMode = 'file' | 'url';
 	let uploadMode = $state<UploadMode>('file');
 	let isLoading = $state(false);
+	let hasImage = $derived(uploadMode === 'file' ? !!files?.[0] : !!imageUrl.trim());
 
 	function onImageChange() {
 		if (files?.[0]) {
@@ -193,7 +194,7 @@
 				>
 					Cancel
 				</Dialog.Close>
-				<Button type="submit" onclick={uploadImage} disabled={isLoading}>
+				<Button type="submit" onclick={uploadImage} disabled={isLoading || !hasImage}>
 					{#if isLoading}
 						<Spinner />
 					{/if}
