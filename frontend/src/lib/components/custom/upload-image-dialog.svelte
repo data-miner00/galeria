@@ -86,6 +86,8 @@
 		title = '';
 		imageUrl = '';
 		isCensored = false;
+		isAutocaption = false;
+		uploadMode = 'file';
 		files = undefined;
 		image = undefined;
 	}
