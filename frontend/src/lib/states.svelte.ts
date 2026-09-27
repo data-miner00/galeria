@@ -57,7 +57,12 @@ export function addNotification(notification: AppNotification) {
 	appState.notifications = [notification, ...appState.notifications].slice(0, MAX_NOTIFICATIONS);
 }
 
-export function markNotificationsRead() {
+export function markNotificationRead(id: string) {
+	const notification = appState.notifications.find((n) => n.id === id);
+	if (notification) notification.isRead = true;
+}
+
+export function markAllNotificationsRead() {
 	for (const notification of appState.notifications) {
 		notification.isRead = true;
 	}
