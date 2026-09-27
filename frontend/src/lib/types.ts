@@ -74,3 +74,14 @@ export type Draft = {
 	updatedAt?: string;
 	isPublished?: boolean;
 };
+
+export type NotificationType = 'success' | 'error' | 'info' | 'warning';
+
+export type AppNotification = {
+	id: string;
+	type: NotificationType;
+	title: string;
+	description?: string;
+	createdAt: string;
+	isRead: boolean;
+};
