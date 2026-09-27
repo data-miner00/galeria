@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { X } from '@lucide/svelte';
-	import { toast } from 'svelte-sonner';
 
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
@@ -8,6 +7,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { toast } from '$lib/notify';
 	import { upload as uploadImageApi } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 

@@ -16,7 +16,6 @@
 		Star,
 		Trash2
 	} from '@lucide/svelte';
-	import { toast } from 'svelte-sonner';
 
 	import { page } from '$app/state';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
@@ -24,6 +23,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { B } from '$lib/helpers';
+	import { toast } from '$lib/notify';
 	import { deleteById, downloadWithWatermark, patchImage } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 	import type { ImageRecord } from '$lib/types';

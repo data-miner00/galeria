@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
-	import { toast } from 'svelte-sonner';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let title = $state('');
 	let description = $state('');

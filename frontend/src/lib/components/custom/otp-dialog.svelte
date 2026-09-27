@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { toast } from 'svelte-sonner';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
 
 	let otp = $state('');

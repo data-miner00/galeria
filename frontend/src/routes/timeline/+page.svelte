@@ -11,7 +11,6 @@
 		Trash2Icon
 	} from '@lucide/svelte';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { toast } from 'svelte-sonner';
 
 	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
@@ -23,6 +22,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { B } from '$lib/helpers';
+	import { toast } from '$lib/notify';
 	import { deleteByIds, downloadMultiple } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 

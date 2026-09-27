@@ -1,16 +1,17 @@
 <script lang="ts">
+	import InfoIcon from '@lucide/svelte/icons/info';
+	import { onMount } from 'svelte';
+
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Label from '$lib/components/ui/label/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import InfoIcon from '@lucide/svelte/icons/info';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import type { UserProfile } from '$lib/types';
-	import { onMount } from 'svelte';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
-	import { toast } from 'svelte-sonner';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import type { UserProfile } from '$lib/types';
 
 	let profile = $state<UserProfile>({});
 

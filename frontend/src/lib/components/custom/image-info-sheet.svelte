@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { ClipboardIcon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
@@ -9,6 +8,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import { toast } from '$lib/notify';
 	import { patchImage } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 

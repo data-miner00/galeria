@@ -4,13 +4,13 @@
 	import FolderIcon from '@lucide/svelte/icons/folder';
 	import ShareIcon from '@lucide/svelte/icons/share';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
-	import { toast } from 'svelte-sonner';
 
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
 	import type { Board } from '$lib/types';
 

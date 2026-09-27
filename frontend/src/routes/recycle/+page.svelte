@@ -10,13 +10,13 @@
 		Trash2Icon
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
 
 	import ImageCard from '$lib/components/custom/image-card.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { toast } from '$lib/notify';
 	import { clearRecycleBin } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 	import type { ImageRecord } from '$lib/types';

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { mode, setMode } from 'mode-watcher';
 	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
 
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -13,6 +12,7 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { availableLanguages } from '$lib/i18n/languages';
 	import { locale } from '$lib/i18n/translations.svelte';
+	import { toast } from '$lib/notify';
 	import { downloadAll } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 

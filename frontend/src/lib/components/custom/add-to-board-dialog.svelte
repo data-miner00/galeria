@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import type { Board } from '$lib/types';
-	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import { toast } from '$lib/notify';
+	import type { Board } from '$lib/types';
 
 	type Props = {
 		isDialogOpen: boolean;

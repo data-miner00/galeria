@@ -11,7 +11,6 @@
 		PinOffIcon
 	} from '@lucide/svelte';
 	import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
-	import { toast } from 'svelte-sonner';
 
 	import { page } from '$app/state';
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
@@ -20,6 +19,7 @@
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { toast } from '$lib/notify';
 	import { downloadMultiple, getByIds } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 	import type { Board, ImageRecord, LayoutType } from '$lib/types';

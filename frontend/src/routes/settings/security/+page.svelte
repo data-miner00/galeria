@@ -1,16 +1,20 @@
 <script lang="ts">
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import * as Label from '$lib/components/ui/label/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import InfoIcon from '@lucide/svelte/icons/info';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { onMount } from 'svelte';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
-	import { Spinner } from '$lib/components/ui/spinner/index.js';
-	import { toast } from 'svelte-sonner';
-	import { appState } from '$lib/states.svelte';
-	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { slide } from 'svelte/transition';
+
 	import { PUBLIC_API_BASE_URL } from '$env/static/public';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
+	import * as Label from '$lib/components/ui/label/index.js';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { toast } from '$lib/notify';
+	import { appState } from '$lib/states.svelte';
 
 	let settings = $state({});
 
@@ -49,12 +53,7 @@
 		otpImageBlobUrl = URL.createObjectURL(blobImage);
 	}
 
-	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
-
 	let otp = $state('');
-
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { slide } from 'svelte/transition';
 
 	async function handleNextSubmit() {
 		if (!isVerifying) {

@@ -2,6 +2,7 @@
 	import { ArrowLeft, PlusIcon, SearchIcon } from '@lucide/svelte';
 
 	import { goto } from '$app/navigation';
+	import NotificationsButton from '$lib/components/custom/notifications-button.svelte';
 	import ThemeButton from '$lib/components/custom/theme-button.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Button } from '$lib/components/ui/button';
@@ -57,6 +58,7 @@
 				</InputGroup.Addon>
 			</InputGroup.Root>
 
+			<NotificationsButton />
 			<ThemeButton />
 
 			<Button onclick={toggleUploadImageDialog}>

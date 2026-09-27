@@ -1,16 +1,18 @@
 <script lang="ts">
+	import { ClipboardIcon } from '@lucide/svelte';
+	import { onMount } from 'svelte';
+
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
-	import { toast } from 'svelte-sonner';
-	import { onMount } from 'svelte';
+
 	import Textarea from '../ui/textarea/textarea.svelte';
-	import { PUBLIC_API_BASE_URL } from '$env/static/public';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { ClipboardIcon } from '@lucide/svelte';
 
 	type Props = {
 		isOpen: boolean;
