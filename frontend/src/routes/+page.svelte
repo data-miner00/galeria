@@ -1,9 +1,4 @@
 <script lang="ts">
-	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { ImageRecord, LayoutType } from '$lib/types';
-	import { onMount } from 'svelte';
-	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import {
 		ArrowDown01Icon,
 		ArrowUp01Icon,
@@ -12,8 +7,15 @@
 		LayoutDashboardIcon,
 		LayoutGridIcon
 	} from '@lucide/svelte';
-	import { appState } from '$lib/states.svelte';
+	import { onMount } from 'svelte';
+
+	import ImageCard from '$lib/components/custom/image-card.svelte';
+	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { appState } from '$lib/states.svelte';
+	import type { ImageRecord, LayoutType } from '$lib/types';
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
 
@@ -70,8 +72,6 @@
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
 
-	import LoadingImagesSkeleton from '$lib/components/custom/loading-images-skeleton.svelte';
-
 	let layoutType = $state<LayoutType>('masonry');
 </script>
 
@@ -97,7 +97,16 @@
 			</Button>
 		{/each}
 	</div>
-	<div>
+	<div class="flex items-center gap-3">
+		{#if !isLoading}
+			<span class="text-sm text-muted-foreground">
+				{#if activeCategory === 'All'}
+					{filteredImages.length} {filteredImages.length === 1 ? 'image' : 'images'}
+				{:else}
+					{filteredImages.length} of {nonSoftDeletedOrHiddenImages.length} images
+				{/if}
+			</span>
+		{/if}
 		<ButtonGroup.Root>
 			<Button
 				variant={layoutType === 'masonry' ? 'default' : 'outline'}

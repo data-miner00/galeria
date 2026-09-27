@@ -78,10 +78,12 @@
 
 	let activeCategory = $state<string>('All');
 
+	let nonSoftDeletedImages = $derived(appState.images.filter((image) => !image.isSoftDeleted));
+
 	let filteredImages = $derived(
 		activeCategory === 'All'
-			? appState.images.filter((image) => !image.isSoftDeleted)
-			: appState.images.filter((image) => !image.isSoftDeleted && image.category === activeCategory)
+			? nonSoftDeletedImages
+			: nonSoftDeletedImages.filter((image) => image.category === activeCategory)
 	);
 
 	let mappedImages = $derived(
@@ -357,6 +359,15 @@
 		</div>
 	{/if}
 	<div class="flex items-center gap-2">
+		{#if !isLoading}
+			<span class="mr-1 text-sm text-nowrap text-muted-foreground">
+				{#if activeCategory === 'All'}
+					{filteredImages.length} {filteredImages.length === 1 ? 'image' : 'images'}
+				{:else}
+					{filteredImages.length} of {nonSoftDeletedImages.length} images
+				{/if}
+			</span>
+		{/if}
 		<div class="flex items-center gap-3">
 			<Switch id="is-selectmode" bind:checked={isSelectMode} />
 			<Label for="is-selectmode">Select Mode</Label>
