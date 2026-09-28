@@ -141,8 +141,8 @@
 	</p>
 
 	<div class="flex items-center gap-3">
-		<Switch id="is-censored" bind:checked={isEnableLoggings} />
-		<Label.Root for="is-censored">Enable Loggings</Label.Root>
+		<Switch id="is-logging-enabled" bind:checked={isEnableLoggings} />
+		<Label.Root for="is-logging-enabled">Enable Loggings</Label.Root>
 	</div>
 
 	<Separator class="my-6 max-w-sm" />
@@ -153,8 +153,8 @@
 	</p>
 
 	<div class="mb-4 flex items-center gap-3">
-		<Switch id="is-censored" bind:checked={isWatermarkEnabled} />
-		<Label.Root for="is-censored">Enable Watermarks</Label.Root>
+		<Switch id="is-watermark-enabled" bind:checked={isWatermarkEnabled} />
+		<Label.Root for="is-watermark-enabled">Enable Watermarks</Label.Root>
 	</div>
 
 	<InputGroup.Root class="max-w-sm">

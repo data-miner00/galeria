@@ -86,8 +86,8 @@
 <section class="mt-6">
 	<div class="grid w-full max-w-sm gap-4">
 		<div class="flex items-center gap-3">
-			<Switch id="is-censored" bind:checked={isEnablePassword} />
-			<Label.Root for="is-censored">Enable Password On Login</Label.Root>
+			<Switch id="is-password-enabled" bind:checked={isEnablePassword} />
+			<Label.Root for="is-password-enabled">Enable Password On Login</Label.Root>
 		</div>
 
 		<InputGroup.Root>
@@ -128,8 +128,8 @@
 		</InputGroup.Root>
 
 		<div class="flex items-center gap-3">
-			<Switch id="is-censored" bind:checked={isTotpEnabled} {onCheckedChange} />
-			<Label.Root for="is-censored">Enable Multi-Factor Authentication</Label.Root>
+			<Switch id="is-totp-enabled" bind:checked={isTotpEnabled} {onCheckedChange} />
+			<Label.Root for="is-totp-enabled">Enable Multi-Factor Authentication</Label.Root>
 		</div>
 
 		<Button size="sm" variant="outline" disabled={isSaving}>Revert Changes</Button>
