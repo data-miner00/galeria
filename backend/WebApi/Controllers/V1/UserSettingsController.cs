@@ -63,9 +63,9 @@ namespace WebApi.Controllers.V1
                 settings.NoOfColumns = request.NoOfColumns.Value;
             }
 
-            if (!string.IsNullOrWhiteSpace(request.Watermark))
+            if (request.Watermark is not null)
             {
-                settings.Watermark = request.Watermark;
+                settings.Watermark = string.IsNullOrWhiteSpace(request.Watermark) ? null : request.Watermark;
             }
         }
     }
