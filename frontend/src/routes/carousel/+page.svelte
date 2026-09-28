@@ -26,6 +26,7 @@
 
 	const AUTOPLAY_INTERVAL_MS = 5000;
 	const SWIPE_THRESHOLD_PX = 50;
+	const FILMSTRIP_DRAG_THRESHOLD_PX = 5;
 
 	onMount(() => {
 		appState.headerTitle = 'Carousel';
@@ -46,6 +47,10 @@
 	let filmstripRef = $state<HTMLDivElement | null>(null);
 
 	let pointerStartX: number | null = null;
+
+	let filmstripDrag: { pointerId: number; startX: number; startScrollLeft: number } | null = null;
+	let isDraggingFilmstrip = $state(false);
+	let suppressFilmstripClick = false;
 
 	let dateTime = $derived(formatDateTime(currentImage?.takenAt ?? currentImage?.createdAt));
 
@@ -186,6 +191,45 @@
 		pointerStartX = null;
 		if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX) return;
 		navigate(deltaX < 0 ? next : prev);
+	}
+
+	// Touch already scrolls the filmstrip natively; this adds grab-to-scroll for the mouse.
+	function handleFilmstripPointerDown(event: PointerEvent) {
+		if (event.pointerType !== 'mouse' || event.button !== 0 || !filmstripRef) return;
+		filmstripDrag = {
+			pointerId: event.pointerId,
+			startX: event.clientX,
+			startScrollLeft: filmstripRef.scrollLeft
+		};
+	}
+
+	function handleFilmstripPointerMove(event: PointerEvent) {
+		if (!filmstripDrag || event.pointerId !== filmstripDrag.pointerId || !filmstripRef) return;
+		const deltaX = event.clientX - filmstripDrag.startX;
+		if (!isDraggingFilmstrip) {
+			if (Math.abs(deltaX) < FILMSTRIP_DRAG_THRESHOLD_PX) return;
+			isDraggingFilmstrip = true;
+			filmstripRef.setPointerCapture(event.pointerId);
+		}
+		filmstripRef.scrollLeft = filmstripDrag.startScrollLeft - deltaX;
+	}
+
+	function handleFilmstripPointerEnd(event: PointerEvent) {
+		if (!filmstripDrag || event.pointerId !== filmstripDrag.pointerId) return;
+		if (isDraggingFilmstrip) {
+			// Swallow the click that follows the drag so it doesn't select a thumbnail.
+			suppressFilmstripClick = true;
+			setTimeout(() => (suppressFilmstripClick = false));
+		}
+		filmstripDrag = null;
+		isDraggingFilmstrip = false;
+	}
+
+	function handleFilmstripClickCapture(event: MouseEvent) {
+		if (!suppressFilmstripClick) return;
+		event.preventDefault();
+		event.stopPropagation();
+		suppressFilmstripClick = false;
 	}
 
 	function formatDateTime(value?: string) {
@@ -436,7 +480,17 @@
 		{#if images.length > 1}
 			<div
 				bind:this={filmstripRef}
-				class="filmstrip flex shrink-0 items-center gap-2 overflow-x-auto px-8 py-2"
+				role="group"
+				aria-label="Image thumbnails"
+				class={cn(
+					'filmstrip flex shrink-0 items-center gap-2 overflow-x-auto px-8 py-2 select-none',
+					isDraggingFilmstrip ? 'cursor-grabbing' : 'cursor-grab'
+				)}
+				onpointerdown={handleFilmstripPointerDown}
+				onpointermove={handleFilmstripPointerMove}
+				onpointerup={handleFilmstripPointerEnd}
+				onpointercancel={handleFilmstripPointerEnd}
+				onclickcapture={handleFilmstripClickCapture}
 			>
 				{#each images as image, i (image.id)}
 					<button
@@ -446,7 +500,7 @@
 						aria-label={`Go to image ${i + 1}`}
 						aria-current={i === selectedIndex}
 						class={cn(
-							'relative shrink-0 overflow-hidden rounded-lg transition-all duration-300 ease-out outline-none focus-visible:ring-2 focus-visible:ring-ring',
+							'relative shrink-0 cursor-[inherit] overflow-hidden rounded-lg transition-all duration-300 ease-out outline-none focus-visible:ring-2 focus-visible:ring-ring',
 							i === selectedIndex
 								? 'size-16 opacity-100 ring-2 ring-foreground ring-offset-2 ring-offset-background'
 								: 'size-12 opacity-45 grayscale-[40%] hover:opacity-90 hover:grayscale-0'
