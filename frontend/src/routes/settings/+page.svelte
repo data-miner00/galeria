@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { XIcon } from '@lucide/svelte';
 	import { mode, setMode } from 'mode-watcher';
 	import { onMount } from 'svelte';
 
@@ -160,6 +161,12 @@
 		<InputGroup.Input id="watermark" placeholder="SC" bind:value={watermark} />
 		<InputGroup.Addon align="block-start">
 			<Label.Root for="watermark" class="text-foreground">Watermark</Label.Root>
+		</InputGroup.Addon>
+		<InputGroup.Addon align="inline-end">
+			<InputGroup.Button onclick={() => (watermark = '')} disabled={!watermark}>
+				<XIcon />
+				Clear
+			</InputGroup.Button>
 		</InputGroup.Addon>
 	</InputGroup.Root>
 
