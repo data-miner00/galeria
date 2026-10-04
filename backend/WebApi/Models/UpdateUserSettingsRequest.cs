@@ -11,5 +11,8 @@ namespace WebApi.Models
 
         [RegularExpression("^(masonry|grid)$", ErrorMessage = "LayoutType must be either 'masonry' or 'grid'.")]
         public string? LayoutType { get; set; }
+
+        [Range(0, 365)]
+        public int? RecycleBinRetentionDays { get; set; }
     }
 }

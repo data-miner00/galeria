@@ -48,6 +48,7 @@ export type UserSettings = {
 	noOfColumns?: number;
 	watermark?: string;
 	layoutType?: LayoutType;
+	recycleBinRetentionDays?: number;
 };
 
 export type InfoSheetData = {

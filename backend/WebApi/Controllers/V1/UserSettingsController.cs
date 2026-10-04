@@ -73,6 +73,11 @@ namespace WebApi.Controllers.V1
             {
                 settings.LayoutType = request.LayoutType;
             }
+
+            if (request.RecycleBinRetentionDays.HasValue)
+            {
+                settings.RecycleBinRetentionDays = request.RecycleBinRetentionDays.Value;
+            }
         }
     }
 }

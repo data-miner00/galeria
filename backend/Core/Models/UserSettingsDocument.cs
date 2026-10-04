@@ -10,6 +10,8 @@
 
         public string? LayoutType { get; set; }
 
+        public int RecycleBinRetentionDays { get; set; }
+
         public UserSettings ToEntity()
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Timestamp ?? 0);
@@ -21,6 +23,7 @@
                 NoOfColumns = NoOfColumns,
                 Watermark = Watermark,
                 LayoutType = LayoutType,
+                RecycleBinRetentionDays = RecycleBinRetentionDays,
                 CreatedAt = CreatedAt,
                 UpdatedAt = updatedAt,
                 ETag = ETag,
@@ -38,6 +41,7 @@
                 NoOfColumns = userSettings.NoOfColumns,
                 Watermark = userSettings.Watermark,
                 LayoutType = userSettings.LayoutType,
+                RecycleBinRetentionDays = userSettings.RecycleBinRetentionDays,
                 ETag = userSettings.ETag,
             };
         }

@@ -5,10 +5,13 @@
 	import { resolve } from '$app/paths';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Label from '$lib/components/ui/label/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from '$lib/notify';
 	import { clearRecycleBin, downloadAll } from '$lib/services/imageService';
+	import { updateSettings } from '$lib/services/userSettingsService';
 	import { appState } from '$lib/states.svelte';
 
 	onMount(() => {
@@ -20,6 +23,36 @@
 	let isDownloading = $state(false);
 
 	let recycledCount = $derived(appState.images.filter((image) => image.isSoftDeleted).length);
+
+	const retentionOptions = [
+		{ value: '0', label: 'Never' },
+		{ value: '7', label: 'After 7 days' },
+		{ value: '30', label: 'After 30 days' },
+		{ value: '90', label: 'After 90 days' }
+	];
+
+	let retentionInput = $derived(String(appState.settings.recycleBinRetentionDays ?? 0));
+
+	const triggerRetentionContent = $derived(
+		retentionOptions.find((option) => option.value === retentionInput)?.label ?? 'Select retention'
+	);
+
+	async function saveRetention(value: string) {
+		const previous = appState.settings.recycleBinRetentionDays;
+		const recycleBinRetentionDays = Number(value);
+		if (previous === recycleBinRetentionDays) return;
+
+		appState.settings.recycleBinRetentionDays = recycleBinRetentionDays;
+
+		try {
+			await updateSettings({ recycleBinRetentionDays });
+			toast.success('Recycle bin retention updated.');
+		} catch (e) {
+			console.error('Failed to save recycle bin retention', e);
+			appState.settings.recycleBinRetentionDays = previous;
+			toast.error('Failed to update recycle bin retention.');
+		}
+	}
 
 	async function downloadZip() {
 		isDownloading = true;
@@ -103,6 +136,32 @@
 	</p>
 
 	<div class="grid w-full max-w-sm gap-4">
+		<div>
+			<Label.Root for="recycleBinRetention" class="mb-3 text-foreground">
+				Automatically delete recycled images
+			</Label.Root>
+			<Select.Root
+				type="single"
+				name="recycleBinRetention"
+				disabled={appState.isLoading}
+				bind:value={retentionInput}
+				onValueChange={saveRetention}
+			>
+				<Select.Trigger id="recycleBinRetention" class="w-full">
+					{triggerRetentionContent}
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						{#each retentionOptions as option (option.value)}
+							<Select.Item value={option.value} label={option.label}>
+								{option.label}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+		</div>
+
 		<Button
 			size="sm"
 			variant="destructive"
