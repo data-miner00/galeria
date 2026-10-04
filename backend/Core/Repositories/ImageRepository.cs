@@ -48,6 +48,29 @@ namespace Core.Repositories
             return this.QueryAllAsync(query, ct);
         }
 
+        /// <summary>
+        /// Gets the ids of every document in the container, including soft deleted images.
+        /// </summary>
+        /// <param name="ct">Cancellation token.</param>
+        /// <returns>The set of document ids.</returns>
+        public async Task<HashSet<string>> GetAllIdsAsync(CancellationToken ct)
+        {
+            var query = new QueryDefinition("SELECT VALUE c.id FROM c");
+
+            using FeedIterator<string> feed = this.container.GetItemQueryIterator<string>(query);
+
+            HashSet<string> ids = [];
+            while (feed.HasMoreResults)
+            {
+                foreach (string id in await feed.ReadNextAsync(ct))
+                {
+                    ids.Add(id);
+                }
+            }
+
+            return ids;
+        }
+
         public async Task<IEnumerable<string>> GetUniqueCategories(CancellationToken ct)
         {
             var query = new QueryDefinition("SELECT DISTINCT VALUE c.Category FROM c");

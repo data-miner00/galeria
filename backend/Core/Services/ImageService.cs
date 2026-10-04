@@ -234,6 +234,48 @@ public sealed class ImageService
         return true;
     }
 
+    /// <summary>
+    /// Removes search index documents whose image no longer exists in the repository.
+    /// </summary>
+    /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+    /// <returns>The number of orphaned index documents removed.</returns>
+    public async Task<int> PurgeOrphanedIndexDocumentsAsync(CancellationToken ct = default)
+    {
+        const int PageSize = 1000;
+
+        List<string> indexedIds = [];
+        var query = new Meilisearch.QueryParameters.DocumentsQuery { Fields = ["id"], Limit = PageSize, Offset = 0 };
+
+        Meilisearch.ResourceResults<IEnumerable<IndexedImage>> page;
+        do
+        {
+            page = await this.index.GetDocumentsAsync<IndexedImage>(query, ct);
+            indexedIds.AddRange(page.Results.Select(document => document.Id));
+            query.Offset += PageSize;
+        }
+        while (query.Offset < page.Total);
+
+        var imageIds = await this.repository.GetAllIdsAsync(ct);
+        var orphanIds = indexedIds.Where(id => !imageIds.Contains(id)).ToList();
+
+        if (orphanIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var task = await this.index.DeleteDocumentsAsync(orphanIds, ct);
+        var result = await this.index.WaitForTaskAsync(task.TaskUid, cancellationToken: ct);
+
+        if (result.Status != Meilisearch.TaskInfoStatus.Succeeded)
+        {
+            throw new InvalidOperationException($"Purging orphaned index documents ended with status {result.Status}.");
+        }
+
+        this.logger.LogInformation("Purged {Count} orphaned index documents.", orphanIds.Count);
+
+        return orphanIds.Count;
+    }
+
     private static IEnumerable<string> GetBlobPaths(ImageRecord record) =>
         new[] { record.Path, record.ThumbnailPath, record.MediumPath }
             .Where(path => !string.IsNullOrWhiteSpace(path));

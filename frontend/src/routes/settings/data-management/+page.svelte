@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DownloadIcon, Trash2Icon } from '@lucide/svelte';
+	import { DownloadIcon, SearchXIcon, Trash2Icon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
 	import { resolve } from '$app/paths';
@@ -10,7 +10,11 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from '$lib/notify';
-	import { clearRecycleBin, downloadAll } from '$lib/services/imageService';
+	import {
+		clearRecycleBin,
+		downloadAll,
+		purgeOrphanedIndexDocuments
+	} from '$lib/services/imageService';
 	import { updateSettings } from '$lib/services/userSettingsService';
 	import { appState } from '$lib/states.svelte';
 
@@ -21,6 +25,7 @@
 	let isDeleteDialogOpen = $state(false);
 	let isEmptying = $state(false);
 	let isDownloading = $state(false);
+	let isPurging = $state(false);
 
 	let recycledCount = $derived(appState.images.filter((image) => image.isSoftDeleted).length);
 
@@ -83,6 +88,27 @@
 		isDownloading = false;
 	}
 
+	async function purgeOrphans() {
+		isPurging = true;
+
+		try {
+			const { purgedCount } = await purgeOrphanedIndexDocuments();
+
+			if (purgedCount === 0) {
+				toast.info('No orphaned search index entries found.');
+			} else {
+				toast.success(
+					`Removed ${purgedCount} orphaned search index ${purgedCount === 1 ? 'entry' : 'entries'}.`
+				);
+			}
+		} catch (e) {
+			console.error('Failed to purge orphaned index documents', e);
+			toast.error('An error has occurred while purging the search index.');
+		}
+
+		isPurging = false;
+	}
+
 	async function emptyRecycleBin() {
 		isDeleteDialogOpen = false;
 		isEmptying = true;
@@ -119,6 +145,24 @@
 				<DownloadIcon />
 			{/if}
 			{isDownloading ? 'Preparing Zip...' : 'Download all as Zip'}
+		</Button>
+	</div>
+
+	<Separator class="my-6 max-w-sm" />
+
+	<h2 class="mb-1 text-lg font-semibold">Search Index</h2>
+	<p class="mb-4 max-w-sm text-sm text-muted-foreground">
+		Remove search entries left behind by images that no longer exist. Your images are not affected.
+	</p>
+
+	<div class="grid w-full max-w-sm gap-4">
+		<Button size="sm" variant="outline" disabled={isPurging} onclick={purgeOrphans}>
+			{#if isPurging}
+				<Spinner />
+			{:else}
+				<SearchXIcon />
+			{/if}
+			{isPurging ? 'Purging...' : 'Purge Orphaned Index Entries'}
 		</Button>
 	</div>
 

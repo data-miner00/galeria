@@ -129,6 +129,14 @@ namespace WebApi.Controllers.V1
             });
         }
 
+        [HttpDelete("index/orphans")]
+        public async Task<ActionResult<PurgeOrphanedIndexDocumentsResponse>> PurgeOrphanedIndexDocuments()
+        {
+            var purgedCount = await this.service.PurgeOrphanedIndexDocumentsAsync(this.CancellationToken);
+
+            return this.Ok(new PurgeOrphanedIndexDocumentsResponse { PurgedCount = purgedCount });
+        }
+
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<string>>> GetUniqueCategories()
         {
