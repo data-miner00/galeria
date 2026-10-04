@@ -16,6 +16,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { search as searchImages } from '$lib/services/imageService';
+	import { saveLayoutType } from '$lib/services/userSettingsService';
 	import { appState } from '$lib/states.svelte';
 	import type { ImageRecord, LayoutType } from '$lib/types';
 
@@ -95,7 +96,7 @@
 		orders = orders === 'newest' ? 'oldest' : 'newest';
 	}
 
-	let layoutType = $state<LayoutType>('masonry');
+	let layoutType = $derived<LayoutType>(appState.settings.layoutType ?? 'masonry');
 </script>
 
 <div class="flex justify-between">
@@ -125,14 +126,14 @@
 			<Button
 				variant={layoutType === 'masonry' ? 'default' : 'outline'}
 				size="icon-sm"
-				onclick={() => (layoutType = 'masonry')}
+				onclick={() => saveLayoutType('masonry')}
 			>
 				<LayoutDashboardIcon />
 			</Button>
 			<Button
 				variant={layoutType === 'grid' ? 'default' : 'outline'}
 				size="icon-sm"
-				onclick={() => (layoutType = 'grid')}
+				onclick={() => saveLayoutType('grid')}
 			>
 				<LayoutGridIcon />
 			</Button>

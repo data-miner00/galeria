@@ -6,17 +6,25 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Label from '$lib/components/ui/label/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
+	import type { LayoutType } from '$lib/types';
 
 	let isSaving = $state(false);
-	let noOfColumnsInput = $state(appState.settings.noOfColumns || 5);
+	let noOfColumnsInput = $derived(appState.settings.noOfColumns || 5);
+	let layoutTypeInput = $derived<LayoutType>(appState.settings.layoutType ?? 'masonry');
 
-	$effect(() => {
-		noOfColumnsInput = appState.settings.noOfColumns || 5;
-	});
+	const layoutTypes: { value: LayoutType; label: string }[] = [
+		{ value: 'masonry', label: 'Masonry' },
+		{ value: 'grid', label: 'Grid' }
+	];
+
+	const triggerLayoutTypeContent = $derived(
+		layoutTypes.find((f) => f.value === layoutTypeInput)?.label ?? 'Select layout'
+	);
 
 	onMount(() => {
 		appState.headerTitle = 'Layout Settings';
@@ -26,6 +34,7 @@
 		isSaving = true;
 
 		appState.settings.noOfColumns = noOfColumnsInput;
+		appState.settings.layoutType = layoutTypeInput;
 
 		const request = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserSettings`, {
 			method: 'PATCH',
@@ -83,6 +92,24 @@
 				</Tooltip.Root>
 			</InputGroup.Addon>
 		</InputGroup.Root>
+
+		<div>
+			<Label.Root for="layoutType" class="mb-3 text-foreground">Default Layout</Label.Root>
+			<Select.Root type="single" name="layoutType" bind:value={layoutTypeInput}>
+				<Select.Trigger id="layoutType" class="w-full">
+					{triggerLayoutTypeContent}
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						{#each layoutTypes as layoutType (layoutType.value)}
+							<Select.Item value={layoutType.value} label={layoutType.label}>
+								{layoutType.label}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+		</div>
 
 		<Button size="sm" variant="outline" disabled={isSaving} onclick={saveSettings}>
 			{#if isSaving}

@@ -8,5 +8,8 @@ namespace WebApi.Models
         public int? NoOfColumns { get; set; }
 
         public string? Watermark { get; set; }
+
+        [RegularExpression("^(masonry|grid)$", ErrorMessage = "LayoutType must be either 'masonry' or 'grid'.")]
+        public string? LayoutType { get; set; }
     }
 }

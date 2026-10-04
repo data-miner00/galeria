@@ -29,6 +29,7 @@ namespace WebApi.Controllers.V1
                 return Ok(new UserSettings
                 {
                     NoOfColumns = 5,
+                    LayoutType = "masonry",
                 });
             }
 
@@ -66,6 +67,11 @@ namespace WebApi.Controllers.V1
             if (request.Watermark is not null)
             {
                 settings.Watermark = string.IsNullOrWhiteSpace(request.Watermark) ? null : request.Watermark;
+            }
+
+            if (request.LayoutType is not null)
+            {
+                settings.LayoutType = request.LayoutType;
             }
         }
     }

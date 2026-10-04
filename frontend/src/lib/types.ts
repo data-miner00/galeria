@@ -47,6 +47,7 @@ export type UserProfile = {
 export type UserSettings = {
 	noOfColumns?: number;
 	watermark?: string;
+	layoutType?: LayoutType;
 };
 
 export type InfoSheetData = {

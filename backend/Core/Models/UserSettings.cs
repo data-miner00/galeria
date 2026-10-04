@@ -8,5 +8,7 @@ namespace Core.Models
         public int NoOfColumns { get; set; }
 
         public string? Watermark { get; set; }
+
+        public string? LayoutType { get; set; }
     }
 }
