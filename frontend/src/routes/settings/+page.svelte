@@ -14,7 +14,6 @@
 	import { availableLanguages } from '$lib/i18n/languages';
 	import { locale } from '$lib/i18n/translations.svelte';
 	import { toast } from '$lib/notify';
-	import { downloadAll } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 
 	let isEnableLoggings = $state(false);
@@ -42,25 +41,6 @@
 	const triggerLanguageContent = $derived(
 		availableLanguages.find((f) => f.value === locale.current)?.label ?? 'Select language'
 	);
-
-	async function downloadZip() {
-		const response = await downloadAll();
-
-		// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
-		const disposition = response.headers.get('Content-Disposition');
-		const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';
-
-		const blob = await response.blob();
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = filename;
-		a.click();
-
-		URL.revokeObjectURL(url);
-
-		toast.success('Download started...');
-	}
 
 	async function saveUserSettings() {
 		isSaving = true;
@@ -169,17 +149,6 @@
 			</InputGroup.Button>
 		</InputGroup.Addon>
 	</InputGroup.Root>
-
-	<Separator class="my-6 max-w-sm" />
-
-	<h2 class="mb-1 text-lg font-semibold">Data Management</h2>
-	<p class="mb-4 max-w-sm text-sm text-muted-foreground">
-		Manage your application's data storage and backup preferences.
-	</p>
-
-	<div class="grid w-full max-w-sm gap-4">
-		<Button size="sm" variant="outline" onclick={downloadZip}>Download all as Zip</Button>
-	</div>
 
 	<Separator class="my-6 max-w-sm" />
 

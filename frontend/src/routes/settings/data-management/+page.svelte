@@ -5,9 +5,10 @@
 	import { resolve } from '$app/paths';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from '$lib/notify';
-	import { clearRecycleBin } from '$lib/services/imageService';
+	import { clearRecycleBin, downloadAll } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 
 	onMount(() => {
@@ -18,6 +19,25 @@
 	let isEmptying = $state(false);
 
 	let recycledCount = $derived(appState.images.filter((image) => image.isSoftDeleted).length);
+
+	async function downloadZip() {
+		const response = await downloadAll();
+
+		// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
+		const disposition = response.headers.get('Content-Disposition');
+		const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';
+
+		const blob = await response.blob();
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		a.click();
+
+		URL.revokeObjectURL(url);
+
+		toast.success('Download started...');
+	}
 
 	async function emptyRecycleBin() {
 		isDeleteDialogOpen = false;
@@ -42,6 +62,17 @@
 <p>Manage the images and data stored by this application.</p>
 
 <section class="mt-6">
+	<h2 class="mb-1 text-lg font-semibold">Backup</h2>
+	<p class="mb-4 max-w-sm text-sm text-muted-foreground">
+		Download a copy of all your images as a single Zip archive.
+	</p>
+
+	<div class="grid w-full max-w-sm gap-4">
+		<Button size="sm" variant="outline" onclick={downloadZip}>Download all as Zip</Button>
+	</div>
+
+	<Separator class="my-6 max-w-sm" />
+
 	<h2 class="mb-1 text-lg font-semibold">Recycle Bin</h2>
 	<p class="mb-4 max-w-sm text-sm text-muted-foreground">
 		{#if appState.isLoading}
