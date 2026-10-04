@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Trash2Icon } from '@lucide/svelte';
+	import { DownloadIcon, Trash2Icon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
 	import { resolve } from '$app/paths';
@@ -17,26 +17,37 @@
 
 	let isDeleteDialogOpen = $state(false);
 	let isEmptying = $state(false);
+	let isDownloading = $state(false);
 
 	let recycledCount = $derived(appState.images.filter((image) => image.isSoftDeleted).length);
 
 	async function downloadZip() {
-		const response = await downloadAll();
+		isDownloading = true;
 
-		// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
-		const disposition = response.headers.get('Content-Disposition');
-		const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';
+		try {
+			const response = await downloadAll();
+			if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
 
-		const blob = await response.blob();
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = filename;
-		a.click();
+			// Read filename from header: Content-Disposition: attachment; filename="archive.zip"
+			const disposition = response.headers.get('Content-Disposition');
+			const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? 'download.zip';
 
-		URL.revokeObjectURL(url);
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			a.click();
 
-		toast.success('Download started...');
+			URL.revokeObjectURL(url);
+
+			toast.success('Download started...');
+		} catch (e) {
+			console.error('Failed to download all images', e);
+			toast.error('An error has occurred while preparing the download.');
+		}
+
+		isDownloading = false;
 	}
 
 	async function emptyRecycleBin() {
@@ -68,7 +79,14 @@
 	</p>
 
 	<div class="grid w-full max-w-sm gap-4">
-		<Button size="sm" variant="outline" onclick={downloadZip}>Download all as Zip</Button>
+		<Button size="sm" variant="outline" disabled={isDownloading} onclick={downloadZip}>
+			{#if isDownloading}
+				<Spinner />
+			{:else}
+				<DownloadIcon />
+			{/if}
+			{isDownloading ? 'Preparing Zip...' : 'Download all as Zip'}
+		</Button>
 	</div>
 
 	<Separator class="my-6 max-w-sm" />
