@@ -19,8 +19,14 @@ namespace Core.Repositories
 
         public Task SoftDeleteByIdsAsync(List<string> ids, CancellationToken ct)
         {
+            var deletedAt = DateTime.UtcNow;
+
             var tasks = ids.Select(
-                id => this.container.PatchItemAsync<ImageDocument>(id, new PartitionKey(ImageDocument.PartitionKeyValue), [PatchOperation.Replace("/IsSoftDeleted", true)]));
+                id => this.container.PatchItemAsync<ImageDocument>(
+                    id,
+                    new PartitionKey(ImageDocument.PartitionKeyValue),
+                    [PatchOperation.Replace("/IsSoftDeleted", true), PatchOperation.Set("/DeletedAt", deletedAt)],
+                    cancellationToken: ct));
 
             return Task.WhenAll(tasks);
         }

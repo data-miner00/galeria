@@ -21,6 +21,7 @@ export type ImageRecord = {
 	mediumPath: string;
 	isFavorite: boolean;
 	isSoftDeleted: boolean;
+	deletedAt?: string;
 	width: number;
 	height: number;
 	size: number;

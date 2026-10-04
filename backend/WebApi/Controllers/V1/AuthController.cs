@@ -23,7 +23,7 @@ namespace WebApi.Controllers.V1
         private CancellationToken CancellationToken => this.HttpContext.RequestAborted;
 
         [HttpGet]
-        public async Task<ActionResult<WebApi.Models.SecuritySettings>> Get()
+        public async Task<ActionResult<SecuritySettings>> Get()
         {
             var settings = await this.repository.GetFirstAsync(this.CancellationToken);
 
@@ -32,7 +32,7 @@ namespace WebApi.Controllers.V1
                 return this.NotFound();
             }
 
-            return this.Ok(WebApi.Models.SecuritySettings.FromInternal(settings));
+            return this.Ok(SecuritySettings.FromInternal(settings));
         }
 
         [HttpPost("totp/enable")]

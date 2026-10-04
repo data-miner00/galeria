@@ -164,6 +164,13 @@
 					<Input id="createdAt" value={currentImageRecord.createdAt} disabled />
 				</div>
 
+				{#if currentImageRecord.deletedAt}
+					<div class="grid gap-3">
+						<Label for="deletedAt" class="text-end">Deleted At</Label>
+						<Input id="deletedAt" value={currentImageRecord.deletedAt} disabled />
+					</div>
+				{/if}
+
 				{#if currentImageRecord.cameraMake}
 					<div class="grid gap-3">
 						<Label for="cameraMake" class="text-end">Camera Make</Label>

@@ -236,6 +236,15 @@ namespace WebApi.Controllers.V1
 
             if (request.IsSoftDeleted.HasValue)
             {
+                if (request.IsSoftDeleted.Value && !image.IsSoftDeleted)
+                {
+                    image.DeletedAt = DateTime.UtcNow;
+                }
+                else if (!request.IsSoftDeleted.Value)
+                {
+                    image.DeletedAt = null;
+                }
+
                 image.IsSoftDeleted = request.IsSoftDeleted.Value;
             }
 

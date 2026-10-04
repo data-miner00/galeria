@@ -32,6 +32,8 @@
 
         public bool IsSoftDeleted { get; set; }
 
+        public DateTime? DeletedAt { get; set; }
+
         public string? Category { get; set; }
 
         public List<string> Tags { get; set; } = [];
@@ -73,6 +75,7 @@
                 MediumPath = MediumPath,
                 IsFavorite = IsFavorite,
                 IsSoftDeleted = IsSoftDeleted,
+                DeletedAt = DeletedAt,
                 Category = Category,
                 Tags = Tags,
                 CameraMake = CameraMake,
@@ -107,6 +110,7 @@
                 MediumPath = entity.MediumPath,
                 IsFavorite = entity.IsFavorite,
                 IsSoftDeleted = entity.IsSoftDeleted,
+                DeletedAt = entity.DeletedAt,
                 Category = entity.Category,
                 Tags = entity.Tags,
                 CameraMake = entity.CameraMake,
