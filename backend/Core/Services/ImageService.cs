@@ -195,9 +195,7 @@ public sealed class ImageService
         await this.repository.DeleteAsync(imageId, ImageDocument.PartitionKeyValue, ct);
 
         List<Task> tasks = [
-            this.blobClient.DeleteAsync(record.Path, ct),
-            this.blobClient.DeleteAsync(record.ThumbnailPath, ct),
-            this.blobClient.DeleteAsync(record.MediumPath, ct),
+            .. GetBlobPaths(record).Select(path => this.blobClient.DeleteAsync(path, ct)),
             this.index.DeleteOneDocumentAsync(imageId),
         ];
 
@@ -207,13 +205,18 @@ public sealed class ImageService
     }
 
     /// <summary>
-    /// Permanently deletes all images that have been soft deleted from the repository.
+    /// Permanently deletes all images that have been soft deleted, including their blobs and search index entries.
     /// </summary>
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>true if all soft deleted images are successfully deleted; otherwise, false.</returns>
     public async Task<bool> DeleteSoftDeletedImagesAsync(CancellationToken ct = default)
     {
-        var recycledImages = await this.repository.GetAllSoftDeletedAsync(ct);
+        var recycledImages = (await this.repository.GetAllSoftDeletedAsync(ct)).ToList();
+
+        if (recycledImages.Count == 0)
+        {
+            return true;
+        }
 
         List<Task<DatabaseOperationStatus>> deleteTasks = recycledImages
             .Select(image => this.repository.DeleteAsync(image.Id, ImageDocument.PartitionKeyValue, ct))
@@ -221,8 +224,19 @@ public sealed class ImageService
 
         await Task.WhenAll(deleteTasks);
 
+        List<Task> tasks = [
+            .. recycledImages.SelectMany(GetBlobPaths).Select(path => this.blobClient.DeleteAsync(path, ct)),
+            this.index.DeleteDocumentsAsync(recycledImages.Select(image => image.Id), ct),
+        ];
+
+        await Task.WhenAll(tasks);
+
         return true;
     }
+
+    private static IEnumerable<string> GetBlobPaths(ImageRecord record) =>
+        new[] { record.Path, record.ThumbnailPath, record.MediumPath }
+            .Where(path => !string.IsNullOrWhiteSpace(path));
 
     public async Task<List<ImageRecord>> SearchAsync(
         string query,
