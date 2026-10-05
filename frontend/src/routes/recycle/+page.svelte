@@ -149,7 +149,7 @@
 		<Empty.Content>
 			<div class="flex gap-2">
 				<Button href="/">Home</Button>
-				<Button variant="outline" href="/settings/general">Settings</Button>
+				<Button variant="outline" href="/settings">Settings</Button>
 			</div>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
