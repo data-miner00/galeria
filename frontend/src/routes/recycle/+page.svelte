@@ -20,8 +20,9 @@
 	import { formatBytes } from '$lib/helpers';
 	import { toast } from '$lib/notify';
 	import { clearRecycleBin, restoreRecycleBin } from '$lib/services/imageService';
+	import { saveLayoutType } from '$lib/services/userSettingsService';
 	import { appState } from '$lib/states.svelte';
-	import type { ImageRecord } from '$lib/types';
+	import type { ImageRecord, LayoutType } from '$lib/types';
 
 	onMount(async () => {
 		appState.headerTitle = 'Recycle Bin';
@@ -33,6 +34,7 @@
 	let orders = $state<'newest' | 'oldest'>('newest');
 
 	let columns = $derived(appState.settings.noOfColumns || 5);
+	let layoutType = $derived<LayoutType>(appState.settings.layoutType ?? 'masonry');
 	let softDeletedImages = $derived(appState.images.filter((image) => image.isSoftDeleted));
 	// Sizes cover the original files only; thumbnail and medium variants are not counted.
 	let librarySize = $derived(appState.images.reduce((sum, image) => sum + image.size, 0));
@@ -112,8 +114,20 @@
 	</div>
 	<div class="ms-auto flex gap-2">
 		<ButtonGroup.Root>
-			<Button variant="outline" size="icon-sm"><LayoutDashboardIcon /></Button>
-			<Button variant="outline" size="icon-sm"><LayoutGridIcon /></Button>
+			<Button
+				variant={layoutType === 'masonry' ? 'default' : 'outline'}
+				size="icon-sm"
+				onclick={() => saveLayoutType('masonry')}
+			>
+				<LayoutDashboardIcon />
+			</Button>
+			<Button
+				variant={layoutType === 'grid' ? 'default' : 'outline'}
+				size="icon-sm"
+				onclick={() => saveLayoutType('grid')}
+			>
+				<LayoutGridIcon />
+			</Button>
 			<Button variant="outline" size="icon-sm" onclick={toggleOrder}>
 				{#if orders === 'newest'}
 					<ArrowDown01Icon />
@@ -170,6 +184,7 @@
 						isFavorite={record.isFavorite}
 						isSoftDeleted={record.isSoftDeleted}
 						isHidden={record.isHidden}
+						{layoutType}
 					/>
 				{/each}
 			</div>
