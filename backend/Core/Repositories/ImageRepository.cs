@@ -31,6 +31,18 @@ namespace Core.Repositories
             return Task.WhenAll(tasks);
         }
 
+        public Task RestoreByIdsAsync(List<string> ids, CancellationToken ct)
+        {
+            var tasks = ids.Select(
+                id => this.container.PatchItemAsync<ImageDocument>(
+                    id,
+                    new PartitionKey(ImageDocument.PartitionKeyValue),
+                    [PatchOperation.Replace("/IsSoftDeleted", false), PatchOperation.Set<DateTime?>("/DeletedAt", null)],
+                    cancellationToken: ct));
+
+            return Task.WhenAll(tasks);
+        }
+
         /// <summary>
         /// Gets all images that is not soft deleted.
         /// </summary>

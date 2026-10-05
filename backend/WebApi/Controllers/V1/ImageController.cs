@@ -129,6 +129,14 @@ namespace WebApi.Controllers.V1
             });
         }
 
+        [HttpPost("recyclebin/restore")]
+        public async Task<ActionResult<RestoreRecycleBinResponse>> RestoreRecycleBin()
+        {
+            var restoredCount = await this.service.RestoreSoftDeletedImagesAsync(this.CancellationToken);
+
+            return this.Ok(new RestoreRecycleBinResponse { RestoredCount = restoredCount });
+        }
+
         [HttpDelete("index/orphans")]
         public async Task<ActionResult<PurgeOrphanedIndexDocumentsResponse>> PurgeOrphanedIndexDocuments()
         {

@@ -235,6 +235,27 @@ public sealed class ImageService
     }
 
     /// <summary>
+    /// Restores all soft deleted images and clears their deletion timestamp.
+    /// </summary>
+    /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+    /// <returns>The number of images restored.</returns>
+    public async Task<int> RestoreSoftDeletedImagesAsync(CancellationToken ct = default)
+    {
+        var recycledIds = (await this.repository.GetAllSoftDeletedAsync(ct)).Select(image => image.Id).ToList();
+
+        if (recycledIds.Count == 0)
+        {
+            return 0;
+        }
+
+        await this.repository.RestoreByIdsAsync(recycledIds, ct);
+
+        this.logger.LogInformation("Restored {Count} images from the recycle bin.", recycledIds.Count);
+
+        return recycledIds.Count;
+    }
+
+    /// <summary>
     /// Removes search index documents whose image no longer exists in the repository.
     /// </summary>
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>

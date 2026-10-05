@@ -16,9 +16,10 @@
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { formatBytes } from '$lib/helpers';
 	import { toast } from '$lib/notify';
-	import { clearRecycleBin } from '$lib/services/imageService';
+	import { clearRecycleBin, restoreRecycleBin } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
 	import type { ImageRecord } from '$lib/types';
 
@@ -27,6 +28,7 @@
 	});
 
 	let isDeleteDialogOpen = $state(false);
+	let isRestoring = $state(false);
 
 	let orders = $state<'newest' | 'oldest'>('newest');
 
@@ -80,6 +82,24 @@
 
 		isDeleteDialogOpen = false;
 	}
+
+	async function restoreAll() {
+		isRestoring = true;
+
+		try {
+			const { restoredCount } = await restoreRecycleBin();
+
+			appState.images = appState.images.map((record) =>
+				record.isSoftDeleted ? { ...record, isSoftDeleted: false, deletedAt: undefined } : record
+			);
+
+			toast.success(`Restored ${restoredCount} ${restoredCount === 1 ? 'image' : 'images'}.`);
+		} catch {
+			toast.error('An error has occurred while restoring the recycle bin.');
+		}
+
+		isRestoring = false;
+	}
 </script>
 
 <div class="flex flex-wrap items-center justify-between gap-2">
@@ -103,7 +123,25 @@
 			</Button>
 		</ButtonGroup.Root>
 
-		<Button variant="outline" size="icon-sm"><ArchiveRestoreIcon /></Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="outline"
+						size="icon-sm"
+						aria-label="Restore all"
+						disabled={isRestoring || softDeletedImages.length === 0}
+						onclick={restoreAll}
+					>
+						<ArchiveRestoreIcon />
+					</Button>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<p>Restore all</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
 
 		<Button variant="destructive" size="sm" onclick={() => (isDeleteDialogOpen = true)}>
 			<Trash2Icon /> Clear All

@@ -66,6 +66,10 @@ export async function clearRecycleBin(): Promise<void> {
 	return apiDelete('/image/recyclebin/clear');
 }
 
+export async function restoreRecycleBin(): Promise<{ restoredCount: number }> {
+	return apiPost<undefined, { restoredCount: number }>('/image/recyclebin/restore', undefined);
+}
+
 export async function purgeOrphanedIndexDocuments(): Promise<{ purgedCount: number }> {
 	return apiDeleteForJson<{ purgedCount: number }>('/image/index/orphans');
 }
