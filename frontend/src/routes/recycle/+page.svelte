@@ -157,7 +157,12 @@
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Button variant="destructive" size="sm" onclick={() => (isDeleteDialogOpen = true)}>
+		<Button
+			variant="destructive"
+			size="sm"
+			disabled={softDeletedImages.length === 0}
+			onclick={() => (isDeleteDialogOpen = true)}
+		>
 			<Trash2Icon /> Clear All
 		</Button>
 	</div>
