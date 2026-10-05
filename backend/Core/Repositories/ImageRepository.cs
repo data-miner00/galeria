@@ -5,6 +5,8 @@ namespace Core.Repositories
 {
     public class ImageRepository : CosmosDbRepository<Image, ImageDocument>
     {
+        private const int MaxBatchOperations = 100;
+
         public ImageRepository(Container container) : base(container)
         {
         }
@@ -19,28 +21,44 @@ namespace Core.Repositories
 
         public Task SoftDeleteByIdsAsync(List<string> ids, CancellationToken ct)
         {
-            var deletedAt = DateTime.UtcNow;
-
-            var tasks = ids.Select(
-                id => this.container.PatchItemAsync<ImageDocument>(
-                    id,
-                    new PartitionKey(ImageDocument.PartitionKeyValue),
-                    [PatchOperation.Replace("/IsSoftDeleted", true), PatchOperation.Set("/DeletedAt", deletedAt)],
-                    cancellationToken: ct));
-
-            return Task.WhenAll(tasks);
+            return this.PatchInBatchesAsync(
+                ids,
+                [PatchOperation.Replace("/IsSoftDeleted", true), PatchOperation.Set("/DeletedAt", DateTime.UtcNow)],
+                ct);
         }
 
         public Task RestoreByIdsAsync(List<string> ids, CancellationToken ct)
         {
-            var tasks = ids.Select(
-                id => this.container.PatchItemAsync<ImageDocument>(
-                    id,
-                    new PartitionKey(ImageDocument.PartitionKeyValue),
-                    [PatchOperation.Replace("/IsSoftDeleted", false), PatchOperation.Set<DateTime?>("/DeletedAt", null)],
-                    cancellationToken: ct));
+            return this.PatchInBatchesAsync(
+                ids,
+                [PatchOperation.Replace("/IsSoftDeleted", false), PatchOperation.Set<DateTime?>("/DeletedAt", null)],
+                ct);
+        }
 
-            return Task.WhenAll(tasks);
+        private async Task PatchInBatchesAsync(List<string> ids, IReadOnlyList<PatchOperation> operations, CancellationToken ct)
+        {
+            foreach (var chunk in ids.Distinct().Chunk(MaxBatchOperations))
+            {
+                var batch = this.container.CreateTransactionalBatch(new PartitionKey(ImageDocument.PartitionKeyValue));
+
+                foreach (var id in chunk)
+                {
+                    batch.PatchItem(id, operations);
+                }
+
+                // A failed batch is reported on the response instead of thrown.
+                using var response = await batch.ExecuteAsync(ct);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new CosmosException(
+                        $"Transactional batch failed: {response.ErrorMessage}",
+                        response.StatusCode,
+                        subStatusCode: 0,
+                        response.ActivityId,
+                        response.RequestCharge);
+                }
+            }
         }
 
         /// <summary>
