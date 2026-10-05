@@ -161,7 +161,7 @@
 			All
 		</Button>
 
-		{#each categories as category}
+		{#each categories as category (category)}
 			<Button
 				size="sm"
 				variant={activeCategory === category ? 'default' : 'outline'}
@@ -223,9 +223,9 @@
 			class:grid-cols-4={columns === 4}
 			class:grid-cols-6={columns === 6}
 		>
-			{#each chunkedRecords as chunk}
+			{#each chunkedRecords as chunk, columnIndex (columnIndex)}
 				<div class="flex flex-col gap-4">
-					{#each chunk as record}
+					{#each chunk as record (record.id)}
 						<ImageCard
 							id={record.id}
 							path={record.path}

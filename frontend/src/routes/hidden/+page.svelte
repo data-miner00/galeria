@@ -1,9 +1,4 @@
 <script lang="ts">
-	import ImageCard from '$lib/components/custom/image-card.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { ImageRecord } from '$lib/types';
-	import { onMount } from 'svelte';
-	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import {
 		ArrowDown01Icon,
 		ArrowUp01Icon,
@@ -12,8 +7,14 @@
 		LayoutDashboardIcon,
 		LayoutGridIcon
 	} from '@lucide/svelte';
-	import { appState } from '$lib/states.svelte';
+	import { onMount } from 'svelte';
+
+	import ImageCard from '$lib/components/custom/image-card.svelte';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { appState } from '$lib/states.svelte';
+	import type { ImageRecord } from '$lib/types';
 
 	onMount(async () => {
 		appState.headerTitle = 'Hidden Images';
@@ -67,7 +68,7 @@
 			All
 		</Button>
 
-		{#each categories as category}
+		{#each categories as category (category)}
 			<Button
 				size="sm"
 				variant={activeCategory === category ? 'default' : 'outline'}
@@ -100,9 +101,9 @@
 		class:grid-cols-4={columns === 4}
 		class:grid-cols-6={columns === 6}
 	>
-		{#each chunkedRecords as chunk}
+		{#each chunkedRecords as chunk, columnIndex (columnIndex)}
 			<div class="flex flex-col gap-4">
-				{#each chunk as record}
+				{#each chunk as record (record.id)}
 					<ImageCard
 						id={record.id}
 						path={record.path}

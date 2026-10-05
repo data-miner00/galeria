@@ -333,7 +333,7 @@
 				All
 			</Button>
 
-			{#each categories as category}
+			{#each categories as category (category)}
 				<Button
 					size="sm"
 					variant={activeCategory === category ? 'default' : 'outline'}
@@ -406,7 +406,7 @@
 
 {#if !isLoading}
 	{#if filteredImages.length > 0}
-		{#each groupedImages as group}
+		{#each groupedImages as group, index (index)}
 			<div id={groupDomId(group[0])}>
 				{#if groupings !== 'none'}
 					<h1 class="my-4 flex items-baseline gap-2 text-lg font-bold">
@@ -421,7 +421,7 @@
 					class:gap-1={gap === 'small'}
 					class:gap-2={gap === 'medium'}
 				>
-					{#each group[1] as image}
+					{#each group[1] as image (image.id)}
 						<div class="relative h-25 w-25">
 							{#if isSelectMode}
 								<Checkbox

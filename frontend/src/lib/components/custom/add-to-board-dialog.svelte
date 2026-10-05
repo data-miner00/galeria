@@ -73,7 +73,7 @@
 						</Select.Trigger>
 						<Select.Content>
 							<Select.Group>
-								{#each boards as board}
+								{#each boards as board (board.id)}
 									<Select.Item value={board.id}>
 										{board.title}
 									</Select.Item>
