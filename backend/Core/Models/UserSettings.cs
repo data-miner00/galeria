@@ -11,6 +11,10 @@ namespace Core.Models
 
         public string? LayoutType { get; set; }
 
+        public string? ThumbnailGap { get; set; }
+
+        public string? ThumbnailCornerRadius { get; set; }
+
         // 0 keeps recycled images until the recycle bin is emptied manually.
         [Range(0, 365)]
         public int RecycleBinRetentionDays { get; set; }

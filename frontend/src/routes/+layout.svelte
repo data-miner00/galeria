@@ -17,11 +17,24 @@
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { fetchAll as fetchImages } from '$lib/services/imageService';
 	import { appState } from '$lib/states.svelte';
-	import type { Board } from '$lib/types';
+	import type { Board, ThumbnailCornerRadius, ThumbnailGap } from '$lib/types';
 
 	import './layout.css';
 
 	let { children } = $props();
+
+	const thumbnailGapSizes: Record<ThumbnailGap, string> = {
+		compact: '0.25rem',
+		comfortable: '1rem',
+		spacious: '1.5rem'
+	};
+
+	const thumbnailCornerRadiusSizes: Record<ThumbnailCornerRadius, string> = {
+		none: '0',
+		small: '0.25rem',
+		medium: '0.5rem',
+		large: '1rem'
+	};
 
 	let isImageInfoSheetOpen = $state(false);
 	let isBoardInfoSheetOpen = $state(false);
@@ -109,7 +122,14 @@
 	<AppSidebar />
 	<Sidebar.Inset class="relative overflow-clip">
 		<SiteHeader bind:searchInputRef />
-		<div class="flex flex-1 flex-col gap-4 p-4 pt-0" id="layout-container">
+		<div
+			class="flex flex-1 flex-col gap-4 p-4 pt-0"
+			id="layout-container"
+			style:--thumbnail-gap={thumbnailGapSizes[appState.settings.thumbnailGap ?? 'comfortable']}
+			style:--thumbnail-radius={thumbnailCornerRadiusSizes[
+				appState.settings.thumbnailCornerRadius ?? 'small'
+			]}
+		>
 			{@render children()}
 		</div>
 	</Sidebar.Inset>

@@ -11,19 +11,43 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { toast } from '$lib/notify';
 	import { appState } from '$lib/states.svelte';
-	import type { LayoutType } from '$lib/types';
+	import type { LayoutType, ThumbnailCornerRadius, ThumbnailGap } from '$lib/types';
 
 	let isSaving = $state(false);
 	let noOfColumnsInput = $derived(appState.settings.noOfColumns || 5);
 	let layoutTypeInput = $derived<LayoutType>(appState.settings.layoutType ?? 'masonry');
+	let thumbnailGapInput = $derived<ThumbnailGap>(appState.settings.thumbnailGap ?? 'comfortable');
+	let thumbnailCornerRadiusInput = $derived<ThumbnailCornerRadius>(
+		appState.settings.thumbnailCornerRadius ?? 'small'
+	);
 
 	const layoutTypes: { value: LayoutType; label: string }[] = [
 		{ value: 'masonry', label: 'Masonry' },
 		{ value: 'grid', label: 'Grid' }
 	];
 
+	const thumbnailGaps: { value: ThumbnailGap; label: string }[] = [
+		{ value: 'compact', label: 'Compact' },
+		{ value: 'comfortable', label: 'Comfortable' },
+		{ value: 'spacious', label: 'Spacious' }
+	];
+
+	const thumbnailCornerRadii: { value: ThumbnailCornerRadius; label: string }[] = [
+		{ value: 'none', label: 'None' },
+		{ value: 'small', label: 'Small' },
+		{ value: 'medium', label: 'Medium' },
+		{ value: 'large', label: 'Large' }
+	];
+
 	const triggerLayoutTypeContent = $derived(
 		layoutTypes.find((f) => f.value === layoutTypeInput)?.label ?? 'Select layout'
+	);
+	const triggerThumbnailGapContent = $derived(
+		thumbnailGaps.find((f) => f.value === thumbnailGapInput)?.label ?? 'Select spacing'
+	);
+	const triggerThumbnailCornerRadiusContent = $derived(
+		thumbnailCornerRadii.find((f) => f.value === thumbnailCornerRadiusInput)?.label ??
+			'Select corner radius'
 	);
 
 	onMount(() => {
@@ -35,6 +59,8 @@
 
 		appState.settings.noOfColumns = noOfColumnsInput;
 		appState.settings.layoutType = layoutTypeInput;
+		appState.settings.thumbnailGap = thumbnailGapInput;
+		appState.settings.thumbnailCornerRadius = thumbnailCornerRadiusInput;
 
 		const request = await fetch(`${PUBLIC_API_BASE_URL}/api/v1/UserSettings`, {
 			method: 'PATCH',
@@ -104,6 +130,48 @@
 						{#each layoutTypes as layoutType (layoutType.value)}
 							<Select.Item value={layoutType.value} label={layoutType.label}>
 								{layoutType.label}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+		</div>
+
+		<div>
+			<Label.Root for="thumbnailGap" class="mb-3 text-foreground">Thumbnail Spacing</Label.Root>
+			<Select.Root type="single" name="thumbnailGap" bind:value={thumbnailGapInput}>
+				<Select.Trigger id="thumbnailGap" class="w-full">
+					{triggerThumbnailGapContent}
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						{#each thumbnailGaps as thumbnailGap (thumbnailGap.value)}
+							<Select.Item value={thumbnailGap.value} label={thumbnailGap.label}>
+								{thumbnailGap.label}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+		</div>
+
+		<div>
+			<Label.Root for="thumbnailCornerRadius" class="mb-3 text-foreground">
+				Thumbnail Corner Radius
+			</Label.Root>
+			<Select.Root
+				type="single"
+				name="thumbnailCornerRadius"
+				bind:value={thumbnailCornerRadiusInput}
+			>
+				<Select.Trigger id="thumbnailCornerRadius" class="w-full">
+					{triggerThumbnailCornerRadiusContent}
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						{#each thumbnailCornerRadii as cornerRadius (cornerRadius.value)}
+							<Select.Item value={cornerRadius.value} label={cornerRadius.label}>
+								{cornerRadius.label}
 							</Select.Item>
 						{/each}
 					</Select.Group>

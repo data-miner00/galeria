@@ -30,6 +30,8 @@ namespace WebApi.Controllers.V1
                 {
                     NoOfColumns = 5,
                     LayoutType = "masonry",
+                    ThumbnailGap = "comfortable",
+                    ThumbnailCornerRadius = "small",
                 });
             }
 
@@ -72,6 +74,16 @@ namespace WebApi.Controllers.V1
             if (request.LayoutType is not null)
             {
                 settings.LayoutType = request.LayoutType;
+            }
+
+            if (request.ThumbnailGap is not null)
+            {
+                settings.ThumbnailGap = request.ThumbnailGap;
+            }
+
+            if (request.ThumbnailCornerRadius is not null)
+            {
+                settings.ThumbnailCornerRadius = request.ThumbnailCornerRadius;
             }
 
             if (request.RecycleBinRetentionDays.HasValue)

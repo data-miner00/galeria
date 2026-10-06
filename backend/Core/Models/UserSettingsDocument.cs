@@ -10,6 +10,10 @@
 
         public string? LayoutType { get; set; }
 
+        public string? ThumbnailGap { get; set; }
+
+        public string? ThumbnailCornerRadius { get; set; }
+
         public int RecycleBinRetentionDays { get; set; }
 
         public UserSettings ToEntity()
@@ -23,6 +27,8 @@
                 NoOfColumns = NoOfColumns,
                 Watermark = Watermark,
                 LayoutType = LayoutType,
+                ThumbnailGap = ThumbnailGap,
+                ThumbnailCornerRadius = ThumbnailCornerRadius,
                 RecycleBinRetentionDays = RecycleBinRetentionDays,
                 CreatedAt = CreatedAt,
                 UpdatedAt = updatedAt,
@@ -41,6 +47,8 @@
                 NoOfColumns = userSettings.NoOfColumns,
                 Watermark = userSettings.Watermark,
                 LayoutType = userSettings.LayoutType,
+                ThumbnailGap = userSettings.ThumbnailGap,
+                ThumbnailCornerRadius = userSettings.ThumbnailCornerRadius,
                 RecycleBinRetentionDays = userSettings.RecycleBinRetentionDays,
                 ETag = userSettings.ETag,
             };

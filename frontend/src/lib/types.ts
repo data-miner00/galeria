@@ -49,6 +49,8 @@ export type UserSettings = {
 	noOfColumns?: number;
 	watermark?: string;
 	layoutType?: LayoutType;
+	thumbnailGap?: ThumbnailGap;
+	thumbnailCornerRadius?: ThumbnailCornerRadius;
 	recycleBinRetentionDays?: number;
 };
 
@@ -67,6 +69,10 @@ export type SecuritySettings = {
 };
 
 export type LayoutType = 'masonry' | 'grid';
+
+export type ThumbnailGap = 'compact' | 'comfortable' | 'spacious';
+
+export type ThumbnailCornerRadius = 'none' | 'small' | 'medium' | 'large';
 
 export type Draft = {
 	id?: string;

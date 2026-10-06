@@ -76,7 +76,7 @@
 
 <div>
 	<button
-		class="relative w-full cursor-pointer overflow-hidden rounded focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+		class="relative w-full cursor-pointer overflow-hidden rounded-(--thumbnail-radius) focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 		class:aspect-square={layoutType === 'grid'}
 		type="button"
 		onclick={!isCensored || revealCensoredImage ? openLightbox : () => (revealCensoredImage = true)}

@@ -151,7 +151,7 @@
 {#if !isLoading}
 	{#if filteredImages.length > 0}
 		<div
-			class="grid h-full gap-4"
+			class="grid h-full gap-(--thumbnail-gap)"
 			class:grid-cols-2={columns === 2}
 			class:grid-cols-3={columns === 3}
 			class:grid-cols-5={columns === 5}
@@ -159,7 +159,7 @@
 			class:grid-cols-6={columns === 6}
 		>
 			{#each chunkedRecords as chunk, columnIndex (columnIndex)}
-				<div class="flex flex-col gap-4">
+				<div class="flex flex-col gap-(--thumbnail-gap)">
 					{#each chunk as record (record.id)}
 						<ImageCard
 							id={record.id}
